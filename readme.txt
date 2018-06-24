@@ -19,7 +19,10 @@ Maybe the library is useful for someone
 
 Eberhard Kümmel
 
+2015-05-30	Created repo
+2015-09-06	Created tag for version 1.0.4
+2016-09-02	New version 1.0.5 available (Features: Display mode without axis scale)
+2016-09-17	New version 1.0.6 available (Fixed class version problem with persistence support)
+2017-03-26	New version 1.0.7 available (Axis and scale can be hidden)
 2018-04-01  New version 1.3.0 available (New repository)
-
-
-
+2018-06-24  Dropped repo and created it new due to change to gradle scripts
