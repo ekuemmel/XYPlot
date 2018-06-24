@@ -1,0 +1,9 @@
+build
+.gradle
+.metadata
+RemoteSystemsTempFiles
+bintray
+*.7z
+Thumbs.db
+*.zip
+

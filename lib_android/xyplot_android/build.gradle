@@ -1,0 +1,82 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+android {
+    compileSdkVersion 23
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.3.3"
+		
+		setProperty("archivesBaseName", "xyplot_android")
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+			version "1.3.3"
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        disable 'InvalidPackage', 'OldTargetApi'
+    }	
+	
+	
+	libraryVariants.all { variant ->
+		variant.outputs.all { output ->
+			if (outputFile != null && outputFileName.endsWith('.aar')) {
+				outputFileName = "${archivesBaseName}-${version}.aar"
+			}
+		}
+	}
+
+    sourceCompatibility = '1.6'
+    targetCompatibility = '1.6'
+
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_6
+        targetCompatibility JavaVersion.VERSION_1_6
+    }
+}
+
+task copyLib(type: Copy) {
+    from file("${buildDir}/../../../core/build/libs/xyplot-${version}.jar")
+    into file("${buildDir}/../libs")
+}
+
+task writeNewPom {
+    doLast {
+        pom {
+			groupId = 'de.ewmksoft.xyplot'
+			artifactId = 'xyplot_android'
+			name = 'XYPlot Library for Android'
+			description = 'Library for displaying an interactive XY Graph on Android'
+            project {
+                licenses {
+                    license {
+						name 'Unlicense'
+                        url 'http://unlicense.org/'
+                    }
+                }
+            }
+        }.writeTo("$buildDir/outputs/aar/xyplot_android-${version}.pom")
+    }
+}
+
+build.dependsOn writeNewPom
+build.dependsOn copyLib
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+	implementation 'xyplot:xyplot:1.3.3'
+	compile fileTree(include: ['*.jar'], dir: 'libs')
+}

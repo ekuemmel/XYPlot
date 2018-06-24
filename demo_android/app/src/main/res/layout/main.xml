@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_weight="1"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:text="@string/text_button_start1" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:text="@string/text_button_start2" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:text="@string/text_button_start3" />
+
+    </LinearLayout>
+
+    <de.ewmksoft.xyplot.driver.XYGraphView
+        android:id="@+id/xyPlot1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fadingEdge="horizontal"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        app:buttonClearImage="@drawable/ic_trash"
+        app:buttonDownImage="@drawable/ic_down"
+        app:buttonEndImage="@drawable/ic_right_end"
+        app:buttonLeftImage="@drawable/ic_left"
+        app:buttonMinusImage="@drawable/ic_minus"
+        app:buttonPauseImage="@drawable/ic_pause"
+        app:buttonPlusImage="@drawable/ic_plus"
+        app:buttonPos1Image="@drawable/ic_left_end"
+        app:buttonRightImage="@drawable/ic_right"
+        app:buttonSaveImage="@drawable/ic_save"
+        app:buttonStartImage="@drawable/ic_play"
+        app:buttonStopImage="@drawable/ic_pause"
+        app:buttonUpImage="@drawable/ic_up"
+        app:buttonZoomDownImage="@drawable/ic_int"
+        app:buttonZoomUpImage="@drawable/ic_int" />
+
+</LinearLayout>

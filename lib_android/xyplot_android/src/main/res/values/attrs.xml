@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="XYGraphView">
+        <attr name="buttonDownImage" format="reference" />
+        <attr name="buttonUpImage" format="reference" />
+        <attr name="buttonPlusImage" format="reference" />
+        <attr name="buttonMinusImage" format="reference" />
+        <attr name="buttonLeftImage" format="reference" />
+        <attr name="buttonRightImage" format="reference" />
+        <attr name="buttonStartImage" format="reference" />
+        <attr name="buttonPauseImage" format="reference" />
+        <attr name="buttonStopImage" format="reference" />
+        <attr name="buttonClearImage" format="reference" />
+        <attr name="buttonZoomUpImage" format="reference" />
+        <attr name="buttonZoomDownImage" format="reference" />
+        <attr name="buttonSaveImage" format="reference" />
+        <attr name="buttonPos1Image" format="reference" />
+        <attr name="buttonEndImage" format="reference" />
+    </declare-styleable>
+</resources>

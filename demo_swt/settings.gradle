@@ -1,0 +1,7 @@
+/*
+ * XY-Plot Demo Application for Gradle
+ *
+ */
+
+
+rootProject.name = 'DemoSwt'
