@@ -1,8 +1,8 @@
 <h1>XYPlot Library</h1>
 <p>
 XYPlot is a library written in Java which draws XY plots from 
-any kind of data having X and one to N Y value. The X values 
-must not be equidistant but must continuously increase (e.g. time)<br>
+any kind of data having X/Y values. The X values 
+must not be equidistant but must continuously increase (e.g. time).<br>
 It separates data and graphical representation and is usually used by 
 a business logic thread creating the data and a visualization running 
 in an GUI thread. The library is available for SWT (c) Oracle based 
