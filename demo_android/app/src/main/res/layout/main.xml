@@ -57,6 +57,8 @@
         app:buttonStopImage="@drawable/ic_pause"
         app:buttonUpImage="@drawable/ic_up"
         app:buttonZoomDownImage="@drawable/ic_int"
-        app:buttonZoomUpImage="@drawable/ic_int" />
+        app:buttonZoomUpImage="@drawable/ic_int"
+        app:axis_color="@color/magenta"
+		/>
 
 </LinearLayout>

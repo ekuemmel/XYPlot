@@ -39,6 +39,8 @@ public class MainActivity extends Activity implements Handler.Callback {
 		xyPlot.setFontSize(20, 30);
 		xyPlot.setAxisLabels(true);
 		xyPlot.setSaveButtonVisisble(true);
+		// uncomment below line to set axis color.
+		// xyGraphView.setAxisColor(getColor(R.color.magenta));
 
 		Button button1 = (Button) findViewById(R.id.button1);
 		Button button2 = (Button) findViewById(R.id.button2);
