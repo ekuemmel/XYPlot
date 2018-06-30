@@ -165,6 +165,7 @@ public class XYGraphView extends View implements Handler.Callback {
                 graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.POS1, drawable);
                 drawable = a.getDrawable(R.styleable.XYGraphView_buttonEndImage);
                 graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.END, drawable);
+				// set axis color.
 				int axisColor = a.getColor(R.styleable.XYGraphView_axis_color, Color.GRAY);
                 setAxisColor(axisColor);
 
