@@ -165,6 +165,8 @@ public class XYGraphView extends View implements Handler.Callback {
                 graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.POS1, drawable);
                 drawable = a.getDrawable(R.styleable.XYGraphView_buttonEndImage);
                 graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.END, drawable);
+				int axisColor = a.getColor(R.styleable.XYGraphView_axis_color, Color.GRAY);
+                setAxisColor(axisColor);
 
             } finally {
                 a.recycle();
@@ -172,6 +174,12 @@ public class XYGraphView extends View implements Handler.Callback {
         }
     }
 
+	public void setAxisColor(int axisColor) {
+        int red = Color.red(axisColor);
+        int green = Color.green(axisColor);
+        int blue = Color.blue(axisColor);
+        graphLib.setAxisColor(red, green, blue);
+    }
 
     public void init(String xTitle, String xUnit, XYPlotData[] xyPlotData,
                      IXYGraphView alistener) {
