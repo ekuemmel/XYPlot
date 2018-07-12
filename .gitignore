@@ -3,6 +3,7 @@ build
 .metadata
 RemoteSystemsTempFiles
 bintray
+caches
 *.7z
 Thumbs.db
 *.zip

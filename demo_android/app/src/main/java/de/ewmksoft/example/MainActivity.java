@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MainActivity extends Activity implements Handler.Callback {
-    Logger logger = LoggerFactory.getLogger(MainActivity.class);
+    private Logger logger = LoggerFactory.getLogger(MainActivity.class);
 
     private static final int MSG_TAG_UPDATE = 1;
     private static final int MSG_TAG_SAVE = 2;

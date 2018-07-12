@@ -168,8 +168,8 @@ public class XYPlotData {
 		// A true value is the real value, the other values are
 		// reduced by the exponent dexpo
 		// Example: dexpo is 2 -> True value 200 becomes shown value 2 
-		public double lmin; // Last used start value
-		public double lmax; // Last used stop value
+		public double lmin; // Last true used start value
+		public double lmax; // Last true used stop value
 		public double smin; // Shown value of lowest tick
 		public double smax; // Shown value of highest tick
 		public double vmin; // Minimum true value on scale

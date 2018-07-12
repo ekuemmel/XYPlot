@@ -70,12 +70,16 @@ import de.ewmksoft.xyplot.core.IXYGraphLibInt.ButtonImages;
 import de.ewmksoft.xyplot.core.IXYGraphLibInt.FgColor;
 import de.ewmksoft.xyplot.core.IXYGraphLibInt.Pt;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * The XYPlot displays two dimensional data in a XY coordinate system. Multiple
  * plots can be displayed simultaneous. The plot contains mouse sensitive fields
  * to allow zooming and defining a cursor position
  */
 public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
+	private Logger logger = LoggerFactory.getLogger(XYPlot.class);
 
 	private IXYGraphLibInt graphLibInt;
 	private ZoomStack zoomStack = new ZoomStack();
@@ -155,7 +159,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	private static final int MIN_ZOOM_RECT_SIZE = 10;
 	private static final int MIN_MOVE_DETECT_SIZE = 5;
 	private static final int POINT_DISTANCE_FOR_CIRCLES = 30;
-	private static final int ZOOM_IN_FACTOR = 4;
+	private static final int ZOOM_IN_FACTOR = 2;
 	private static final String EXPO_STUB = " x 1E";
 	private static final boolean GROUPING_USED = false;
 	// The next two values define from which exponent the
@@ -766,21 +770,29 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		}
 	}
 
-	public void zoomAt(int position, float factor) {
-		XYPlotData xyPlotData = dataList.get(currentPlotNo);
-		if (xyPlotData != null) {
-			double xposL = screenToScaleX(position);
-			if (xposL < xData.lmin || xposL > xData.lmax) {
+	/**
+	 * 
+	 */
+	public boolean zoomAt(int position, float factor) {
+		boolean result = false;
+		if (dataList.size() > currentPlotNo) {
+			XYPlotData xyPlotData = dataList.get(currentPlotNo);
+			if (xyPlotData != null) {
+				XYPlotData.lock();
+				double xposL = screenToScaleX(position);
+				float f = Math.max(0.1f, factor);
+				f = Math.min(1.9f, f);
+				double xmin = xposL - (xposL - xData.lmin) / f;
+				double xmax = xposL + (xData.lmax - xposL) / f;
 				int pos = xyPlotData.locateIndexFromXValue(xposL);
 				xyPlotData.setCursorPos(pos);
+				zoomStack.clear();
+				result = zoomScreen(xyPlotData, xmin, xmax);
+				needsRedraw = true;
+				XYPlotData.unlock();
 			}
-			float f = Math.max(0.1f, factor);
-			f = Math.min(1.9f, f);
-			zoomStack.clear();
-			double range = (xData.lmax - xData.lmin) / f;
-			zoomScreen(xyPlotData, range);
-			needsRedraw = true;
 		}
+		return result;
 	}
 
 	/**
@@ -947,6 +959,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		if (dataList.size() == 0) {
 			return;
 		}
+		logger.debug("Redraw requested, scaleChanged= {}", scaleChanged);
 		XYPlotData.lock();
 		int no = -1;
 		dataMinMax.clear();
@@ -2044,7 +2057,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		Pt fontSize = graphLibInt.getAverageCharacterSize();
 		switch (axis) {
 		case XAXIS: {
-			maxticks = bounds.width / (fontSize.x * 20) + 1;
+			maxticks = bounds.width / (fontSize.x * 25) + 1;
 			calcPointNum = true;
 			break;
 		}
@@ -2135,6 +2148,8 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		double q = Math.pow(10, dexpo);
 		sd.vmin = sd.smin * q;
 		sd.vmax = sd.smax * q;
+		// sd.vmin = sd.lmin;
+		// sd.vmax = sd.lmax;
 		sd.dexpo = dexpo;
 		sd.sdelta = delta;
 		sd.ticks = ticks;
@@ -2233,14 +2248,18 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	}
 
 	/**
-	 * Zoom into the data visible on the screen
+	 * Zoom into the data visible on the screen. The zoom is done symetrically
+	 * to the left and right of the current cursor position, so the cursor moved
+	 * to the middle.
 	 *
 	 * @param data
 	 *            Currently selected plot data
 	 * @param range
 	 *            New range for x axis
+	 * @return True in case a zoom was done
 	 */
-	private void zoomScreen(XYPlotData data, double range) {
+	private boolean zoomScreen(XYPlotData data, double range) {
+		boolean result = false;
 		int cp = data.getCursorPos();
 		if (cp >= 0) {
 			double cx = data.getValue(cp).x();
@@ -2251,26 +2270,70 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			double dataXMax = data.getXMax();
 			double dataXRange = dataXMax - dataXMin;
 			if (((xmax - xmin) < range) || allowZoomIn(data)) {
+				double saveXmin = xmin;
+				double saveXmax = xmax;
 				zoomStack.push(xmin, xmax);
 				xmin = cx - diff;
 				xmax = cx + diff;
-				
+
 				if (xmin < dataXMin - dataXRange) {
 					xmin = dataXMin - dataXRange;
-					//xmax = xmin + range;
 				}
-				
+
 				if (xmax > dataXMax + dataXRange) {
 					xmax = dataXMax + dataXRange;
-					//xmin = xmax - range;
 				}
-				
+
 				setPaused(true);
 
 				scaleChanged |= calculateScale(xData, AxisType.XAXIS, xmin, xmax);
+				if (scaleChanged) {
+					zoomStack.push(saveXmin, saveXmax);
+					result = true;
+				}
 				zoomVisibleRange = true;
 			}
 		}
+		return result;
+	}
+
+	/**
+	 * Zoom into the data visible on the screen. The zoom is done to a given
+	 * range
+	 *
+	 * @param data
+	 *            Currently selected plot data
+	 * @param xmin
+	 *            New minimum x value
+	 * @param xmax
+	 *            New maximum x value
+	 * @return True in case a zoom was done
+	 */
+	private boolean zoomScreen(XYPlotData data, final double xmin, final double xmax) {
+		boolean result = false;
+		double dataXMin = data.getXMin();
+		double dataXMax = data.getXMax();
+		double x_min = xmin;
+		double x_max = xmax;
+		double dataXRange = dataXMax - dataXMin;
+		if (allowZoomIn(data) || (xData.lmax - xData.lmin) < (xmax - xmin)) {
+			if (x_min < dataXMin - dataXRange) {
+				x_min = dataXMin - dataXRange;
+			}
+
+			if (x_max > dataXMax + dataXRange) {
+				x_max = dataXMax + dataXRange;
+			}
+
+			setPaused(true);
+
+			scaleChanged |= calculateScale(xData, AxisType.XAXIS, x_min, x_max);
+			if (scaleChanged) {
+				result = true;
+			}
+			zoomVisibleRange = true;
+		}
+		return result;
 	}
 
 	/**
