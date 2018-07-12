@@ -31,3 +31,14 @@ Eberhard Kümmel<br>
 2018-06-24  Dropped repository and re-created it again due to change of complete file structure and switch to Gradle scripts<br>
 2018-07-12  New version 1.3.4 available. Improved gesture zoom on Android
 </p>
+<h2>How to use on Android</h2>
+<p>
+Include the library into your gradle script via:<br>
+implementation 'xyplot_android:xyplot_android:1.3.2@aar'<br>
+</p>
+<h2>How to build</h2>
+<p>
+This actually not a real gradle multi build. The several parts must be compiled separately on the command line using gradle in the respective folders.
+First the core must be build, then the libraries, then the demo projects.
+</p>
+
