@@ -29,4 +29,5 @@ Eberhard Kümmel<br>
 2017-03-26	New version 1.0.7 available (Axis and scale can be hidden)<br>
 2018-04-01  New version 1.3.0 available (New repository)<br>
 2018-06-24  Dropped repository and re-created it again due to change of complete file structure and switch to Gradle scripts<br>
+2018-07-12  New version 1.3.4 available. Improved gesture zoom on Android
 </p>
