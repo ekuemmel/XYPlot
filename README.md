@@ -28,9 +28,9 @@ Eberhard Kümmel<br>
 2016-09-17	New version 1.0.6 available (Fixed class version problem with persistence support)<br>
 2017-03-26	New version 1.0.7 available (Axis and scale can be hidden)<br>
 2018-04-01  New version 1.3.0 available (New repository)<br>
-2018-05-14  New version 1.3.3 published on JCenter
+2018-05-14  New version 1.3.3 published on JCenter<br>
 2018-06-24  Dropped repository and re-created it again due to change of complete file structure and switch to Gradle scripts<br>
-2018-07-12  Improved gesture zoom on Android
+2018-07-12  Improved gesture zoom on Android<br>
 </p>
 <h2>How to use on Android</h2>
 <p>
