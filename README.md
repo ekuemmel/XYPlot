@@ -28,13 +28,14 @@ Eberhard Kümmel<br>
 2016-09-17	New version 1.0.6 available (Fixed class version problem with persistence support)<br>
 2017-03-26	New version 1.0.7 available (Axis and scale can be hidden)<br>
 2018-04-01  New version 1.3.0 available (New repository)<br>
+2018-05-14  New version 1.3.3 published on JCenter
 2018-06-24  Dropped repository and re-created it again due to change of complete file structure and switch to Gradle scripts<br>
-2018-07-12  New version 1.3.4 available. Improved gesture zoom on Android
+2018-07-12  Improved gesture zoom on Android
 </p>
 <h2>How to use on Android</h2>
 <p>
-Include the library into your gradle script via:<br>
-implementation 'xyplot_android:xyplot_android:1.3.2@aar'<br>
+The Android archive is available on JCenter. Include the library into your gradle script via:<br>
+implementation 'xyplot_android:xyplot_android:1.3.3@aar'<br>
 </p>
 <h2>How to build</h2>
 <p>
