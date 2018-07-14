@@ -34,7 +34,7 @@ import de.ewmksoft.xyplot.utils.XYPlotPersistence;
  * 
  */
 public class Application2 implements ITimeTicker {
-	public static final int WINDOW_WIDTH = 300;
+	public static final int WINDOW_WIDTH = 600;
 	public static final int WINDOW_HEIGHT = 450;
 	public static final int OFS_X = 0; // 50
 	public static final int OFS_Y = 100; // 100

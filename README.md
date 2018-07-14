@@ -10,7 +10,7 @@ Java applications and for Android (c) Google. Special focus had been put on axis
 The graph can be inspected at runtime using things like zoom in and out, move left/right or change scaling.<br>
 </p>
 <p>
-The library has quite some history, it was first developed for my 
+The library has quite some history, it was first developed in 1990 for my 
 lab work in experimental physics at the University in 
 Tübingen/Germany (in Borland Pascal) and much later been ported to Java.<br>
 </p>
@@ -38,7 +38,7 @@ implementation 'xyplot_android:xyplot_android:1.3.2@aar'<br>
 </p>
 <h2>How to build</h2>
 <p>
-This actually not a real gradle multi build. The several parts must be compiled separately on the command line using gradle in the respective folders.
+The build for xyplot is actually not a real gradle multi build. The different parts must be compiled separately on the command line using gradle in the respective folders.
 First the core must be build, then the libraries, then the demo projects.
 </p>
 

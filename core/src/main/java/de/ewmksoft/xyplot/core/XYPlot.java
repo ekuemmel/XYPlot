@@ -117,6 +117,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	private double userxmax;
 	private double xShiftValue;
 	private boolean paused;
+	private int lastZoomAtPosition;
 	private Pt mouseDownPosition;
 	private Pt mouseCurrentPosition;
 	private Pt mouseLastPosition;
@@ -784,8 +785,11 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 				f = Math.min(1.9f, f);
 				double xmin = xposL - (xposL - xData.lmin) / f;
 				double xmax = xposL + (xData.lmax - xposL) / f;
-				int pos = xyPlotData.locateIndexFromXValue(xposL);
-				xyPlotData.setCursorPos(pos);
+				if (position != lastZoomAtPosition) {
+					lastZoomAtPosition = position;
+					int pos = xyPlotData.locateIndexFromXValue(xposL);
+					xyPlotData.setCursorPos(pos);
+				}
 				zoomStack.clear();
 				result = zoomScreen(xyPlotData, xmin, xmax);
 				needsRedraw = true;

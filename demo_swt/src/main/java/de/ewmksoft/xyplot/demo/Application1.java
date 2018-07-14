@@ -33,7 +33,7 @@ import de.ewmksoft.xyplot.driver.XYPlotCanvas;
  */
 public class Application1 implements ITimeTicker {
 	private static final int TMAX = 300;
-	public static final int WINDOW_WIDTH = 300;
+	public static final int WINDOW_WIDTH = 600;
 	public static final int WINDOW_HEIGHT = 500;
 	public static final int OFS_X = 0; // 50
 	public static final int OFS_Y = 100; // 100
