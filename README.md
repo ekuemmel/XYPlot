@@ -10,7 +10,7 @@ Java applications and for Android (c) Google. Special focus had been put on axis
 The graph can be inspected at runtime using things like zoom in and out, move left/right or change scaling.<br>
 </p>
 <p>
-The library has quite some history, it was first developed for my 
+The library has quite some history, it was first developed in 1990 for my 
 lab work in experimental physics at the University in 
 Tübingen/Germany (in Borland Pascal) and much later been ported to Java.<br>
 </p>
@@ -28,5 +28,18 @@ Eberhard Kümmel<br>
 2016-09-17	New version 1.0.6 available (Fixed class version problem with persistence support)<br>
 2017-03-26	New version 1.0.7 available (Axis and scale can be hidden)<br>
 2018-04-01  New version 1.3.0 available (New repository)<br>
+2018-05-14  New version 1.3.3 published on JCenter<br>
 2018-06-24  Dropped repository and re-created it again due to change of complete file structure and switch to Gradle scripts<br>
+2018-07-12  Improved gesture zoom on Android<br>
 </p>
+<h2>How to use on Android</h2>
+<p>
+The Android archive is available on JCenter. Include the library into your gradle script via:<br>
+implementation 'xyplot_android:xyplot_android:1.3.3@aar'<br>
+</p>
+<h2>How to build</h2>
+<p>
+The build for xyplot is actually not a real gradle multi build. The different parts must be compiled separately on the command line using gradle in the respective folders.
+First the core must be build, then the libraries, then the demo projects.
+</p>
+

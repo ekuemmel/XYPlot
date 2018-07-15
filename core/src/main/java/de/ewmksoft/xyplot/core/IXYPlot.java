@@ -411,7 +411,9 @@ public interface IXYPlot {
 	 *            X-position on the screen in pixels
 	 * @param factor
 	 *            Factor to scale
+	 * 
+	 * @return True in case a zoom was done
 	 */
-	public abstract void zoomAt(int position, float factor);
+	public abstract boolean zoomAt(int position, float factor);
 
 }
