@@ -2,4 +2,5 @@
 <resources>
     <!--Add your colors here-->
     <color name="magenta">#FF00FF</color>
+    <color name="magenta_light">#BB88AA</color>
 </resources>

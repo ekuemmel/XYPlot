@@ -62,6 +62,7 @@ package de.ewmksoft.xyplot.driver;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -72,17 +73,17 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.ewmksoft.xyplot.R;
 import de.ewmksoft.xyplot.core.IXYGraphLib;
+import de.ewmksoft.xyplot.core.IXYGraphLib.MouseEvent;
 import de.ewmksoft.xyplot.core.IXYGraphLibInt;
 import de.ewmksoft.xyplot.core.IXYPlot;
 import de.ewmksoft.xyplot.core.IXYPlotEvent;
 import de.ewmksoft.xyplot.core.XYPlot;
 import de.ewmksoft.xyplot.core.XYPlotData;
-import de.ewmksoft.xyplot.core.IXYGraphLib.MouseEvent;
-import de.ewmksoft.xyplot.R;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class XYGraphView extends View implements Handler.Callback {
     private Logger logger = LoggerFactory.getLogger(XYGraphView.class);

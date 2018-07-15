@@ -1,11 +1,5 @@
 package de.ewmksoft.example;
 
-import java.io.IOException;
-
-import de.ewmksoft.xyplot.driver.IXYGraphView;
-import de.ewmksoft.xyplot.driver.XYGraphView;
-import de.ewmksoft.xyplot.core.IXYPlot;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +11,12 @@ import android.widget.Toast;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+
+import de.ewmksoft.xyplot.core.IXYPlot;
+import de.ewmksoft.xyplot.driver.IXYGraphView;
+import de.ewmksoft.xyplot.driver.XYGraphView;
 
 public class MainActivity extends Activity implements Handler.Callback {
     private Logger logger = LoggerFactory.getLogger(MainActivity.class);
@@ -48,7 +48,7 @@ public class MainActivity extends Activity implements Handler.Callback {
         xyPlot.setAxisLabels(true);
         xyPlot.setSaveButtonVisisble(true);
 // uncomment below line to set axis color.
-        // xyGraphView.setAxisColor(getColor(R.color.magenta));
+        // xyGraphView.setAxisColor(getResources().getColor(R.color.magenta));
         Button button1 = (Button) findViewById(R.id.button1);
         Button button2 = (Button) findViewById(R.id.button2);
         Button button3 = (Button) findViewById(R.id.button3);
