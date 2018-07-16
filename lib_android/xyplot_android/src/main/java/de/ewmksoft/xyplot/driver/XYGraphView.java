@@ -376,11 +376,6 @@ public class XYGraphView extends View implements Handler.Callback {
                     if (xyPlot.zoomAt(xPos, factor)) {
                         invalidate();
                     } else {
-                        if (factor < 1) {
-                            xyPlot.zoomAt(xPos, factor * 1.1f);
-                        } else {
-                            xyPlot.zoomAt(xPos, factor * 0.9f);
-                        }
                         invalidate();
                     }
                 }
@@ -394,7 +389,7 @@ public class XYGraphView extends View implements Handler.Callback {
         public boolean onScale(ScaleGestureDetector detector) {
             float scaleFactor = detector.getScaleFactor();
 
-            if (Math.abs(1.0f - scaleFactor) > 0.05) {
+            if (Math.abs(1.0f - scaleFactor) > 0.01) {
                 Message msg = myHandler.obtainMessage();
                 msg.what = MSG_ZOOM;
                 Bundle b = new Bundle();

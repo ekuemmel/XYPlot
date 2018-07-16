@@ -1,6 +1,18 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 
+buildscript {
+    
+    repositories {
+        google()
+        jcenter()
+    }
+	
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+    }
+}
+
 android {
     compileSdkVersion 23
 
@@ -46,14 +58,27 @@ android {
     }
 }
 
-task copyLib(type: Copy) {
-    from file("${buildDir}/../../../core/build/libs/xyplot-${version}.jar")
-    into file("${buildDir}/../libs")
+task hello {
+    doLast {
+        println 'Hello world!'
+    }
+}
+task intro(dependsOn: hello) {
+    doLast {
+        println "I'm Gradle"
+    }
 }
 
-task writeNewPom {
+task (copyCore, type: Copy) {
+		println("Copy core library")
+		from file("${buildDir}/../../../core/build/libs/xyplot-${version}.jar")
+		into file("${buildDir}/../libs")
+}
+
+task (makePom) {
     doLast {
         pom {
+			println("Creating POM")
 			groupId = 'de.ewmksoft.xyplot'
 			artifactId = 'xyplot_android'
 			name = 'XYPlot Library for Android'
@@ -67,11 +92,39 @@ task writeNewPom {
                 }
             }
         }.writeTo("$buildDir/outputs/aar/xyplot_android-${version}.pom")
+		
     }
 }
 
-build.dependsOn writeNewPom
-build.dependsOn copyLib
+task (copyDistribution, type: Copy) {
+	doLast {
+		println("Preparing ZIP")
+		from file("$buildDir/outputs/aar")
+		include "xyplot_android-${version}.*"
+		into file("${buildDir}/../bintray/de/ewmksoft/xyplot/xyplot_android/${version}")
+	}
+}
+
+task (packageDistribution, type: Zip) {
+    doLast {
+		println("Creating ZIP")
+		archiveName = "de-${version}.zip"
+		destinationDir = file("${buildDir}")
+		include("**/*")
+		from "${buildDir}/../bintray"
+	}
+}
+
+task (dist) {
+	def tasks = [makePom, copyDistribution, packageDistribution]
+	for (int i = 0; i < tasks.size() - 1; i++) {
+		tasks[i + 1].mustRunAfter(tasks[i])
+	}
+	dependsOn(tasks)
+}
+
+packageDistribution.dependsOn copyDistribution
+build.dependsOn copyCore
 
 dependencies {
     testImplementation 'junit:junit:4.12'
