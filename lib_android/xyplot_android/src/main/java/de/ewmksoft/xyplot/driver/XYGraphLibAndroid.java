@@ -67,6 +67,8 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 
 class XYGraphLibAndroid implements IXYGraphLib {
+	private XYGraphLibIntAndroid xyGraphLibIntAndroid;
+	
     XYGraphLibAndroid(View owner, Rect bounds) {
         xyGraphLibIntAndroid = new XYGraphLibIntAndroid(owner, bounds);
     }
@@ -103,7 +105,10 @@ class XYGraphLibAndroid implements IXYGraphLib {
     void setImageDrawable(IXYGraphLibInt.ButtonImages button, Drawable drawable) {
         xyGraphLibIntAndroid.setImageDrawable(button, drawable);
     }
-
-    private XYGraphLibIntAndroid xyGraphLibIntAndroid;
+  		
+	void setAxisColor(int redColor,int green,int blue)
+    {
+        xyGraphLibIntAndroid.setAxisColor(redColor,green,blue);
+    }
 
 }

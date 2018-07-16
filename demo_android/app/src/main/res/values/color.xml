@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Add your colors here-->
+    <color name="magenta">#FF00FF</color>
+    <color name="magenta_light">#BB88AA</color>
+</resources>
