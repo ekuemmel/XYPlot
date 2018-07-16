@@ -523,7 +523,7 @@ class XYGraphLibIntAndroid implements IXYGraphLibInt {
 
     @Override
     public void setAxisColor(int r, int g, int b) {
-        // Not supported on Android
+        lineColor=Color.argb(250,r,g,b);
     }
 
     @Override

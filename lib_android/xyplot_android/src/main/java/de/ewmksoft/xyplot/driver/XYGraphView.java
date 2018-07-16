@@ -62,6 +62,7 @@ package de.ewmksoft.xyplot.driver;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -72,17 +73,17 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.ewmksoft.xyplot.R;
 import de.ewmksoft.xyplot.core.IXYGraphLib;
+import de.ewmksoft.xyplot.core.IXYGraphLib.MouseEvent;
 import de.ewmksoft.xyplot.core.IXYGraphLibInt;
 import de.ewmksoft.xyplot.core.IXYPlot;
 import de.ewmksoft.xyplot.core.IXYPlotEvent;
 import de.ewmksoft.xyplot.core.XYPlot;
 import de.ewmksoft.xyplot.core.XYPlotData;
-import de.ewmksoft.xyplot.core.IXYGraphLib.MouseEvent;
-import de.ewmksoft.xyplot.R;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class XYGraphView extends View implements Handler.Callback {
     private Logger logger = LoggerFactory.getLogger(XYGraphView.class);
@@ -171,6 +172,9 @@ public class XYGraphView extends View implements Handler.Callback {
                 graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.POS1, drawable);
                 drawable = a.getDrawable(R.styleable.XYGraphView_buttonEndImage);
                 graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.END, drawable);
+				// set axis color.
+				int axisColor = a.getColor(R.styleable.XYGraphView_axis_color, Color.GRAY);
+                setAxisColor(axisColor);
 
             } finally {
                 a.recycle();
@@ -508,5 +512,11 @@ public class XYGraphView extends View implements Handler.Callback {
             }
             return false;
         }
+    }
+    public void setAxisColor(int axisColor) {
+        int red = Color.red(axisColor);
+        int green = Color.green(axisColor);
+        int blue = Color.blue(axisColor);
+        graphLib.setAxisColor(red, green, blue);
     }
 }

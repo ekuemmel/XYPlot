@@ -6,12 +6,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_weight="1"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/button1"
@@ -35,7 +35,10 @@
             android:text="@string/text_button_start3" />
 
     </LinearLayout>
-
+    <!--
+    app:axis_color="@color/your_color"
+    use above attribute to set the axis color in xml.
+    -->
     <de.ewmksoft.xyplot.driver.XYGraphView
         android:id="@+id/xyPlot1"
         android:layout_width="match_parent"
@@ -43,6 +46,7 @@
         android:fadingEdge="horizontal"
         android:focusable="true"
         android:focusableInTouchMode="true"
+        app:axis_color="@color/magenta_light"
         app:buttonClearImage="@drawable/ic_trash"
         app:buttonDownImage="@drawable/ic_down"
         app:buttonEndImage="@drawable/ic_right_end"

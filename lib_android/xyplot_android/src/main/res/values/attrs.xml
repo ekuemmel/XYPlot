@@ -16,5 +16,6 @@
         <attr name="buttonSaveImage" format="reference" />
         <attr name="buttonPos1Image" format="reference" />
         <attr name="buttonEndImage" format="reference" />
+		<attr name="axis_color" format="color"/>
     </declare-styleable>
 </resources>
