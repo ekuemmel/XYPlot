@@ -414,6 +414,6 @@ public interface IXYPlot {
 	 * 
 	 * @return True in case a zoom was done
 	 */
-	public abstract boolean zoomAt(int position, float factor);
+	public abstract boolean zoomAt(int position, double factor);
 
 }

@@ -35,7 +35,11 @@ Eberhard Kümmel<br>
 <h2>How to use on Android</h2>
 <p>
 The Android archive is available on JCenter. Include the library into your gradle script via:<br>
-implementation 'xyplot_android:xyplot_android:1.3.3@aar'<br>
+implementation 'xyplot_android:xyplot_android:1.3.4@aar'<br>
+<br>
+Use the following grade dependency to fetch the library from JCenter<br>
+implementation 'de.ewmksoft.xyplot:xyplot_android:1.3.4@aar'<br>
+<br>
 </p>
 <h2>How to build</h2>
 <p>

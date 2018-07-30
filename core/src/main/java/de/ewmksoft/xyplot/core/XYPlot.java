@@ -774,15 +774,15 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * 
 	 */
-	public boolean zoomAt(int position, float factor) {
+	public boolean zoomAt(int position, double factor) {
 		boolean result = false;
 		if (dataList.size() > currentPlotNo) {
 			XYPlotData xyPlotData = dataList.get(currentPlotNo);
 			if (xyPlotData != null) {
 				XYPlotData.lock();
 				double xposL = screenToScaleX(position);
-				float f = Math.max(0.01f, factor);
-				f = Math.min(1.99f, f);
+				double f = Math.max(0.01d, factor);
+				f = Math.min(1.99d, f);
 				double xmin = xposL - (xposL - xData.lmin) / f;
 				double xmax = xposL + (xData.lmax - xposL) / f;
 				if (position != lastZoomAtPosition) {

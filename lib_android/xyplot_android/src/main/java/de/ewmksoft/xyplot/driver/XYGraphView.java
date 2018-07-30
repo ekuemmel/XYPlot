@@ -113,6 +113,8 @@ public class XYGraphView extends View implements Handler.Callback {
     private static final String PARAM_SHIFT = "shift";
     private static final String PARAM_LAST = "last";
 
+    private double zoomBoost = 2.0;
+
     public XYGraphView(Context context) {
         super(context);
         init("", "", new XYPlotData[0], null);
@@ -372,7 +374,7 @@ public class XYGraphView extends View implements Handler.Callback {
                 break;
             case MSG_ZOOM:
                 int xPos = b.getInt(PARAM_XPOS);
-                float factor = 0.000001f * b.getInt(PARAM_ZOOM);
+                double factor = (0.000001d * b.getLong(PARAM_ZOOM) - 1) * zoomBoost + 1;
                 boolean valid = Math.abs(factor - 1) > 0.0;
                 logger.debug("Zoom factor: {} at {} -> {}", factor, xPos, Boolean.toString(valid));
                 blockMoveUntil = System.currentTimeMillis() + 500;
@@ -393,17 +395,17 @@ public class XYGraphView extends View implements Handler.Callback {
         public boolean onScale(ScaleGestureDetector detector) {
             float scaleFactor = detector.getScaleFactor();
 
-            if (Math.abs(1.0f - scaleFactor) > 0.01) {
+            if (Math.abs(1.0f - scaleFactor) > 0.01f) {
                 Message msg = myHandler.obtainMessage();
                 msg.what = MSG_ZOOM;
                 Bundle b = new Bundle();
-                int zoom = Math.round(1000000f * scaleFactor);
+                long zoom = Math.round(1000000.0d * scaleFactor);
                 int xPos = (int) detector.getFocusX();
                 if (0 == zoomCenterPos) {
                     zoomCenterPos = xPos;
                 }
                 b.putInt(PARAM_XPOS, zoomCenterPos);
-                b.putInt(PARAM_ZOOM, zoom);
+                b.putLong(PARAM_ZOOM, zoom);
                 logger.debug("onScale zoom {} on xpos {}", zoom, xPos);
                 msg.setData(b);
                 myHandler.sendMessage(msg);
@@ -508,6 +510,7 @@ public class XYGraphView extends View implements Handler.Callback {
             return false;
         }
     }
+
     public void setAxisColor(int axisColor) {
         int red = Color.red(axisColor);
         int green = Color.green(axisColor);
