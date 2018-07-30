@@ -31,6 +31,7 @@ Eberhard Kümmel<br>
 2018-05-14  New version 1.3.3 published on JCenter<br>
 2018-06-24  Dropped repository and re-created it again due to change of complete file structure and switch to Gradle scripts<br>
 2018-07-12  Improved gesture zoom on Android<br>
+2018-07-30  New version 1.3.4 published on JCenter<br>
 </p>
 <h2>How to use on Android</h2>
 <p>
