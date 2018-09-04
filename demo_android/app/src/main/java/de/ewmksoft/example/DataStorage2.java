@@ -18,7 +18,7 @@ class DataStorage2 implements IDataStorage {
 	private double lastTime;
 	private Random random;
 	private XYPlotData[] dhs;
-	private static final int MAX_POINTS = 400; // Total points in the plot
+	private static final int MAX_POINTS = 4096; // Total points in the plot
 
 	DataStorage2() {
 		dhs = new XYPlotData[1];
@@ -130,7 +130,7 @@ class DataStorage2 implements IDataStorage {
 
 	@Override
 	public void updateXAxis(XYGraphView xyGraphView) {
-		xyGraphView.setVisibleLastX(1000);
+		xyGraphView.setVisibleLastX(10000);
 	}
 
 	@Override

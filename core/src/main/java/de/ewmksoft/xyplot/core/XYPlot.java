@@ -260,6 +260,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 * de.ewmksoft.xyplot.IXYPlot#addDataHandler(de.ewmksoft.xyplot.XYPlotData)
 	 */
 	public boolean addDataHandler(XYPlotData dh) {
+		XYPlotData.lock();
 		boolean result = false;
 		dh.setOwner(this);
 		result = dataList.add(dh);
@@ -267,6 +268,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		graphLibInt.createColor(no, dh.getColor());
 		scaleChanged = true;
 		needsRedraw = true;
+		XYPlotData.unlock();
 		return result;
 	}
 
@@ -277,12 +279,16 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 * IXYPlotData )
 	 */
 	public boolean removeDataHandler(XYPlotData dh) {
+		XYPlotData.lock();
 		boolean result = dataList.remove(dh);
+		XYPlotData.unlock();
 		return result;
 	}
 
 	public void removeDataHandlers() {
+		XYPlotData.lock();
 		dataList.clear();
+		XYPlotData.unlock();
 	}
 
 	/**

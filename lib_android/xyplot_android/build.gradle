@@ -13,14 +13,16 @@ buildscript {
     }
 }
 
-android {
-    compileSdkVersion 23
+ext.version = '1.3.5'
 
+android {
+	compileSdkVersion 23
+	
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
-        versionName "1.3.4"
+        versionName '1.3.5'
 		
 		setProperty("archivesBaseName", "xyplot_android")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -29,7 +31,7 @@ android {
 
     buildTypes {
         release {
-			version "1.3.4"
+			version "1.3.5"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -58,15 +60,16 @@ android {
     }
 }
 
-task (copyCore, type: Copy) {
-		println("Copy core library")
-		from file("${buildDir}/../../../core/build/libs/xyplot-${version}.jar")
-		into file("${buildDir}/../libs")
+task copyCore(type: Copy) {
+	from file("${buildDir}/../../../core/build/libs/xyplot-${version}.jar")
+	into file("${buildDir}/../libs")
+	doLast {
+		println("Copied core library")
+	}
 }
 
-task (makePom) {
+task makePom {
         pom {
-			println("Creating POM")
 			groupId = 'de.ewmksoft.xyplot'
 			artifactId = 'xyplot_android'
 			name = 'XYPlot Library for Android'
@@ -80,27 +83,34 @@ task (makePom) {
                 }
             }
         }.writeTo("$buildDir/outputs/aar/xyplot_android-${version}.pom")
+	doLast {
+		println("Created POM")
+	}
 }
 
-task (copyDistribution, type: Copy) {
-		println("Preparing ZIP")
-		from file("$buildDir/outputs/aar")
-		include "xyplot_android-${version}.*"
-		into file("${buildDir}/../bintray/de/ewmksoft/xyplot/xyplot_android/${version}")
-		dependsOn makePom
-}
-
-task (packageDistribution, type: Zip) {
-		println("Creating ZIP")
-		archiveName = "de-${version}.zip"
-		destinationDir = file("${buildDir}")
-		include("**/*")
-		from "${buildDir}/../bintray"
-		dependsOn copyDistribution
+task copyDistribution(type: Copy) {
+	from file("$buildDir/outputs/aar")
+	include "xyplot_android-${version}.*"
+	into file("${buildDir}/../bintray/de/ewmksoft/xyplot/xyplot_android/${version}")
+	doLast {
+		println("Copied distribution")
+	}
+	dependsOn makePom
 }
 
 
-build.dependsOn copyCore
+task buildDistribution(type: Zip) {
+	archiveName = "de-${version}.zip"
+	destinationDir = file("${buildDir}")
+	include("**/*")
+	from "${buildDir}/../bintray"
+	doLast {
+		println("Created ZIP")
+	}
+	dependsOn copyDistribution
+}
+
+assemble.dependsOn copyCore
 
 dependencies {
     testImplementation 'junit:junit:4.12'

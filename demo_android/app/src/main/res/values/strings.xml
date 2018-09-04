@@ -5,4 +5,5 @@
     <string name="text_button_start1">Start 1</string>
     <string name="text_button_start2">Start 2</string>
     <string name="text_button_start3">Start 3</string>
+    <string name="text_button_changeSize">Size</string>
 </resources>

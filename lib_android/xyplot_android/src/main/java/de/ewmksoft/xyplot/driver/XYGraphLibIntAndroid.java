@@ -161,8 +161,8 @@ class XYGraphLibIntAndroid implements IXYGraphLibInt {
 
     void setBounds(IXYGraphLib.Rect rect) {
         bounds = rect;
-        int w = bounds.width;
-        int h = bounds.height;
+        int w = Math.max(bounds.width, 10);
+        int h = Math.max(bounds.height, 10);
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         bitmapCanvas = new Canvas(mBitmap);
         if (xyPlotAdapter != null) {

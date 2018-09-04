@@ -1,11 +1,13 @@
 package de.ewmksoft.example;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -13,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Random;
 
 import de.ewmksoft.xyplot.core.IXYPlot;
 import de.ewmksoft.xyplot.driver.IXYGraphView;
@@ -52,6 +55,7 @@ public class MainActivity extends Activity implements Handler.Callback {
         Button button1 = (Button) findViewById(R.id.button1);
         Button button2 = (Button) findViewById(R.id.button2);
         Button button3 = (Button) findViewById(R.id.button3);
+        Button button4 = (Button) findViewById(R.id.button4);
         button1.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,6 +74,19 @@ public class MainActivity extends Activity implements Handler.Callback {
             @Override
             public void onClick(View v) {
                 initGraph(3, false);
+            }
+        });
+        button4.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Random random = new Random();
+                ViewGroup.LayoutParams layoutParams = xyGraphView.getLayoutParams();
+                int height = random.nextInt(1500);
+                if (height < 100) {
+                    height = 0;
+                }
+                layoutParams.height = height;
+                xyGraphView.setLayoutParams(layoutParams);
             }
         });
 
