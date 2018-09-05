@@ -36,3 +36,13 @@ Version 1.3.3
  2018-05-14
 - Switched to gradle build scripts
 - Exported more properties to Android layout files
+
+Version 1.3.4
+ 2018-07-30
+- Fixed problems with zoom by gestures (Android)
+
+Version 1.3.5
+ 2018-09-04
+- Fixed problems with view height zero (Android)
+
+

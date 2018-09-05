@@ -13,9 +13,8 @@ import de.ewmksoft.xyplot.utils.XYPlotPersistence;
 
 class DataStorage2 implements IDataStorage {
 	private static final String DATA_FILE_NAME = "data2_xyplot";
-	private double t;
 	private boolean enabled;
-	private double lastTime;
+	private double startTime;
 	private Random random;
 	private XYPlotData[] dhs;
 	private static final int MAX_POINTS = 4096; // Total points in the plot
@@ -43,7 +42,7 @@ class DataStorage2 implements IDataStorage {
 		for (XYPlotData dh : dhs) {
 			dh.clear();
 		}
-		t = 0;
+		startTime = System.currentTimeMillis();
 	}
 
 	/*
@@ -67,11 +66,9 @@ class DataStorage2 implements IDataStorage {
 			return;
 		}
 		long now = System.currentTimeMillis();
-		double delta = now - lastTime;
-		lastTime = now;
-		t += delta;
+		double delta = 0.001 * (now - startTime);
 		double y = random.nextDouble() * 20;
-		dhs[0].addValue(t, y);
+		dhs[0].addValue(delta, y);
 	}
 
 	/*
@@ -92,9 +89,7 @@ class DataStorage2 implements IDataStorage {
 	@Override
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-		if (enabled) {
-			lastTime = System.currentTimeMillis();
-		} else {
+		if (!enabled) {
 			for (XYPlotData dh : dhs) {
 				dh.setPause();
 			}
@@ -125,7 +120,6 @@ class DataStorage2 implements IDataStorage {
 	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -140,9 +134,6 @@ class DataStorage2 implements IDataStorage {
 		XYPlotPersistence xyPlotPersistence = new XYPlotPersistence();
 		dhs = xyPlotPersistence.readData(homePath + File.separator
 				+ DATA_FILE_NAME);
-		if (dhs != null && dhs.length > 0) {
-			t = dhs[0].getXMax();
-		}
 	}
 
 }
