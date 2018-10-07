@@ -220,7 +220,6 @@ public class XYGraphView extends View implements Handler.Callback {
         }
         xyPlot.setXAxisText(xTitle);
         xyPlot.setXUnitText(xUnit);
-        xyPlot.setAllowPauseOnDataClick(true);
 
         xyPlotEvent = new IXYPlotEvent() {
             public void onEvent(KeyEvent event) {
@@ -390,6 +389,13 @@ public class XYGraphView extends View implements Handler.Callback {
         return true;
     }
 
+    public void setAxisColor(int axisColor) {
+        int red = Color.red(axisColor);
+        int green = Color.green(axisColor);
+        int blue = Color.blue(axisColor);
+        graphLib.setAxisColor(red, green, blue);
+    }
+
     private class ZoomListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
@@ -511,10 +517,4 @@ public class XYGraphView extends View implements Handler.Callback {
         }
     }
 
-    public void setAxisColor(int axisColor) {
-        int red = Color.red(axisColor);
-        int green = Color.green(axisColor);
-        int blue = Color.blue(axisColor);
-        graphLib.setAxisColor(red, green, blue);
-    }
 }

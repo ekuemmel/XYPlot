@@ -71,7 +71,7 @@ public interface IXYPlot {
 	 * @param h
 	 *            Receiver object for the events
 	 */
-	public abstract void registerEventHandler(IXYPlotEvent h);
+	abstract void registerEventHandler(IXYPlotEvent h);
 
 	/**
 	 * Get list of data handlers
@@ -79,26 +79,26 @@ public interface IXYPlot {
 	 * @return List of data sets
 	 */
 
-	public abstract ArrayList<XYPlotData> getDataHandler();
+	abstract ArrayList<XYPlotData> getDataHandler();
 
 	/**
 	 * Add an already existing data set
 	 *
 	 * @return true if data handler has been added
 	 */
-	public abstract boolean addDataHandler(XYPlotData dh);
+	abstract boolean addDataHandler(XYPlotData dh);
 
 	/**
 	 * Remove data set
 	 *
 	 * @return True if data set has been removed
 	 */
-	public abstract boolean removeDataHandler(XYPlotData dh);
+	abstract boolean removeDataHandler(XYPlotData dh);
 
 	/**
 	 * Remove all data sets
 	 */
-	public abstract void removeDataHandlers();
+	abstract void removeDataHandlers();
 
 	/**
 	 * Set the delay of the repaint operation. The delay controls how much time
@@ -110,7 +110,7 @@ public interface IXYPlot {
 	 *
 	 * @return Value in [ms]
 	 */
-	public abstract void setUpdateDelay(long delay);
+	abstract void setUpdateDelay(long delay);
 
 	/**
 	 * Set size of font for labels and title
@@ -118,7 +118,7 @@ public interface IXYPlot {
 	 * @param labelFontSize
 	 * @param titleFontSize
 	 */
-	public abstract void setFontSize(int labelFontSize, int titleFontSize);
+	abstract void setFontSize(int labelFontSize, int titleFontSize);
 
 	/**
 	 * Set name and size of font for labels and title
@@ -126,7 +126,7 @@ public interface IXYPlot {
 	 * @param labelFontSize
 	 * @param titleFontSize
 	 */
-	public abstract void setFontSize(String fontName, int labelFontSize, int titleFontSize);
+	abstract void setFontSize(String fontName, int labelFontSize, int titleFontSize);
 
 	/**
 	 * Set color of global background
@@ -138,7 +138,7 @@ public interface IXYPlot {
 	 * @param b
 	 *            B value of RGB
 	 */
-	public abstract void setBgColor(int r, int g, int b);
+	abstract void setBgColor(int r, int g, int b);
 
 	/**
 	 * Set color of curve draw area background
@@ -150,7 +150,7 @@ public interface IXYPlot {
 	 * @param b
 	 *            B value of RGB
 	 */
-	public abstract void setDrawAreaBgColor(int r, int g, int b);
+	abstract void setDrawAreaBgColor(int r, int g, int b);
 
 	/**
 	 * Set color of axis
@@ -162,7 +162,7 @@ public interface IXYPlot {
 	 * @param b
 	 *            B value of RGB
 	 */
-	public abstract void setAxisColor(int r, int g, int b);
+	abstract void setAxisColor(int r, int g, int b);
 
 	/**
 	 * Set color of cursor
@@ -174,7 +174,7 @@ public interface IXYPlot {
 	 * @param b
 	 *            B value of RGB
 	 */
-	public abstract void setCursorColor(int r, int g, int b);
+	abstract void setCursorColor(int r, int g, int b);
 
 	/**
 	 * Set color of cursor box background
@@ -186,14 +186,14 @@ public interface IXYPlot {
 	 * @param b
 	 *            B value of RGB
 	 */
-	public abstract void setCursorBgColor(int r, int g, int b);
+	abstract void setCursorBgColor(int r, int g, int b);
 
 	/**
 	 * Get the text for the X axis unit
 	 *
 	 * @return text for x axis unit
 	 */
-	public abstract String getXUnitText();
+	abstract String getXUnitText();
 
 	/**
 	 * Set the text for the X axis unit
@@ -201,14 +201,14 @@ public interface IXYPlot {
 	 * @param s
 	 *            Unit text i.e. "s" for seconds. Do not add brackets [] here
 	 */
-	public abstract void setXUnitText(String s);
+	abstract void setXUnitText(String s);
 
 	/**
 	 * Get the text for the X axis
 	 *
 	 * @return text for x axis.
 	 */
-	public abstract String getXAxisText();
+	abstract String getXAxisText();
 
 	/**
 	 * Set the text for the X axis unit
@@ -217,7 +217,7 @@ public interface IXYPlot {
 	 *            Unit text i.e. "s" for seconds. Do not use brackets [] here,
 	 *            they are added automatically
 	 */
-	public abstract void setXAxisText(String s);
+	abstract void setXAxisText(String s);
 
 	/**
 	 * Set the range for the X axis. The class takes this values to calculate a
@@ -229,17 +229,17 @@ public interface IXYPlot {
 	 * @param xmax
 	 *            Maximum x value to be displayed
 	 */
-	public abstract void setXRange(double xmin, double xmax);
+	abstract void setXRange(double xmin, double xmax);
 
 	/**
 	 * Get the minimum X value
 	 */
-	public abstract double getXMin();
+	abstract double getXMin();
 
 	/**
 	 * Get the maximum X value
 	 */
-	public abstract double getXMax();
+	abstract double getXMax();
 
 	/**
 	 * Method to be called by the owner of the plot to inform about a key
@@ -248,7 +248,7 @@ public interface IXYPlot {
 	 * @return true The key changed the plot display false The key did not
 	 *         change anything
 	 */
-	public abstract boolean evalKey(int key);
+	abstract boolean evalKey(int key);
 
 	/**
 	 * Method to be called by the owner of the plot to inform about mouse click
@@ -262,7 +262,7 @@ public interface IXYPlot {
 	 *         not change the plot display false The click did not change
 	 *         anything because it did not hit a sensitive area
 	 */
-	public abstract boolean evalMouseEvent(MouseEvent event, int x, int y);
+	abstract boolean evalMouseEvent(MouseEvent event, int x, int y);
 
 	/**
 	 * Get the area which needs to be redrawn. If nothing needs to be redrawn it
@@ -270,7 +270,7 @@ public interface IXYPlot {
 	 *
 	 * @return Rectangle or null
 	 */
-	public abstract Rect getRedrawArea();
+	abstract Rect getRedrawArea();
 
 	/**
 	 * Returns true if the graph needs to be repainted. This call should be used
@@ -279,7 +279,7 @@ public interface IXYPlot {
 	 * @return true Graph needs to be repainted false No need to repaint the
 	 *         graph
 	 */
-	public abstract boolean isOutdated();
+	abstract boolean isOutdated();
 
 	/**
 	 * Set the boundaries of the component in absolute coordinates of the canvas
@@ -287,7 +287,7 @@ public interface IXYPlot {
 	 * @param bounds
 	 *            Outer rectangle defining the plotting are
 	 */
-	public abstract void setBounds(Rect bounds);
+	abstract void setBounds(Rect bounds);
 
 	/**
 	 * Returns the current value of the zoom box delay (See
@@ -295,7 +295,7 @@ public interface IXYPlot {
 	 *
 	 * @return Current value [ms]
 	 */
-	public abstract int getZoomBoxLacyUpdateDelay();
+	abstract int getZoomBoxLacyUpdateDelay();
 
 	/**
 	 * This value in [ms] is used to delay the update of the zoom box when
@@ -304,7 +304,7 @@ public interface IXYPlot {
 	 *
 	 * @param zoomBoxLacyUpdateDelay
 	 */
-	public abstract void setZoomBoxLacyUpdateDelay(int zoomBoxLacyUpdateDelay);
+	abstract void setZoomBoxLacyUpdateDelay(int zoomBoxLacyUpdateDelay);
 
 	/**
 	 * Returns the current state of the flag. See
@@ -312,7 +312,7 @@ public interface IXYPlot {
 	 *
 	 * @return Current State
 	 */
-	public abstract boolean isAllowPauseOnDataClick();
+	abstract boolean isAllowPauseOnDataClick();
 
 	/**
 	 * Allow that a click into the graph switches the state to pause mode.
@@ -320,7 +320,7 @@ public interface IXYPlot {
 	 * @param New
 	 *            state
 	 */
-	public abstract void setAllowPauseOnDataClick(boolean allowPauseOnDataClick);
+	abstract void setAllowPauseOnDataClick(boolean allowPauseOnDataClick);
 
 	/**
 	 * Set graph in paused mode. In this mode the cursor appears Note: In paused
@@ -328,21 +328,21 @@ public interface IXYPlot {
 	 *
 	 * @param zoomed
 	 */
-	public abstract void setPaused(boolean paused);
+	abstract void setPaused(boolean paused);
 
 	/**
 	 * Expand (true) ore collapse (false) the legend box
 	 *
 	 * @param value
 	 */
-	public abstract void setLegendExpanded(boolean value);
+	abstract void setLegendExpanded(boolean value);
 
 	/**
 	 * Set the legend box to visible or invisible
 	 *
 	 * @param value
 	 */
-	public abstract void setLegendVisisble(boolean value);
+	abstract void setLegendVisisble(boolean value);
 
 	/**
 	 * Set the axis visible (default) or hide it. If axis is hidden, the legend
@@ -350,28 +350,28 @@ public interface IXYPlot {
 	 *
 	 * @param value
 	 */
-	public abstract void setAxisVisible(boolean value);
+	abstract void setAxisVisible(boolean value);
 
 	/**
 	 * Set the save button to visible or invisible
 	 *
 	 * @param value
 	 */
-	public abstract void setSaveButtonVisisble(boolean value);
+	abstract void setSaveButtonVisisble(boolean value);
 
 	/**
 	 * Set the run/pause button to visible or invisible
 	 *
 	 * @param value
 	 */
-	public abstract void setStartButtonVisisble(boolean value);
+	abstract void setStartButtonVisisble(boolean value);
 
 	/**
 	 * Set the delete plot button to visible or invisible
 	 *
 	 * @param value
 	 */
-	public abstract void setClearButtonVisisble(boolean value);
+	abstract void setClearButtonVisisble(boolean value);
 
 	/**
 	 * Turn on/off of axis labels. Without labels and legend. This allows to
@@ -380,29 +380,29 @@ public interface IXYPlot {
 	 * @param value
 	 *            true (default) or false
 	 */
-	public abstract void setAxisLabels(boolean value);
+	abstract void setAxisLabels(boolean value);
 
 	/**
 	 * Move visible data to the left
 	 */
-	public abstract void moveLeft();
+	abstract void moveLeft();
 
 	/**
 	 * Move visible data to the right
 	 */
-	public abstract void moveRight();
+	abstract void moveRight();
 
 	/**
 	 * Move visible data to the right
 	 *
 	 * @return True if move was done, false if at left or right end of data
 	 */
-	public abstract boolean moveByPixels(int pixelNum);
+	abstract boolean moveByPixels(int pixelNum);
 
 	/**
 	 * Zoom x-Axis around cursor position
 	 */
-	public abstract void zoomIn();
+	abstract void zoomIn();
 
 	/**
 	 * Zoom x-Axis at given position by a factor
@@ -414,6 +414,14 @@ public interface IXYPlot {
 	 * 
 	 * @return True in case a zoom was done
 	 */
-	public abstract boolean zoomAt(int position, double factor);
+	abstract boolean zoomAt(int position, double factor);
 
+	/**
+	 * Set smooth scrolling. Smooth means, that the graph is not shifted in
+	 * bigger chunks but only as much as required. This causes more drawing
+	 * operations. Default is true.
+	 * 
+	 * @param smoothScroll True to scroll smoothly
+	 */
+	abstract void setSmoothScroll(boolean smoothScroll);
 }

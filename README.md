@@ -33,6 +33,7 @@ Eberhard Kümmel<br>
 2018-07-12  Improved gesture zoom on Android<br>
 2018-07-30  New version 1.3.4 published on JCenter<br>
 2018-09-04  New version 1.3.5 published on JCenter<br>
+2018-10-08  New version 1.3.6 published on JCenter<br>
 </p>
 <h2>How to use on Android</h2>
 <p>

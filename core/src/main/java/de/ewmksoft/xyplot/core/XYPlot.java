@@ -61,6 +61,7 @@ package de.ewmksoft.xyplot.core;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import de.ewmksoft.xyplot.core.IXYGraphLib.MouseEvent;
 import de.ewmksoft.xyplot.core.IXYGraphLib.RGB;
@@ -80,6 +81,44 @@ import org.slf4j.LoggerFactory;
  */
 public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	private Logger logger = LoggerFactory.getLogger(XYPlot.class);
+
+	private static final int ZOOMBOX_LAZY_UPDATE_DELAY = 10;
+	private static final int DATA_UPDATE_DELAY = 500;
+	private static final int MIN_DATA_UPDATE_DELAY = 10;
+	private static final double DEF_Y_DIFF = 0.1;
+	private static final int BUTTON_NUM = 10;
+	private static final int BUTTON_SPACING = 10;
+	private static final int MIN_BUTTON_WIDTH = 44;
+	private static final int LEGEND_BOX_BORDER = 4;
+	private static final int TICK_LEN = 4;
+	private static final int PADDING_TOP = 3;
+	private static final int PADDING_BUTTON = 5;
+	private static final int PADDING_XR = 5;
+	private static final int MOVES_PER_SCREEN = 20;
+	private static final int MIN_ZOOM_RECT_SIZE = 10;
+	private static final int MIN_MOVE_DETECT_SIZE = 5;
+	private static final int POINT_DISTANCE_FOR_CIRCLES = 30;
+	private static final int ZOOM_IN_FACTOR = 2;
+	private static final String EXPO_STUB = " x 1E";
+	private static final boolean GROUPING_USED = false;
+	// The next two values define from which exponent the
+	// display switches to a scaled format
+	private static final int NON_EXPO_MAX = 3;
+	private static final int NON_EXPO_MIN = -2;
+	// The next two values define from which exponent the
+	// scaled format is shown as e.g. 1E4 instead of x 10000
+	private static final int EXPO_E_MIN = 6;
+	private static final int EXPO_E_MAX = -4;
+
+	public static final int CMD_MOVE_LEFT = 1;
+	public static final int CMD_MOVE_RIGHT = 2;
+	public static final int CMD_LAST_DATA = 3;
+	public static final int CMD_NEXT_DATA = 4;
+	public static final int CMD_ZOOM_IN = 5;
+	public static final int CMD_ZOOM_OUT = 6;
+	public static final int CMD_SHOW_ALL = 7;
+
+	public static final boolean SUPPORT_PARTIAL_DRAW = false;
 
 	private IXYGraphLibInt graphLibInt;
 	private ZoomStack zoomStack = new ZoomStack();
@@ -133,55 +172,16 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	@SuppressWarnings("unused")
 	private boolean zoomVisibleRange = false;
 	private boolean globalYZoomSwitch = false;
-	private boolean autoLegendWidth = true;
 	private boolean allowPauseOnDataClick = false;
 	private boolean supportZoomBox = false;
 	private boolean showStartButton = true;
 	private boolean showClearButton = true;
 	private boolean showSaveButton = false;
 	private boolean showButtonsAndLegend = true;
+	private boolean smoothScroll = true;
 	private int zoomBoxLacyUpdateDelay = ZOOMBOX_LAZY_UPDATE_DELAY;
 	private HashMap<Integer, XYPlotData.MinMax> dataMinMax;
 	private HashMap<String, XYPlotData.MinMax> unitMinMax;
-
-	private static final int ZOOMBOX_LAZY_UPDATE_DELAY = 10;
-	private static final int DATA_UPDATE_DELAY = 500;
-	private static final int MIN_DATA_UPDATE_DELAY = 10;
-	private static final double DEF_Y_DIFF = 0.1;
-	private static final int BUTTON_NUM = 10;
-	private static final int BUTTON_SPACING = 10;
-	private static final int MIN_BUTTON_WIDTH = 44;
-	private static final int LEGEND_BOX_BORDER = 4;
-	private static final int TICK_LEN = 4;
-	private static final int PADDING_TOP = 3;
-	private static final int PADDING_BUTTON = 5;
-	private static final int PADDING_XR = 5;
-	private static final int MOVES_PER_SCREEN = 20;
-	private static final int MIN_ZOOM_RECT_SIZE = 10;
-	private static final int MIN_MOVE_DETECT_SIZE = 5;
-	private static final int POINT_DISTANCE_FOR_CIRCLES = 30;
-	private static final int ZOOM_IN_FACTOR = 2;
-	private static final String EXPO_STUB = " x 1E";
-	private static final boolean GROUPING_USED = false;
-	// The next two values define from which exponent the
-	// display switches to a scaled format
-	private static final int NON_EXPO_MAX = 3;
-	private static final int NON_EXPO_MIN = -2;
-	// The next two values define from which exponent the
-	// scaled format is shown as e.g. 1E4 instead of x 10000
-	private static final int EXPO_E_MIN = 6;
-	private static final int EXPO_E_MAX = -4;
-	// private static final int SMOOTH_SCALE_FACTOR = 10;
-
-	public static final int CMD_MOVE_LEFT = 1;
-	public static final int CMD_MOVE_RIGHT = 2;
-	public static final int CMD_LAST_DATA = 3;
-	public static final int CMD_NEXT_DATA = 4;
-	public static final int CMD_ZOOM_IN = 5;
-	public static final int CMD_ZOOM_OUT = 6;
-	public static final int CMD_SHOW_ALL = 7;
-
-	public static final boolean SUPPORT_PARTIAL_DRAW = false;
 
 	protected XYPlot(IXYGraphLib graphLib) {
 		dataMinMax = new HashMap<Integer, XYPlotData.MinMax>();
@@ -1182,6 +1182,15 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 
 	/*
 	 * (non-Javadoc)
+	 * 
+	 * @see de.ewmksoft.xyplot.core.IXYPlot#setSmoothScroll(boolean)
+	 */
+	public void setSmoothScroll(boolean smoothScroll) {
+		this.smoothScroll = smoothScroll;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 *
 	 * @see de.ewmksoft.xyplot.core.IXYPlot#setSaveButtonVisisble(boolean)
 	 */
@@ -1471,20 +1480,8 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 				graphLibInt.setBgColor(BgColor.LEGENDSELECTBG);
 			}
 			graphLibInt.fillRectangle(r);
-			String s = data.getLegendText();
-			int tl = 0;
-			if (graphLibInt.getStringExtends(s).x > r.width) {
-				do {
-					if (++tl < data.getLegendText().length()) {
-						s = data.getLegendText().substring(0, tl) + "...";
-					} else
-						break;
-				} while (graphLibInt.getStringExtends(s).x < r.width);
-				if (tl > 1) {
-					s = data.getLegendText().substring(0, --tl) + "...";
-				}
-			}
-			graphLibInt.drawText(s.trim(), r.x, r.y);
+			String s = trimText(data.getLegendText(), r.width);
+			graphLibInt.drawText(s, r.x, r.y);
 			graphLibInt.setBgColor(BgColor.PLOTBG);
 			graphLibInt.setFgPlotColor(no);
 			graphLibInt.drawRectangle(new Rect(r.x, r.y + r.height - 3, r.width, 2));
@@ -1495,6 +1492,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 					pos = data.getCursorPos();
 				}
 				String label = formatValueUnit(false, data, data.getValue(pos).y());
+				label = trimText(label, r.width);
 				graphLibInt.setBgColor(BgColor.LEGENDBG);
 				if (no == currentPlotNo) {
 					graphLibInt.setBgColor(BgColor.LEGENDSELECTBG);
@@ -1546,7 +1544,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 				if (sd != null) {
 					double q = Math.pow(10, sd.dexpo);
 					for (int i = 0; i < sd.ticks; ++i) {
-						double yv = sd.smin + i * sd.sdelta;
+						double yv = sd.tmin + i * sd.tdelta;
 						Pt p = scaleToScreenX0(currentPlotNo, yv * q);
 						if (p.y != stopPointY.y) {
 							graphLibInt.drawLine(x + 1, p.y, x + w, p.y);
@@ -1617,25 +1615,45 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		nf.setMaximumFractionDigits(sd.nk);
 		nf.setMinimumFractionDigits(sd.nk);
 		if (showButtonsAndLegend) {
-			for (int i = 0; i < sd.ticks; ++i) {
-				double y = sd.smin + sd.sdelta * i;
-				Pt p = scaleToScreenX0(currentPlotNo, y * q);
-				p1 = new Pt(p.x, p.y);
-				p2 = new Pt(p.x - TICK_LEN, p.y);
-				graphLibInt.setFgColor(FgColor.AXIS);
-				graphLibInt.setSolidLines(1);
-				graphLibInt.drawLine(p1.x, p1.y, p2.x, p2.y);
-				nf.setMaximumFractionDigits(sd.nk);
-				nf.setMinimumFractionDigits(sd.nk);
-				String label = nf.format(y);
-				if (label.endsWith(".")) {
-					label = label.replace('.', ' ').trim();
+			List<String> labels = data.getSwitchLabels();
+			if (labels.size() > 0) {
+				for (int i = 0; i < sd.ticks; ++i) {
+					int y = (int) Math.round(sd.tmin + sd.tdelta * i);
+					if (y >= 0 && y < labels.size()) {
+						Pt p = scaleToScreenX0(currentPlotNo, y * q);
+						p1 = new Pt(p.x, p.y);
+						p2 = new Pt(p.x - TICK_LEN, p.y);
+						graphLibInt.setFgColor(FgColor.AXIS);
+						String label = labels.get(y);
+						Pt shift = graphLibInt.getStringExtends(label);
+						int tx = Math.max(p2.x - shift.x - TICK_LEN, 3);
+						int ty = p2.y - shift.y / 2;
+						graphLibInt.drawRectangle(tx - 1, ty - 1, shift.x + 2, shift.y + 2);
+						graphLibInt.drawText(label, tx, ty);
+					}
 				}
-				if (label.equals("-0")) {
-					label = "0";
+
+			} else {
+				for (int i = 0; i < sd.ticks; ++i) {
+					double y = sd.tmin + sd.tdelta * i;
+					Pt p = scaleToScreenX0(currentPlotNo, y * q);
+					p1 = new Pt(p.x, p.y);
+					p2 = new Pt(p.x - TICK_LEN, p.y);
+					graphLibInt.setFgColor(FgColor.AXIS);
+					graphLibInt.setSolidLines(1);
+					graphLibInt.drawLine(p1.x, p1.y, p2.x, p2.y);
+					nf.setMaximumFractionDigits(sd.nk);
+					nf.setMinimumFractionDigits(sd.nk);
+					String label = nf.format(y);
+					if (label.endsWith(".")) {
+						label = label.replace('.', ' ').trim();
+					}
+					if (label.equals("-0")) {
+						label = "0";
+					}
+					Pt shift = graphLibInt.getStringExtends(label);
+					graphLibInt.drawText(label, p2.x - shift.x - TICK_LEN, p2.y - shift.y / 2);
 				}
-				Pt shift = graphLibInt.getStringExtends(label);
-				graphLibInt.drawText(label, p2.x - shift.x - TICK_LEN, p2.y - shift.y / 2);
 			}
 		}
 
@@ -1659,15 +1677,15 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		nf.setMinimumFractionDigits(xData.nk);
 		if (showButtonsAndLegend) {
 			for (int i = 1; i < xData.ticks; ++i) {
-				double xvalue = xData.smin + xData.sdelta * i;
+				double xvalue = xData.tmin + xData.tdelta * i;
 				Pt p = scaleToScreenY0(xvalue * q);
 				p1 = new Pt(p.x, p.y);
 				p2 = new Pt(p.x, p.y + TICK_LEN);
-				graphLibInt.drawLine(p1.x, p1.y, p2.x, p2.y);
 				String label = nf.format(xvalue);
 				Pt shift = graphLibInt.getStringExtends(label);
 				int labelPos = p2.x - shift.x / 2;
-				if (labelPos + shift.x < unitPos) {
+				if (labelPos > startPointX.x && labelPos + shift.x < unitPos) {
+					graphLibInt.drawLine(p1.x, p1.y, p2.x, p2.y);
 					graphLibInt.drawText(label, labelPos, p2.y + TICK_LEN);
 				}
 			}
@@ -1915,15 +1933,13 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			if (xData == null || sd == null)
 				continue;
 			int bw = 3 * LEGEND_BOX_BORDER;
-			if (autoLegendWidth) {
-				graphLibInt.setBoldFont();
-				lw = bw + graphLibInt.getStringExtends(data.getLegendText()).x;
-				legendWidth = Math.max(legendWidth, lw);
-			} else {
-				graphLibInt.setBoldFont();
-				lw = bw + graphLibInt.getStringExtends(formatValueUnit(true, data, sd.vmax)).x;
-				legendWidth = Math.max(legendWidth, lw);
-			}
+			graphLibInt.setNormalFont();
+			lw = bw + graphLibInt.getStringExtends(data.getLegendText()).x;
+			legendWidth = Math.max(legendWidth, lw);
+			lw = bw + graphLibInt.getStringExtends(formatValueUnit(true, data, sd.vmax)).x;
+			legendWidth = Math.max(legendWidth, lw);
+			lw = bw + graphLibInt.getStringExtends(formatValueUnit(true, data, sd.vmin)).x;
+			legendWidth = Math.max(legendWidth, lw);
 			if (showButtonsAndLegend) {
 				graphLibInt.setNormalFont();
 				yox = Math.max(yox, (sd.gk + 4) * fontSize.x + TICK_LEN);
@@ -2088,7 +2104,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		}
 		int expo = (int) Math.floor(Math.log10(max - min));
 		int dexpo = 0;
-		if (expo > NON_EXPO_MAX | expo < NON_EXPO_MIN) {
+		if (expo > NON_EXPO_MAX || expo < NON_EXPO_MIN) {
 			dexpo = expo;
 			double q = Math.pow(10, dexpo);
 			min = min / q;
@@ -2138,30 +2154,41 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			sd.nk = (int) (Math.round(0.499 + Math.abs(Math.log10(delta))));
 		}
 		sd.gk = sd.vk + Math.abs(sd.nk) + 2;
-		double smax = Math.round(max / delta) * delta;
-		if (max > smax) {
-			smax += delta;
-		}
-		if (Math.abs(smax - sd.smax) > delta / 10) {
-			sd.smax = smax;
-			result = true;
-		}
 		double smin = Math.round(min / delta) * delta;
 		if (min < smin) {
 			smin -= delta;
 		}
 		if (Math.abs(smin - sd.smin) > delta / 10) {
-			sd.smin = smin;
+			sd.tmin = smin;
 			result = true;
 		}
-		ticks = Math.round((sd.smax - sd.smin) / delta) + 1;
+		double smax = Math.round(max / delta) * delta;
+		if (max > smax) {
+			smax += delta;
+		}
+		if (Math.abs(smax - sd.smax) > delta / 10) {
+			sd.tmax = smax;
+			result = true;
+		}
+		if ((isPaused() || smoothScroll) && AxisType.XAXIS.equals(axis)) {
+			if (sd.smin != min || sd.smax != max) {
+				result = true;
+			}
+			sd.smin = min;
+			sd.smax = max;
+		} else {
+			sd.smin = sd.tmin;
+			sd.smax = sd.tmax;
+		}
+		if (sd.isSwitch && delta < 1) {
+			delta = 1;
+		}
+		ticks = Math.round((sd.tmax - sd.tmin) / delta) + 1;
 		double q = Math.pow(10, dexpo);
 		sd.vmin = sd.smin * q;
 		sd.vmax = sd.smax * q;
-		// sd.vmin = sd.lmin;
-		// sd.vmax = sd.lmax;
 		sd.dexpo = dexpo;
-		sd.sdelta = delta;
+		sd.tdelta = delta;
 		sd.ticks = ticks;
 		sd.maxticks = maxticks;
 		sd.ticktype = ticktype;
@@ -2282,7 +2309,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			if (((xmax - xmin) < range) || allowZoomIn(data)) {
 				double saveXmin = xmin;
 				double saveXmax = xmax;
-				zoomStack.push(xmin, xmax);
 				xmin = cx - diff;
 				xmax = cx + diff;
 
@@ -2476,6 +2502,30 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	}
 
 	/**
+	 * Trim a text to fit into a given width.
+	 * 
+	 * @param text
+	 *            Text to trim
+	 * @param width
+	 *            Max allowed width in pixels.
+	 * @return Text fitting into the width
+	 */
+	private String trimText(final String text, final int width) {
+		String dots = "...";
+		int w = width;
+		String s = text;
+		int dotWidth = graphLibInt.getStringExtends(dots).x;
+		if (graphLibInt.getStringExtends(s).x > w) {
+			w -= dotWidth;
+			while (s.length() > 0 && graphLibInt.getStringExtends(s).x > w) {
+				s = s.substring(0, s.length()-1);
+			}
+			s += dots;
+		}
+		return s;
+	}
+
+	/**
 	 * Convert an y value into a string
 	 *
 	 * @param scaled
@@ -2491,11 +2541,20 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 */
 	private String formatValueUnit(boolean scaled, XYPlotData data, double value) {
 		XYPlotData.ScaleData sd = data.getScaleData();
-		String unit = data.getUnit();
-		if (unit.length() > 0) {
-			unit = " [" + unit + "]";
+		if (sd.isSwitch) {
+			List<String> labels = data.getSwitchLabels();
+			int y = (int) Math.round(value);
+			if (y >= 0 && y < labels.size()) {
+				return labels.get(y);
+			}
+		} else {
+			String unit = data.getUnit();
+			if (unit.length() > 0) {
+				unit = " [" + unit + "]";
+			}
+			return formatValue(scaled, sd, value) + unit;
 		}
-		return formatValue(scaled, sd, value) + unit;
+		return "";
 	}
 
 	/**

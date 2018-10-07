@@ -46,10 +46,6 @@ public class MainActivity extends Activity implements Handler.Callback {
 
         xyGraphView = (XYGraphView) findViewById(R.id.xyPlot1);
 
-        IXYPlot xyPlot = xyGraphView.getXYPlot();
-        xyPlot.setFontSize(20, 30);
-        xyPlot.setAxisLabels(true);
-        xyPlot.setSaveButtonVisisble(true);
         // uncomment below line to set axis color.
         //xyGraphView.setAxisColor(getResources().getColor(R.color.magenta_light));
         Button button1 = (Button) findViewById(R.id.button1);
@@ -156,6 +152,7 @@ public class MainActivity extends Activity implements Handler.Callback {
     private void initGraph(int dataStorageNum, boolean loadPrevData) {
         MyApplication application = (MyApplication) getApplication();
         dataStorage = application.getDataStorage(dataStorageNum, this);
+		
         dataStorage.setEnabled(true);
         if (loadPrevData) {
             try {
@@ -184,6 +181,13 @@ public class MainActivity extends Activity implements Handler.Callback {
                         myHandler.sendEmptyMessageDelayed(MSG_TAG_SAVE, 100);
                     }
                 });
+        final IXYPlot xyPlot = xyGraphView.getXYPlot();
+        xyPlot.setFontSize(20, 30);
+        xyPlot.setAxisLabels(true);
+        xyPlot.setSaveButtonVisisble(true);
+        xyPlot.setAllowPauseOnDataClick(false);
+		xyPlot.setSmoothScroll(2 == dataStorageNum);
+			
         myHandler.sendEmptyMessage(MSG_TAG_UPDATE);
     }
 }

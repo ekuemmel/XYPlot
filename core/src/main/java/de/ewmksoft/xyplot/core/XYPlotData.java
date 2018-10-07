@@ -64,6 +64,8 @@ package de.ewmksoft.xyplot.core;
  *
  */
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -101,6 +103,7 @@ public class XYPlotData {
 	private RGB color;
 	private int newValues;
 	private boolean otherChanges;
+	private final List<String> labels = new ArrayList<String>();
 	private ArrayList<DataValue> values;
 
 	public XYPlotData(XYPlot owner, int maxvalue) {
@@ -120,6 +123,7 @@ public class XYPlotData {
 	public void clear() {
 		accessLock.lock();
 		try {
+			labels.clear();
 			values.clear();
 			init();
 		} finally {
@@ -158,45 +162,6 @@ public class XYPlotData {
 		private double y;
 		private boolean border;
 	}
-
-	/**
-	 * Nested class containing all data relevant for the scaling
-	 * 
-	 * 
-	 */
-	static public class ScaleData {
-		// A true value is the real value, the other values are
-		// reduced by the exponent dexpo
-		// Example: dexpo is 2 -> True value 200 becomes shown value 2 
-		public double lmin; // Last true used start value
-		public double lmax; // Last true used stop value
-		public double smin; // Shown value of lowest tick
-		public double smax; // Shown value of highest tick
-		public double vmin; // Minimum true value on scale
-		public double vmax; // Maximum true value on scale
-		public double vfactor; // Factor from real to screen values
-		public double sdelta; // Difference between two tick labels
-		public long dexpo; // Exponent to be shown on the scale
-		public long ticks; // number of ticks on the scale
-		public int ticktype; // Ticks all 2, 5 or 10 units
-		public int vk; // Number of digits before the comma
-		public int nk; // Number of digits behind the comma
-		public int gk; // Total number of digits in a displayed number
-		public int maxticks; // Maximum number of allowed ticks with label
-	}
-
-	// /**
-	// * Turn off screen updates while using the addValue method
-	// *
-	// * @param value
-	// * true to not update the screen on data changes
-	// */
-	// protected void setDisableScreenUpdate(boolean value) {
-	// disableScreenUpdate = value;
-	// if (owner != null && !disableScreenUpdate) {
-	// owner.setOutdated();
-	// }
-	// }
 
 	/**
 	 * Add a value to the data ring buffer. If the buffer is full, the oldest
@@ -254,6 +219,53 @@ public class XYPlotData {
 			owner.setOutdated();
 		}
 		return values.size();
+	}
+
+	/**
+	 * Add a switch value with text and value.
+	 * 
+	 * @param label
+	 *            Text of the switch state.
+	 * @param y
+	 *            Value of the state.
+	 * @return
+	 */
+	public int addValue(double x, String label) {
+		accessLock.lock();
+		scaleData.isSwitch = true;
+		long y = -1;
+		try {
+			if (!labels.contains(label)) {
+				labels.add(label);
+				Collections.sort(labels);
+				y = labels.indexOf(label);
+				for (DataValue dv : values) {
+					if (Math.round(dv.y) >= y) {
+						dv.y += 1.0;
+					}
+				}
+				yMinMax.min = 0;
+				yMinMax.max = labels.size()-1;
+			} else {
+				y = labels.indexOf(label);
+			}
+		} finally {
+			accessLock.unlock();
+		}
+		if (y >= 0) {
+			addValue(x, y);
+		}
+		return labels.size();
+	}
+
+	/**
+	 * Get the switch labels.
+	 * 
+	 * @return Sorted list of labels.
+	 */
+	public List<String> getSwitchLabels() {
+		ArrayList<String> result = new ArrayList<String>(labels);
+		return result;
 	}
 
 	/**
@@ -701,10 +713,10 @@ public class XYPlotData {
 		System.out.println("Min Calc: " + sd.vmin);
 		System.out.println("Max Calc: " + sd.vmax);
 		System.out.println("DExpo: " + sd.dexpo);
-		System.out.println("Delta:" + sd.sdelta);
+		System.out.println("Delta:" + sd.tdelta);
 		System.out.println("TickType:" + sd.ticktype);
 		System.out.println("Ticks:" + sd.ticks + " (" + sd.maxticks + ")");
-		System.out.println("Range:" + sd.ticks * sd.sdelta);
+		System.out.println("Range:" + sd.ticks * sd.tdelta);
 		System.out.println("VK:   " + sd.vk);
 		System.out.println("NK:   " + sd.nk);
 		System.out.println("--------------------------------------------");
@@ -757,39 +769,6 @@ public class XYPlotData {
 	}
 
 	/**
-	 * Inner class to hold min/max data
-	 */
-
-	public class MinMax {
-		MinMax() {
-			max = MIN_DOUBLE_VALUE;
-			min = MAX_DOUBLE_VALUE;
-			minIndex = 0;
-			maxIndex = 0;
-		}
-
-		MinMax(double min, double max) {
-			this.min = min;
-			this.max = max;
-			this.minIndex = 0;
-			this.maxIndex = 0;
-		}
-
-		public double getMin() {
-			return min;
-		}
-
-		public double getMax() {
-			return max;
-		}
-
-		private double min;
-		private double max;
-		private int minIndex;
-		private int maxIndex;
-	}
-
-	/**
 	 * Function to find minimum and maximum y values.
 	 * 
 	 * @param minIndex
@@ -836,6 +815,68 @@ public class XYPlotData {
 		lastDrawPointNum = 0;
 		scaleData.smin = 0;
 		scaleData.smax = 0;
+	}
+
+	/**
+	 * Nested class containing all data relevant for the scaling
+	 * 
+	 * 
+	 */
+	static public class ScaleData {
+		// A true value is the real value, the other values are
+		// reduced by the exponent dexpo
+		// Example: dexpo is 2 -> True value 200 becomes shown value 2
+		public double lmin; // Last true start value
+		public double lmax; // Last true stop value
+		public double smin; // Last shown start value
+		public double smax; // Last shown stop value
+		public double tmin; // Shown value of lowest tick
+		public double tmax; // Shown value of highest tick
+		public double tdelta; // Difference between two tick labels
+		public double vmin; // Minimum true value on scale
+		public double vmax; // Maximum true value on scale
+		public double vfactor; // Factor from real to screen values
+		public long dexpo; // Exponent to be shown on the scale
+		public long ticks; // number of ticks on the scale
+		public int ticktype; // Ticks all 2, 5 or 10 units
+		public int vk; // Number of digits before the comma
+		public int nk; // Number of digits behind the comma
+		public int gk; // Total number of digits in a displayed number
+		public int maxticks; // Maximum number of allowed ticks with label
+		public boolean isSwitch; // True if the y values are switch states
+									// (text)
+	}
+
+	/**
+	 * Inner class to hold minimum and maximum values.
+	 */
+	public class MinMax {
+		MinMax() {
+			max = MIN_DOUBLE_VALUE;
+			min = MAX_DOUBLE_VALUE;
+			minIndex = 0;
+			maxIndex = 0;
+		}
+
+		MinMax(double min, double max) {
+			this.min = min;
+			this.max = max;
+			this.minIndex = 0;
+			this.maxIndex = 0;
+		}
+
+		public double getMin() {
+			return min;
+		}
+
+		public double getMax() {
+			return max;
+		}
+
+		private double min;
+		private double max;
+		private int minIndex;
+		private int maxIndex;
 	}
 
 }

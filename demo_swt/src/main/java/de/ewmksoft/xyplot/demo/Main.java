@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class Main {
 
-	private static int APPLICATION_TYPE = 2;
+	private static int APPLICATION_TYPE = 3;
 
 	/**
 	 * @param args
@@ -25,8 +25,11 @@ public class Main {
 		if (APPLICATION_TYPE == 1) {
 			Application1 appl = new Application1(display);
 			appl.run(); // does not return until application is closed
-		} else {
+		} else if (APPLICATION_TYPE == 2) {
 			Application2 appl = new Application2(display);
+			appl.run(); // does not return until application is closed
+		} else {
+			Application3 appl = new Application3(display);
 			appl.run(); // does not return until application is closed
 		}
 

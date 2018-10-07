@@ -33,7 +33,7 @@ import de.ewmksoft.xyplot.utils.XYPlotPersistence;
  * @author Eberhard Kuemmel
  * 
  */
-public class Application2 implements ITimeTicker {
+public class Application3 implements ITimeTicker {
 	public static final int WINDOW_WIDTH = 600;
 	public static final int WINDOW_HEIGHT = 450;
 	public static final int OFS_X = 0; // 50
@@ -57,8 +57,11 @@ public class Application2 implements ITimeTicker {
 	private volatile long startTime;
 	private boolean isPaused = false;
 	private boolean newStart = false;
+	private int step = 200;
 
-	public Application2(Display display) {
+	private String[] labels = { "Label 1", "Label 2 has a very long value and might be cutted", "Label 3" };
+
+	public Application3(Display display) {
 		this.display = display;
 		random = new Random();
 
@@ -81,18 +84,15 @@ public class Application2 implements ITimeTicker {
 		});
 
 		dhs = new XYPlotData[2];
-		dhs[0] = XYPlot.createDataHandler(MAX_POINTS, new XYGraphLibSWT.RGB(
-				255, 50, 200, 50));
+		dhs[0] = XYPlot.createDataHandler(MAX_POINTS, new XYGraphLibSWT.RGB(255, 50, 200, 50));
 		dhs[0].setLegendText("Voltage");
 		dhs[0].setUnit("V");
 		dhs[0].setManualScaleMin(0);
 		dhs[0].setManualScale(-10, 10);
 
-		dhs[1] = XYPlot.createDataHandler(MAX_POINTS, new XYGraphLibSWT.RGB(55,
-				250, 200, 50));
-		dhs[1].setLegendText("Ampere");
-		dhs[1].setUnit("A");
-		dhs[1].setManualScaleMin(0);
+		dhs[1] = XYPlot.createDataHandler(MAX_POINTS, new XYGraphLibSWT.RGB(55, 250, 200, 50));
+		dhs[1].setLegendText("Switch");
+		dhs[1].setUnit("");
 
 		IXYPlot xyplot = xyPlotCanvas.getXYPlot();
 		xyplot.setXAxisText("Time");
@@ -165,8 +165,7 @@ public class Application2 implements ITimeTicker {
 		try {
 			XYPlotPersistence xyPlotPersistence = new XYPlotPersistence();
 			xyPlotPersistence.setComment("Test Save");
-			xyPlotPersistence.setXDescription(xyplot.getXAxisText(),
-					xyplot.getXUnitText());
+			xyPlotPersistence.setXDescription(xyplot.getXAxisText(), xyplot.getXUnitText());
 			xyPlotPersistence.writeData("test", dhs);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -200,11 +199,15 @@ public class Application2 implements ITimeTicker {
 			}
 		} else {
 			if (dhs[0] != null) {
-				dhs[0].addValue(x, -4.5);
+				double v = (-14 + random.nextDouble()) * 100000.0;
+				dhs[0].addValue(x, v);
 			}
 			if (dhs[1] != null) {
-				double v = (-14 + random.nextDouble()) * 100000.0;
-				dhs[1].addValue(x, v);
+				if (step == labels.length * 100) {
+					step = 0;
+				}
+				dhs[1].addValue(x, labels[step / 100]);
+				step++;
 			}
 			double min_x = Math.max(x - MOVING_DELTAT, 0);
 			IXYPlot xyplot = xyPlotCanvas.getXYPlot();
