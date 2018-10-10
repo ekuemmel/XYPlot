@@ -815,6 +815,7 @@ public class XYPlotData {
 		lastDrawPointNum = 0;
 		scaleData.smin = 0;
 		scaleData.smax = 0;
+		scaleData.isSwitch = false;
 	}
 
 	/**
