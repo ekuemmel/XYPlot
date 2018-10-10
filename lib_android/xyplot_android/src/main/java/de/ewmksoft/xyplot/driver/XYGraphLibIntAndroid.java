@@ -325,7 +325,8 @@ class XYGraphLibIntAndroid implements IXYGraphLibInt {
 
     @Override
     public void drawRectangle(int x, int y, int width, int height) {
-        canvas.drawRect(x, y, x + width, x + height, paint);
+		paint.setColor(currentBgColor);
+        canvas.drawRect(x, y, x + width, y + height, paint);
     }
 
     @Override

@@ -1623,12 +1623,13 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 						Pt p = scaleToScreenX0(currentPlotNo, y * q);
 						p1 = new Pt(p.x, p.y);
 						p2 = new Pt(p.x - TICK_LEN, p.y);
-						graphLibInt.setFgColor(FgColor.AXIS);
+						graphLibInt.setBgColor(BgColor.LEGENDSELECTBG);
 						String label = labels.get(y);
 						Pt shift = graphLibInt.getStringExtends(label);
 						int tx = Math.max(p2.x - shift.x - TICK_LEN, 3);
-						int ty = p2.y - shift.y / 2;
-						graphLibInt.drawRectangle(tx - 1, ty - 1, shift.x + 2, shift.y + 2);
+						int ty = p2.y - shift.y;
+						graphLibInt.drawRectangle(tx - 2, ty - 6, shift.x + 8, shift.y + 6);
+						graphLibInt.setFgColor(FgColor.AXIS);
 						graphLibInt.drawText(label, tx, ty);
 					}
 				}

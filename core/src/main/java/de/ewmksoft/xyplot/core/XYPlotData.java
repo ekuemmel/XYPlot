@@ -237,7 +237,7 @@ public class XYPlotData {
 		try {
 			if (!labels.contains(label)) {
 				labels.add(label);
-				Collections.sort(labels);
+				Collections.sort(labels, Collections.reverseOrder());
 				y = labels.indexOf(label);
 				for (DataValue dv : values) {
 					if (Math.round(dv.y) >= y) {

@@ -19,15 +19,19 @@ class DataStorage2 implements IDataStorage {
 	private XYPlotData[] dhs;
 	private double y = 0;
 	private static final int MAX_POINTS = 4096; // Total points in the plot
+	
+	private final String[] labels = { "Under Limit", "In Limit", "Above Limit"};
 
 	DataStorage2() {
-		dhs = new XYPlotData[1];
+		dhs = new XYPlotData[2];
 		int plotPoints = MAX_POINTS / dhs.length;
 		dhs[0] = XYPlot
 				.createDataHandler(plotPoints, new RGB(255, 50, 150, 50));
 		dhs[0].setLegendText("Battery Voltage");
 		dhs[0].setUnit("Volt");
-		dhs[0].setManualScaleMin(0);
+		dhs[1] = XYPlot
+				.createDataHandler(plotPoints, new RGB(255, 150, 50, 50));
+		dhs[1].setLegendText("Limit");
 		random = new Random();
 		enabled = false;
 		clearData();
@@ -43,6 +47,7 @@ class DataStorage2 implements IDataStorage {
 		for (XYPlotData dh : dhs) {
 			dh.clear();
 		}
+		y = 0;
 		startTime = System.currentTimeMillis();
 	}
 
@@ -70,6 +75,13 @@ class DataStorage2 implements IDataStorage {
 		double delta = 0.001 * (now - startTime);
 		y = y + (random.nextDouble() - 0.5);
 		dhs[0].addValue(delta, y);
+		if (y > 3) {
+			dhs[1].addValue(delta, labels[2]);
+		} else  if (y < -3) {
+			dhs[1].addValue(delta, labels[0]);
+		} else {
+			dhs[1].addValue(delta, labels[1]);
+		}
 	}
 
 	/*
