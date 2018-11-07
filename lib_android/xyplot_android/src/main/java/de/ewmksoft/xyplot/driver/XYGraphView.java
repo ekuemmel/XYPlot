@@ -73,9 +73,6 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.ewmksoft.xyplot.R;
 import de.ewmksoft.xyplot.core.IXYGraphLib;
 import de.ewmksoft.xyplot.core.IXYGraphLib.MouseEvent;
@@ -86,8 +83,6 @@ import de.ewmksoft.xyplot.core.XYPlot;
 import de.ewmksoft.xyplot.core.XYPlotData;
 
 public class XYGraphView extends View implements Handler.Callback {
-    private Logger logger = LoggerFactory.getLogger(XYGraphView.class);
-
     private Handler myHandler;
     private IXYGraphLib.Rect rect;
     private IXYPlotEvent xyPlotEvent;
@@ -350,8 +345,6 @@ public class XYGraphView extends View implements Handler.Callback {
                     int shift = b.getInt(PARAM_SHIFT);
                     int last = b.getInt(PARAM_LAST);
                     boolean ContinueMove = xyPlot.moveByPixels(shift);
-                    logger.debug("MOVE: shift: {} shiftPending: {} last: {} ContinueMove: {}"
-                            , shift, shiftPending, last, ContinueMove);
                     if (last == 0 && ContinueMove) {
                         shift = shift / 2;
                         if (Math.abs(shift) > 2) {
@@ -367,15 +360,12 @@ public class XYGraphView extends View implements Handler.Callback {
                         }
                     }
                     invalidate();
-                } else {
-                    logger.debug("Move suppressed by zoom");
                 }
                 break;
             case MSG_ZOOM:
                 int xPos = b.getInt(PARAM_XPOS);
                 double factor = (0.000001d * b.getLong(PARAM_ZOOM) - 1) * zoomBoost + 1;
                 boolean valid = Math.abs(factor - 1) > 0.0;
-                logger.debug("Zoom factor: {} at {} -> {}", factor, xPos, Boolean.toString(valid));
                 blockMoveUntil = System.currentTimeMillis() + 500;
                 if (valid) {
                     if (xyPlot.zoomAt(xPos, factor)) {
@@ -412,7 +402,6 @@ public class XYGraphView extends View implements Handler.Callback {
                 }
                 b.putInt(PARAM_XPOS, zoomCenterPos);
                 b.putLong(PARAM_ZOOM, zoom);
-                logger.debug("onScale zoom {} on xpos {}", zoom, xPos);
                 msg.setData(b);
                 myHandler.sendMessage(msg);
                 zoomPending = true;
@@ -426,7 +415,6 @@ public class XYGraphView extends View implements Handler.Callback {
 
         @Override
         public boolean onDoubleTapEvent(MotionEvent ev) {
-            logger.debug("onDoubleTapEvent {}", ev.toString());
             if (ev.getAction() == 0) {
                 int x = (int) ev.getX();
                 int y = (int) ev.getY();
@@ -439,7 +427,6 @@ public class XYGraphView extends View implements Handler.Callback {
 
         @Override
         public boolean onSingleTapUp(MotionEvent ev) {
-            logger.debug("onSingleTapUp {}", ev.toString());
             int x = (int) ev.getX();
             int y = (int) ev.getY();
             xyPlot.evalMouseEvent(MouseEvent.MOUSESINGLETAP, x, y);
@@ -455,7 +442,6 @@ public class XYGraphView extends View implements Handler.Callback {
             lastXPos = (int) ev.getX();
             int x = lastXPos;
             int y = (int) ev.getY();
-            logger.debug("onDown {}", ev.toString());
             zoomCenterPos = 0;
             xyPlot.evalMouseEvent(MouseEvent.MOUSEDOWN, x, y);
             xyPlot.evalMouseEvent(MouseEvent.MOUSEUP, x, y);
@@ -465,12 +451,10 @@ public class XYGraphView extends View implements Handler.Callback {
 
         @Override
         public void onShowPress(MotionEvent ev) {
-            logger.debug("onShowPress {}", ev.toString());
         }
 
         @Override
         public void onLongPress(MotionEvent ev) {
-            logger.debug("onLongPress {}", ev.toString());
         }
 
         @Override
@@ -478,7 +462,6 @@ public class XYGraphView extends View implements Handler.Callback {
             boolean multiTouch = e2.getPointerCount() > 1;
             if (!zoomPending && multiTouch && Math.abs(distanceX) > 3) {
                 shiftPending = true;
-                logger.debug("onScroll {}:{} {}", distanceX, e1.getX(), e2.getX());
                 int delta = (int) distanceX;
                 if (Math.abs(delta) > 2) {
                     Message msg = myHandler.obtainMessage();
@@ -496,12 +479,10 @@ public class XYGraphView extends View implements Handler.Callback {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            logger.debug("onFling {}:{} {}", velocityX, e1.toString(), e2.toString());
             if (shiftPending) {
                 int factor = Math.max(1, (int) (Math.abs(velocityX / 1000.0f)));
                 int delta = factor * (int) (e1.getX() - e2.getX());
                 boolean doFling = Math.abs(delta) > 2;
-                logger.debug("onFling Factor {} and Delta {}  -> {}", Integer.toString(factor), delta, doFling);
                 if (doFling) {
                     Message msg = myHandler.obtainMessage();
                     Bundle b = new Bundle();

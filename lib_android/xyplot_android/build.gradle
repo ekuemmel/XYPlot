@@ -13,7 +13,7 @@ buildscript {
     }
 }
 
-version = '1.3.8'
+version = '1.3.9'
 
 android {
 	compileSdkVersion 23
@@ -115,8 +115,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-	implementation 'xyplot:xyplot:'+version
-	implementation fileTree(include: ['*.jar'], dir: 'libs')
 	
-	implementation 'org.slf4j:slf4j-api:1.7.25'
+	implementation 'xyplot:xyplot:'+version
+	implementation fileTree(include: ['*.jar'], dir: 'libs')	
 }

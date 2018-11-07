@@ -71,17 +71,12 @@ import de.ewmksoft.xyplot.core.IXYGraphLibInt.ButtonImages;
 import de.ewmksoft.xyplot.core.IXYGraphLibInt.FgColor;
 import de.ewmksoft.xyplot.core.IXYGraphLibInt.Pt;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * The XYPlot displays two dimensional data in a XY coordinate system. Multiple
  * plots can be displayed simultaneous. The plot contains mouse sensitive fields
  * to allow zooming and defining a cursor position
  */
 public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
-	private Logger logger = LoggerFactory.getLogger(XYPlot.class);
-
 	private static final int ZOOMBOX_LAZY_UPDATE_DELAY = 10;
 	private static final int DATA_UPDATE_DELAY = 500;
 	private static final int MIN_DATA_UPDATE_DELAY = 10;
@@ -268,6 +263,9 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		graphLibInt.createColor(no, dh.getColor());
 		scaleChanged = true;
 		needsRedraw = true;
+		if (dh.getCursorPos() >= 0) {
+			//paused = true;
+		}
 		XYPlotData.unlock();
 		return result;
 	}
@@ -969,7 +967,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		if (dataList.size() == 0) {
 			return;
 		}
-		logger.debug("Redraw requested, scaleChanged= {}", scaleChanged);
 		XYPlotData.lock();
 		int no = -1;
 		dataMinMax.clear();
@@ -1094,28 +1091,30 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 					graphLibInt.drawLine(x - 1, y1, x - 1, y2);
 					graphLibInt.setFgPlotColor(currentPlotNo);
 					graphLibInt.drawCircle(x, y, 5);
-					double xvalue = dv.x();
-					double yvalue = dv.y();
-					NumberFormat nf = NumberFormat.getInstance();
-					nf.setGroupingUsed(GROUPING_USED);
-					nf.setMaximumFractionDigits(xData.nk + 1);
-					nf.setMinimumFractionDigits(xData.nk + 1);
-					String xs = nf.format(xvalue);
-					String ys = formatValue(false, sd, yvalue);
-					String label = xs.trim() + " / " + ys.trim();
-					Pt pt = graphLibInt.getStringExtends(label);
-					int w = pt.x + 10;
-					int h = pt.y + 5;
-					if (p1.x + w > stopPointX.x) {
-						x -= w;
+					if (showButtonsAndLegend) {
+						double xvalue = dv.x();
+						double yvalue = dv.y();
+						NumberFormat nf = NumberFormat.getInstance();
+						nf.setGroupingUsed(GROUPING_USED);
+						nf.setMaximumFractionDigits(xData.nk + 1);
+						nf.setMinimumFractionDigits(xData.nk + 1);
+						String xs = nf.format(xvalue);
+						String ys = formatValue(false, sd, yvalue);
+						String label = xs.trim() + " / " + ys.trim();
+						Pt pt = graphLibInt.getStringExtends(label);
+						int w = pt.x + 10;
+						int h = pt.y + 5;
+						if (p1.x + w > stopPointX.x) {
+							x -= w;
+						}
+						Rect r = new Rect(x + 1, y1 - h - 2, w, h);
+						graphLibInt.setSolidLines(1);
+						graphLibInt.drawRoundRectangle(r, 8);
+						graphLibInt.fillRoundRectangle(r, 8);
+						graphLibInt.setFgPlotColor(currentPlotNo);
+						graphLibInt.setFgColor(FgColor.AXIS);
+						graphLibInt.drawText(label, r.x + 3, r.y + 4);
 					}
-					Rect r = new Rect(x + 1, y1 - h - 2, w, h);
-					graphLibInt.setSolidLines(1);
-					graphLibInt.drawRoundRectangle(r, 8);
-					graphLibInt.fillRoundRectangle(r, 8);
-					graphLibInt.setFgPlotColor(currentPlotNo);
-					graphLibInt.setFgColor(FgColor.AXIS);
-					graphLibInt.drawText(label, r.x + 3, r.y + 1);
 				}
 			}
 		}

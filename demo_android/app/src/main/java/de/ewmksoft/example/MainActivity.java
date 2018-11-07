@@ -185,8 +185,9 @@ public class MainActivity extends Activity implements Handler.Callback {
         xyPlot.setFontSize(20, 30);
         xyPlot.setAxisLabels(true);
         xyPlot.setSaveButtonVisisble(true);
+
         xyPlot.setAllowPauseOnDataClick(false);
-		xyPlot.setSmoothScroll(2 == dataStorageNum);
+		xyPlot.setAxisVisible(true);
 			
         myHandler.sendEmptyMessage(MSG_TAG_UPDATE);
     }
