@@ -101,7 +101,8 @@ task copyDistribution(type: Copy) {
 task buildDistribution(type: Zip) {
 	archiveName = "de-${version}.zip"
 	destinationDir = file("${buildDir}")
-	include("**/*")
+	includeEmptyDirs = false
+	include("**/${version}/xyplot*")
 	from "${buildDir}/../bintray"
 	doLast {
 		println("Created ZIP")

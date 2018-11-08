@@ -152,7 +152,7 @@ public class MainActivity extends Activity implements Handler.Callback {
     private void initGraph(int dataStorageNum, boolean loadPrevData) {
         MyApplication application = (MyApplication) getApplication();
         dataStorage = application.getDataStorage(dataStorageNum, this);
-		
+
         dataStorage.setEnabled(true);
         if (loadPrevData) {
             try {
@@ -187,8 +187,8 @@ public class MainActivity extends Activity implements Handler.Callback {
         xyPlot.setSaveButtonVisisble(true);
 
         xyPlot.setAllowPauseOnDataClick(false);
-		xyPlot.setAxisVisible(true);
-			
+        xyPlot.setAxisVisible(true);
+
         myHandler.sendEmptyMessage(MSG_TAG_UPDATE);
     }
 }
