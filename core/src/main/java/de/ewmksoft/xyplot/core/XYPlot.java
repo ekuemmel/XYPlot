@@ -264,7 +264,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		scaleChanged = true;
 		needsRedraw = true;
 		if (dh.getCursorPos() >= 0) {
-			//paused = true;
+			paused = true;
 		}
 		XYPlotData.unlock();
 		return result;
