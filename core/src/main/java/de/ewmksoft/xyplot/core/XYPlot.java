@@ -353,7 +353,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		long msTime = System.currentTimeMillis();
 		if (!isPaused() && !result && msTime - lastNewValueCheck > updateDelay) {
 			for (XYPlotData data : dataList) {
-				if (data.hasNewValues() /* && data.getCursorPos() < 0 */) {
+				if (data.hasNewValues()) {
 					result = true;
 					break;
 				}
@@ -609,7 +609,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 				if (no == currentPlotNo) {
 					if (clearRectangle != null && clearRectangle.contains(x_loc, y_loc)) {
 						plotEvent.onEvent(KeyEvent.KEY_CLEAR);
-						// setPaused(true);
 						y_loc = stopPointY.y - 1;
 						needsRedraw = true;
 						result = true;
@@ -1179,6 +1178,16 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		}
 	}
 
+	/**
+	 * Status, expanded (true) ore collapsed (false), of the legend box
+	 *
+	 * @return true/false
+	 */
+	public boolean isLegendExpanded() {
+		return expandLegend;
+	}
+
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1319,11 +1328,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 					points[pointNum++] = p1.y;
 					points[pointNum++] = p2.x;
 					points[pointNum++] = p2.y;
-					if (isPaused()
-							// && data.getVisiblePointNum() <
-							// MAX_POINT_NUM_FOR_CIRCLES)
-							// {
-							&& (p2.x - p1.x) > POINT_DISTANCE_FOR_CIRCLES) {
+					if (isPaused() && (p2.x - p1.x) > POINT_DISTANCE_FOR_CIRCLES) {
 						graphLibInt.drawCircle(p1.x, p1.y, 3);
 					}
 					drawIt = true;

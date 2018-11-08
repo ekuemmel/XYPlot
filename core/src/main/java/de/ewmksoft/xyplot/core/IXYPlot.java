@@ -338,6 +338,13 @@ public interface IXYPlot {
 	abstract void setLegendExpanded(boolean value);
 
 	/**
+	 * Status, expanded (true) ore collapsed (false), of the legend box
+	 *
+	 * @return true/false
+	 */
+	abstract boolean isLegendExpanded();
+
+	/**
 	 * Set the legend box to visible or invisible
 	 *
 	 * @param value
