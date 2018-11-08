@@ -50,3 +50,9 @@ Version 1.3.8
 -	Fixed gradle file for SWT
 -	Added support of switch values
 
+Version 1.3.10
+2018-11-08
+-	Graph is paused now on creation when cursor is set in the data
+-	New method to get state of ledgend box on IXYPlot API
+
+

@@ -34,6 +34,7 @@ Eberhard Kümmel<br>
 2018-07-30  New version 1.3.4 published on JCenter<br>
 2018-09-04  New version 1.3.5 published on JCenter<br>
 2018-10-10  New version 1.3.8 published on JCenter<br>
+2018-11-08  New version 1.3.10 published on JCenter<br>
 </p>
 <h2>How to use on Android</h2>
 <p>
