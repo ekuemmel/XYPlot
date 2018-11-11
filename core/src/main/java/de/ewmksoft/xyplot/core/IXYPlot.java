@@ -230,6 +230,17 @@ public interface IXYPlot {
 	 *            Maximum x value to be displayed
 	 */
 	abstract void setXRange(double xmin, double xmax);
+	
+	/**
+	 * Same as setXRange but is always executed independent of the 
+	 * graphs current paused state.
+	 *
+	 * @param xmin
+	 *            Minimum x value to be displayed
+	 * @param xmax
+	 *            Maximum x value to be displayed
+	 */
+	abstract void initXRange(double xmin, double xmax);
 
 	/**
 	 * Get the minimum X value
@@ -352,14 +363,6 @@ public interface IXYPlot {
 	abstract void setLegendVisisble(boolean value);
 
 	/**
-	 * Set the axis visible (default) or hide it. If axis is hidden, the legend
-	 * and title are also hidden.
-	 *
-	 * @param value
-	 */
-	abstract void setAxisVisible(boolean value);
-
-	/**
 	 * Set the save button to visible or invisible
 	 *
 	 * @param value
@@ -381,7 +384,7 @@ public interface IXYPlot {
 	abstract void setClearButtonVisisble(boolean value);
 
 	/**
-	 * Turn on/off of axis labels. Without labels and legend. This allows to
+	 * Turn on/off of axis labels and legend. This allows to
 	 * create smaller diagrams.
 	 *
 	 * @param value

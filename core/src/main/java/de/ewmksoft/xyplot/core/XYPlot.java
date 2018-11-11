@@ -263,9 +263,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		graphLibInt.createColor(no, dh.getColor());
 		scaleChanged = true;
 		needsRedraw = true;
-		if (dh.getCursorPos() >= 0) {
-			paused = true;
-		}
 		XYPlotData.unlock();
 		return result;
 	}
@@ -941,6 +938,22 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		XYPlotData.unlock();
 	}
 
+		/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.ewmksoft.xyplot.IXYPlot#initXRange(double, double, boolean)
+	 */
+	public void initXRange(double xmin, double xmax) {
+		XYPlotData.lock();
+		userxmin = xmin;
+		userxmax = xmax;
+		calculateScale(xData, AxisType.XAXIS, xmin, xmax);
+		scaleChanged = true;
+		setOutdated();
+		needsRedraw = true;
+		XYPlotData.unlock();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -1071,6 +1084,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			graphLibInt.setFgColor(FgColor.CURSOR);
 			graphLibInt.setSolidLines(1);
 			XYPlotData.DataValue dv = data.getValue(cursorPos);
+			
 			Pt p1 = scaleToScreen(currentPlotNo, dv.x(), dv.y());
 			if (mouseDownPosition != null && mouseCurrentPosition != null) {
 				int xPos = Math.min(mouseDownPosition.x, mouseCurrentPosition.x) - 1;
@@ -1272,7 +1286,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 * @param zoomed
 	 */
 	public void setPaused(boolean paused) {
-		if (!this.paused) {
+		if (!this.paused && paused) {
 			for (XYPlotData data : dataList) {
 				data.setCursorPos(data.getLastDrawPointNum());
 			}
@@ -1285,7 +1299,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	public void setAxisLabels(boolean value) {
 		showButtonsAndLegend = value;
 	}
-
+	
 	/**
 	 * Paint the curve
 	 *
@@ -1666,21 +1680,22 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		p1 = new Pt(startPointX.x, stopPointY.y);
 		p2 = new Pt(stopPointX.x, stopPointY.y);
 		graphLibInt.setFgColor(FgColor.AXIS);
-		String s = xAxisText + " [" + xUnit + "]";
-		int xexp = (int) xData.dexpo;
-		if (xexp != 0) {
-			s = s + EXPO_STUB + xexp;
-		}
-		int unitPos = bounds.width - graphLibInt.getStringExtends(s).x - 10;
-		graphLibInt.drawText(s, unitPos, p2.y + TICK_LEN);
 		graphLibInt.setSolidLines(1);
 		graphLibInt.drawLine(p1.x, p1.y, p2.x, p2.y);
-		q = Math.pow(10, xData.dexpo);
-		nf = NumberFormat.getInstance();
-		nf.setGroupingUsed(GROUPING_USED);
-		nf.setMaximumFractionDigits(xData.nk);
-		nf.setMinimumFractionDigits(xData.nk);
+
 		if (showButtonsAndLegend) {
+			String s = xAxisText + " [" + xUnit + "]";
+			int xexp = (int) xData.dexpo;
+			if (xexp != 0) {
+				s = s + EXPO_STUB + xexp;
+			}
+			int unitPos = bounds.width - graphLibInt.getStringExtends(s).x - 10;
+			graphLibInt.drawText(s, unitPos, p2.y + TICK_LEN);
+			q = Math.pow(10, xData.dexpo);
+			nf = NumberFormat.getInstance();
+			nf.setGroupingUsed(GROUPING_USED);
+			nf.setMaximumFractionDigits(xData.nk);
+			nf.setMinimumFractionDigits(xData.nk);
 			for (int i = 1; i < xData.ticks; ++i) {
 				double xvalue = xData.tmin + xData.tdelta * i;
 				Pt p = scaleToScreenY0(xvalue * q);
@@ -2604,11 +2619,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 */
 	private boolean isPaused() {
 		return paused;
-	}
-
-	@Override
-	public void setAxisVisible(boolean value) {
-		showButtonsAndLegend = value;
 	}
 
 }

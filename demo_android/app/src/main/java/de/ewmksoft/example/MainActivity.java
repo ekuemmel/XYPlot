@@ -123,11 +123,9 @@ public class MainActivity extends Activity implements Handler.Callback {
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
             case MSG_TAG_UPDATE:
-                if (dataStorage != null) {
-                    dataStorage.updateXAxis(xyGraphView);
-                    if (dataStorage.isEnabled()) {
+                if (dataStorage != null && dataStorage.isEnabled()) {
+                        dataStorage.updateXAxis(xyGraphView);
                         myHandler.sendEmptyMessageDelayed(MSG_TAG_UPDATE, 100);
-                    }
                 }
                 break;
             case MSG_TAG_SAVE:
@@ -151,9 +149,16 @@ public class MainActivity extends Activity implements Handler.Callback {
 
     private void initGraph(int dataStorageNum, boolean loadPrevData) {
         MyApplication application = (MyApplication) getApplication();
+
+        final IXYPlot xyPlot = xyGraphView.getXYPlot();
+
+        if (dataStorage != null) {
+            dataStorage.setXMin(xyPlot.getXMin());
+            dataStorage.setXMax(xyPlot.getXMax());
+        }
+
         dataStorage = application.getDataStorage(dataStorageNum, this);
 
-        dataStorage.setEnabled(true);
         if (loadPrevData) {
             try {
                 dataStorage.restore();
@@ -181,13 +186,12 @@ public class MainActivity extends Activity implements Handler.Callback {
                         myHandler.sendEmptyMessageDelayed(MSG_TAG_SAVE, 100);
                     }
                 });
-        final IXYPlot xyPlot = xyGraphView.getXYPlot();
         xyPlot.setFontSize(20, 30);
         xyPlot.setAxisLabels(true);
         xyPlot.setSaveButtonVisisble(true);
-
         xyPlot.setAllowPauseOnDataClick(false);
-        xyPlot.setAxisVisible(true);
+
+        xyGraphView.initXRange(dataStorage.getXMin(), dataStorage.getXMax());
 
         myHandler.sendEmptyMessage(MSG_TAG_UPDATE);
     }

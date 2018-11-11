@@ -323,10 +323,15 @@ public class XYPlotData {
 	 * @see de.ewmksoft.xyplot.IXYPlotData#getValue(int)
 	 */
 	public DataValue getValue(int index) {
-		if (index >= 0 && index < values.size()) {
-			return values.get(index);
-		}
-		return new DataValue(0, 0, false);
+		accessLock.lock();
+		try {
+			if (index >= 0 && index < values.size()) {
+				return values.get(index);
+			}
+			return new DataValue(0, 0, false);
+		} finally {
+			accessLock.unlock();
+		}			
 	}
 
 	/*

@@ -22,6 +22,8 @@ class DataStorage2 implements IDataStorage {
     private static final int MAX_POINTS = 4096; // Total points in the plot
 
     private final String[] labels = {"Under Limit", "In Limit", "Above Limit"};
+    private double xMin;
+    private double xMax;
 
     DataStorage2() {
         dhs = new XYPlotData[2];
@@ -34,7 +36,7 @@ class DataStorage2 implements IDataStorage {
                 .createDataHandler(plotPoints, new RGB(255, 150, 50, 50));
         dhs[1].setLegendText("Limit");
         random = new Random();
-        enabled = false;
+        enabled = true;
         clearData();
     }
 
@@ -108,6 +110,26 @@ class DataStorage2 implements IDataStorage {
                 dh.setPause();
             }
         }
+    }
+
+    @Override
+    public void setXMin(double xMin) {
+        this.xMin = xMin;
+    }
+
+    @Override
+    public void setXMax(double xMax) {
+        this.xMax = xMax;
+    }
+
+    @Override
+    public double getXMin() {
+        return xMin;
+    }
+
+    @Override
+    public double getXMax() {
+        return xMax;
     }
 
     /*

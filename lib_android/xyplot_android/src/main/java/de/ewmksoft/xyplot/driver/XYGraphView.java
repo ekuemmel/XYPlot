@@ -216,6 +216,10 @@ public class XYGraphView extends View implements Handler.Callback {
         xyPlot.setXAxisText(xTitle);
         xyPlot.setXUnitText(xUnit);
 
+		if (listener != null) {
+			xyPlot.setPaused(!listener.isEnabled());
+		}
+		
         xyPlotEvent = new IXYPlotEvent() {
             public void onEvent(KeyEvent event) {
                 switch (event) {
@@ -310,6 +314,22 @@ public class XYGraphView extends View implements Handler.Callback {
             }
         }
     }
+	
+	/**
+	 * Same as setXRange but is always executed independent of the 
+	 * graphs current mode.
+	 *
+	 * @param xmin
+	 *            Minimum x value to be displayed
+	 * @param xmax
+	 *            Maximum x value to be displayed
+	 */
+	public void initXRange(double xmin, double xmax) {
+        if (xyPlot != null) {
+			xyPlot.initXRange(xmin, xmax);
+			invalidate();
+		}			
+	}
 
     /**
      * Set a given range on the x axis to be visible

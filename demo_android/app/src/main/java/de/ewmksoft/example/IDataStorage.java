@@ -18,7 +18,15 @@ public interface IDataStorage {
 
 	public abstract boolean isEnabled();
 
+	public abstract double getXMin();
+
+	public abstract double getXMax();
+
 	public abstract void setEnabled(boolean enabled);
+
+    public abstract void setXMin(double xMin);
+
+    public abstract void setXMax(double xMax);
 
 	public abstract String save() throws IOException;
 
