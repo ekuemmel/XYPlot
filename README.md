@@ -12,7 +12,7 @@ The graph can be inspected at runtime using things like zoom in and out, move le
 <p>
 The library has quite some history, it was first developed in 1990 for my 
 lab work in experimental physics at the University in 
-Tübingen/Germany (in Borland Pascal) and much later been ported to Java.<br>
+Tübingen/Germany (in Borland Pascal) and many years later been ported to Java.<br>
 </p>
 <p>
 In this repository you find the library and example applications for SWT and Android.<br>
@@ -35,6 +35,7 @@ Eberhard Kümmel<br>
 2018-09-04  New version 1.3.5 published on JCenter<br>
 2018-10-10  New version 1.3.8 published on JCenter<br>
 2018-11-08  New version 1.3.10 published on JCenter<br>
+2018-12-27  New version 1.3.14 published on JCenter<br>
 </p>
 <h2>How to use on Android</h2>
 <p>
