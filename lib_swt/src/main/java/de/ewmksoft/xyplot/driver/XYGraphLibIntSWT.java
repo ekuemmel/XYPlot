@@ -82,6 +82,8 @@ import de.ewmksoft.xyplot.core.IXYGraphLibInt;
  * 
  */
 public class XYGraphLibIntSWT implements IXYGraphLibInt {
+	private final int MAX_TOOLTIPS = 20;
+	
 	private final Display display;
 	private IXYGraphLibAdapter xyPlotAdapter;
 	private GC currentGc;
@@ -109,6 +111,9 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 
 	private Font normalFont;
 	private Font boldFont;
+	
+	private Rectangle[] toolTipRects;
+	private String[] toolTipStrings;
 
 	private Image downImage;
 	private Image upImage;
@@ -127,6 +132,13 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 
 	public XYGraphLibIntSWT(Display dp) {
 		this.display = dp;
+		
+        toolTipRects = new Rectangle[MAX_TOOLTIPS];
+		toolTipStrings = new String[MAX_TOOLTIPS];
+		for (int i = 0; i < toolTipRects.length; ++i) {
+			toolTipRects[i] = new Rectangle(0, 0, 0, 0);
+		}
+		
 		defCharSize = new Pt(10, 15);
 		this.bounds = new Rectangle(0,0,10,10);
 		bkImage = new Image(display, bounds);
@@ -312,6 +324,14 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 			display.wake();
 			lastWakeUpCall = msTime;
 		}
+	}
+	
+	Rectangle[] getToolTipRects() {
+		return toolTipRects;
+	}
+
+	String[] getToolTipStrings() {
+		return toolTipStrings;
 	}
 
 	public IXYGraphLib.Rect getBounds() {
@@ -608,6 +628,28 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 
 	public void drawText(String label, int x, int y) {
 		currentGc.drawText(label, x, y);
+	}
+
+	public void drawTextRect(int number, String label, IXYGraphLib.Rect rect) {
+		String dots = "...";
+		int w = rect.width;
+		String s = label;
+		int dotWidth = getStringExtends(dots).x;
+		if (getStringExtends(s).x > w) {
+			w -= dotWidth;
+			while (s.length() > 0 && getStringExtends(s).x > w) {
+				s = s.substring(0, s.length()-1);
+			}
+			s += dots;
+		}
+		drawText(s, rect.x, rect.y);
+		if (number < toolTipRects.length) {
+			toolTipRects[number].x = rect.x;
+			toolTipRects[number].y = rect.y;
+			toolTipRects[number].width = rect.width;
+			toolTipRects[number].height = rect.height;
+			toolTipStrings[number] = label;
+		}
 	}
 
 	public void drawBackground(IXYGraphLib.Rect rect) {

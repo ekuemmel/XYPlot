@@ -34,7 +34,7 @@ import de.ewmksoft.xyplot.utils.XYPlotPersistence;
  * 
  */
 public class Application3 implements ITimeTicker {
-	public static final int WINDOW_WIDTH = 600;
+	public static final int WINDOW_WIDTH = 400;
 	public static final int WINDOW_HEIGHT = 450;
 	public static final int OFS_X = 0; // 50
 	public static final int OFS_Y = 100; // 100
@@ -59,7 +59,7 @@ public class Application3 implements ITimeTicker {
 	private boolean newStart = false;
 	private int step = 200;
 
-	private String[] labels = { "Label 1", "Label 2 has a very long value and might be cutted", "Label 3" };
+	private String[] labels = { "Label 1", "Label 2 has a very long value and might be cut in some cases", "Label 3" };
 
 	public Application3(Display display) {
 		this.display = display;
@@ -91,7 +91,7 @@ public class Application3 implements ITimeTicker {
 		dhs[0].setManualScale(-10, 10);
 
 		dhs[1] = XYPlot.createDataHandler(MAX_POINTS, new XYGraphLibSWT.RGB(55, 250, 200, 50));
-		dhs[1].setLegendText("Switch");
+		dhs[1].setLegendText("A Switch value with a long title which might be cut");
 		dhs[1].setUnit("");
 
 		IXYPlot xyplot = xyPlotCanvas.getXYPlot();
@@ -99,13 +99,12 @@ public class Application3 implements ITimeTicker {
 		xyplot.setXUnitText("s");
 		xyplot.setXRange(0, 0);
 		xyplot.setUpdateDelay(200);
-		xyplot.setFontSize("Courier", 12, 28);
+		xyplot.setFontSize("Courier", 12, 20);
 		xyplot.setBgColor(0, 0, 100);
 		xyplot.setDrawAreaBgColor(0, 10, 10);
 		xyplot.setAxisColor(255, 255, 255);
 		xyplot.setCursorColor(0, 255, 0);
 		xyplot.setCursorBgColor(50, 50, 50);
-		xyplot.setAxisVisible(true);
 		xyplot.setSmoothScroll(true);
 
 		xyplot.registerEventHandler(new IXYPlotEvent() {

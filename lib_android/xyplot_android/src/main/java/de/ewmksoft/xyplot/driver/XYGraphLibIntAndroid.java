@@ -495,6 +495,22 @@ class XYGraphLibIntAndroid implements IXYGraphLibInt {
         paint.getTextBounds(label, 0, label.length(), r);
         canvas.drawText(label, x, y + r.height(), paint);
     }
+	
+		public void drawTextRect(int number, String label, IXYGraphLib.Rect rect) {
+		String dots = "...";
+		int w = rect.width;
+		String s = label;
+		int dotWidth = getStringExtends(dots).x;
+		if (getStringExtends(s).x > w) {
+			w -= dotWidth;
+			while (s.length() > 0 && getStringExtends(s).x > w) {
+				s = s.substring(0, s.length()-1);
+			}
+			s += dots;
+		}
+		drawText(s, rect.x, rect.y);
+	}
+
 
     @Override
     public float getButtonRatio() {

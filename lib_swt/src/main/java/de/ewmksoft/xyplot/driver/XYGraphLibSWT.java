@@ -60,6 +60,7 @@ package de.ewmksoft.xyplot.driver;
 
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.graphics.Rectangle;
 
 import de.ewmksoft.xyplot.core.IXYGraphLib;
 import de.ewmksoft.xyplot.core.IXYGraphLibInt;
@@ -69,6 +70,7 @@ import de.ewmksoft.xyplot.core.IXYGraphLibInt;
  * 
  */
 public class XYGraphLibSWT implements IXYGraphLib {
+	private XYGraphLibIntSWT xyGraphLibIntSWT;
 	/**
 	 * Creates a graphic library for XYPlot on SWT. Make sure to call the
 	 * close() method when the library instance is not needed any more
@@ -101,8 +103,6 @@ public class XYGraphLibSWT implements IXYGraphLib {
 		return xyGraphLibIntSWT;
 	}
 
-	private XYGraphLibIntSWT xyGraphLibIntSWT;
-
 	public boolean hasZoomBox() {
 		return true;
 	}
@@ -110,4 +110,13 @@ public class XYGraphLibSWT implements IXYGraphLib {
 	public boolean hasOwnButtonDrawing() {
 		return false;
 	}
+	
+	public Rectangle[] getToolTipRects() {
+		return xyGraphLibIntSWT.getToolTipRects();
+	}
+
+	public String[] getToolTipStrings() {
+		return xyGraphLibIntSWT.getToolTipStrings();
+	}
+	
 }

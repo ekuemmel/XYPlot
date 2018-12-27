@@ -32,6 +32,8 @@ import de.ewmksoft.xyplot.driver.XYGraphLibSWT;
  * MyCanvas class is derived from Canvas class
  */
 public class XYPlotCanvas extends Canvas {
+	private static final int minDeltaX = 10;
+	private static final int minDeltaY = 10;
 	private double updateFreq;
 	private long startT;
 	private int updateCount = 0;
@@ -42,14 +44,13 @@ public class XYPlotCanvas extends Canvas {
 	private boolean isDown;
 	private int oldX;
 	private int oldY;
-	private static final int minDeltaX = 10;
-	private static final int minDeltaY = 10;
 
-	public XYPlotCanvas(Shell shell) {
+	public XYPlotCanvas(final Shell shell) {
 		super(shell, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED);
 		Display display = shell.getDisplay();
 		graphLib = new XYGraphLibSWT(display);
 		xyplot = XYPlot.createXYPlot(graphLib);
+		
 		addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				paint(event);
@@ -90,7 +91,23 @@ public class XYPlotCanvas extends Canvas {
 						oldX = e.x;
 						oldY = e.y;
 					}
+				} else {
+					/* Disabled this for the moment since it did not work
+					Rectangle[] toolTipRects = graphLib.getToolTipRects();
+					String[] toolTipStrings = graphLib.getToolTipStrings();
+					for (int i = 0; i < toolTipRects.length; i++) {
+						if (toolTipRects[i] != null && toolTipRects[i].contains(e.x, e.y)) {
+							String s = toolTipStrings[i];
+							if (!(s.equals(shell.getToolTipText()))) {
+								shell.setToolTipText(s);
+							}
+							return;
+						}
+					}
+					shell.setToolTipText(null);
+					*/
 				}
+
 			}
 		});
 		addKeyListener(new KeyListener() {

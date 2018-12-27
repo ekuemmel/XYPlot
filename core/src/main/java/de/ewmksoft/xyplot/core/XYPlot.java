@@ -1016,7 +1016,9 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			} else {
 				minMax = unitMinMax.get(unit);
 			}
-			scaleChanged |= calculateScale(sd, AxisType.YAXIS, minMax.getMin(), minMax.getMax());
+			if (minMax != null) {
+				scaleChanged |= calculateScale(sd, AxisType.YAXIS, minMax.getMin(), minMax.getMax());
+			}
 		}
 		if (scaleChanged) {
 			calculateAxisPosition();
@@ -1498,8 +1500,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 				graphLibInt.setBgColor(BgColor.LEGENDSELECTBG);
 			}
 			graphLibInt.fillRectangle(r);
-			String s = trimText(data.getLegendText(), r.width);
-			graphLibInt.drawText(s, r.x, r.y);
+			graphLibInt.drawTextRect(no + 1, data.getLegendText(), r);
 			graphLibInt.setBgColor(BgColor.PLOTBG);
 			graphLibInt.setFgPlotColor(no);
 			graphLibInt.drawRectangle(new Rect(r.x, r.y + r.height - 3, r.width, 2));
@@ -1609,13 +1610,14 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 				unit = " [" + unit + "]";
 			}
 			ytext += unit;
+			
 			Pt tw = graphLibInt.getStringExtends(ytext);
 			// Draw current curve title in header
-			// int titleXpos = (startPointX.x + stopPointX.x - tw.x) / 2;
 			int titleXpos = startPointX.x + 40;
 			int titleYPos = PADDING_TOP;
+			Rect titleRect = new Rect(titleXpos, titleYPos, stopPointX.x - startPointX.x - 50, tw.y);
 			Rect titleColorBox = new Rect(titleXpos - 30, titleYPos, 20, 20);
-			graphLibInt.drawText(ytext, titleXpos, titleYPos);
+			graphLibInt.drawTextRect(0, ytext, titleRect);
 			graphLibInt.setBgPlotColor(currentPlotNo);
 			graphLibInt.fillRectangle(titleColorBox);
 			graphLibInt.setBgColor(BgColor.BG);
@@ -1960,6 +1962,9 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			legendWidth = Math.max(legendWidth, lw);
 			lw = bw + graphLibInt.getStringExtends(formatValueUnit(true, data, sd.vmin)).x;
 			legendWidth = Math.max(legendWidth, lw);
+			
+			legendWidth = Math.min(2 * bounds.width / 3, legendWidth);
+			
 			if (showButtonsAndLegend) {
 				graphLibInt.setNormalFont();
 				yox = Math.max(yox, (sd.gk + 4) * fontSize.x + TICK_LEN);

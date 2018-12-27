@@ -34,7 +34,7 @@ import de.ewmksoft.xyplot.utils.XYPlotPersistence;
  * 
  */
 public class Application2 implements ITimeTicker {
-	public static final int WINDOW_WIDTH = 600;
+	public static final int WINDOW_WIDTH = 400;
 	public static final int WINDOW_HEIGHT = 450;
 	public static final int OFS_X = 0; // 50
 	public static final int OFS_Y = 100; // 100
@@ -105,7 +105,6 @@ public class Application2 implements ITimeTicker {
 		xyplot.setAxisColor(255, 255, 255);
 		xyplot.setCursorColor(0, 255, 0);
 		xyplot.setCursorBgColor(50, 50, 50);
-		xyplot.setAxisVisible(true);
 		xyplot.setSmoothScroll(true);
 
 		xyplot.registerEventHandler(new IXYPlotEvent() {

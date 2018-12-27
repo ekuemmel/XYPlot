@@ -128,6 +128,8 @@ public interface IXYGraphLibInt {
 	abstract public void drawBackground(IXYGraphLib.Rect rect);
 
 	abstract public void drawText(String label, int x, int y);
+	
+	abstract public void drawTextRect(int number, String label, IXYGraphLib.Rect rect);
 
 	/**
 	 * If true, the core will not paint the buttons. The painting is done by the

@@ -344,6 +344,11 @@ public class XYGraphLibIntSVG implements IXYGraphLibInt {
 			}
 		}
 	}
+	
+	public void drawTextRect(int number, String label, IXYGraphLib.Rect rect) {
+		drawText(label, rect.x, rect.y);
+	}
+
 
 	@Override
 	public void drawBackground(Rect rect) {
