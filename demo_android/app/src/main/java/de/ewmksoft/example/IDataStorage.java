@@ -13,6 +13,10 @@ public interface IDataStorage {
 	public abstract void clearData();
 
 	public abstract XYPlotData[] getDataHandlers();
+	
+	public abstract String getXName();
+	
+	public abstract String getXUnit();
 
 	public abstract void update();
 

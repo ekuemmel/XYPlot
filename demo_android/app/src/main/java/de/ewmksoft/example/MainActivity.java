@@ -45,6 +45,12 @@ public class MainActivity extends Activity implements Handler.Callback {
         setContentView(R.layout.main);
 
         xyGraphView = (XYGraphView) findViewById(R.id.xyPlot1);
+			
+		MyApplication application = (MyApplication) getApplication();	
+		int dataStorageNum = application.getCurrentDataStorageNum();
+		if (dataStorageNum > 0) {
+			initGraph(dataStorageNum, false);
+		}
 
         // uncomment below line to set axis color.
         //xyGraphView.setAxisColor(getResources().getColor(R.color.magenta_light));
@@ -107,6 +113,15 @@ public class MainActivity extends Activity implements Handler.Callback {
     public void onResume() {
         super.onResume();
     }
+	
+	public void onPause() {
+		super.onPause();
+        if (dataStorage != null) {
+			IXYPlot xyPlot = xyGraphView.getXYPlot();
+            dataStorage.setXMin(xyPlot.getXMin());
+            dataStorage.setXMax(xyPlot.getXMax());
+        }
+	}
 
     @Override
     public void onDestroy() {
@@ -152,11 +167,11 @@ public class MainActivity extends Activity implements Handler.Callback {
 
         final IXYPlot xyPlot = xyGraphView.getXYPlot();
 
-        if (dataStorage != null) {
-            dataStorage.setXMin(xyPlot.getXMin());
-            dataStorage.setXMax(xyPlot.getXMax());
-        }
-
+        if (dataStorage != null) {		
+			dataStorage.setXMin(xyPlot.getXMin());
+			dataStorage.setXMax(xyPlot.getXMax());
+		}
+		
         dataStorage = application.getDataStorage(dataStorageNum, this);
 
         if (loadPrevData) {
@@ -167,7 +182,7 @@ public class MainActivity extends Activity implements Handler.Callback {
                         Toast.LENGTH_SHORT).show();
             }
         }
-        xyGraphView.init("Time", "s", dataStorage.getDataHandlers(),
+        xyGraphView.init(dataStorage.getXName(), dataStorage.getXUnit(), dataStorage.getDataHandlers(),
                 new IXYGraphView() {
                     public void setEnabled(boolean enabled) {
                         dataStorage.setEnabled(enabled);

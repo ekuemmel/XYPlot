@@ -64,6 +64,18 @@ class DataStorage2 implements IDataStorage {
         return dhs;
     }
 
+	@Override
+	public String getXName() {
+		return "time";
+	}
+
+	
+	@Override
+	public String getXUnit() {
+		return "s";
+	}
+
+	
     /*
      * (non-Javadoc)
      *

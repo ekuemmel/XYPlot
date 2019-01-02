@@ -493,10 +493,11 @@ class XYGraphLibIntAndroid implements IXYGraphLibInt {
     public void drawText(String label, int x, int y) {
         android.graphics.Rect r = new android.graphics.Rect();
         paint.getTextBounds(label, 0, label.length(), r);
-        canvas.drawText(label, x, y + r.height(), paint);
+        canvas.drawText(label, x, y + r.height() + 2, paint);
     }
 	
-		public void drawTextRect(int number, String label, IXYGraphLib.Rect rect) {
+    @Override
+	public void drawTextRect(int number, String label, IXYGraphLib.Rect rect) {
 		String dots = "...";
 		int w = rect.width;
 		String s = label;

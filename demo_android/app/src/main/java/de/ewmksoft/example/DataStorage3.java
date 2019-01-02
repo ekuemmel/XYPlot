@@ -35,12 +35,12 @@ class DataStorage3 implements IDataStorage, SensorEventListener {
         plotPoints = MAX_POINTS;
         dhs[0] = XYPlot
                 .createDataHandler(plotPoints, new RGB(255, 50, 150, 50));
-        dhs[0].setLegendText("Sensordata");
-        dhs[0].setUnit("unit");
+        dhs[0].setLegendText("ACC");
+        dhs[0].setUnit("kg*m/s²");
         dhs[0].setManualScale(-5, 25);
         dhs[1] = XYPlot.createDataHandler(plotPoints, new RGB(255, 0, 0, 0));
         dhs[1].setLegendText("MP");
-        dhs[1].setUnit("unit");
+        dhs[1].setUnit("");
         dhs[1].setManualScale(-5, 25);
         enabled = true;
         mp = new double[plotPoints];
@@ -77,6 +77,16 @@ class DataStorage3 implements IDataStorage, SensorEventListener {
     public XYPlotData[] getDataHandlers() {
         return dhs;
     }
+	
+	@Override
+	public String getXName() {
+		return "Point";
+	}
+
+	@Override
+	public String getXUnit() {
+		return "";
+	}
 
     @Override
     public void update() {

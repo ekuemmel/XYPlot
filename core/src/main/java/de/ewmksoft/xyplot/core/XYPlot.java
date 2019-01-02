@@ -1470,13 +1470,14 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 * @param no
 	 */
 	private void calculateLegendBox(int no, XYPlotData data) {
-		if (legendFrameRect == null)
+		if (legendFrameRect == null) {
 			return;
+		}
 		if (expandLegend) {
 			graphLibInt.setNormalFont();
 			Pt fontSize = graphLibInt.getAverageCharacterSize();
 			int x = bounds.width - legendWidth;
-			int itemHeight = fontSize.y * 2 + LEGEND_BOX_BORDER;
+			int itemHeight = fontSize.y * 2 + LEGEND_BOX_BORDER + 5;
 			int y = legendFrameRect.y + no * itemHeight + 4 + legendButtonRect.height;
 			data.setLegendRect(new Rect(x, y, legendWidth - 2 * LEGEND_BOX_BORDER, itemHeight));
 		} else {
@@ -1488,8 +1489,9 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 * Draw the legend box for one channel
 	 */
 	private void paintLegendBox(int no, XYPlotData data) {
-		if (legendFrameRect == null)
+		if (legendFrameRect == null || !expandLegend) {
 			return;
+		}
 		Rect r = data.getLegendRect();
 		if (r != null) {
 			graphLibInt.setNormalFont();
@@ -1686,7 +1688,10 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		graphLibInt.drawLine(p1.x, p1.y, p2.x, p2.y);
 
 		if (showButtonsAndLegend) {
-			String s = xAxisText + " [" + xUnit + "]";
+			String s = xAxisText;
+			if (xUnit.length() > 0) {
+				s += " [" + xUnit + "]";
+			}
 			int xexp = (int) xData.dexpo;
 			if (xexp != 0) {
 				s = s + EXPO_STUB + xexp;
@@ -1721,18 +1726,22 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		XYPlotData data = dataList.get(no);
 		int h = buttonHeight;
 		int w = buttonWidth;
-		int x = bounds.width - w - 8;
+		int x = bounds.width - w - BUTTON_SPACING;
 		if (showStartButton) {
 			startRectangle = new Rect(x, bounds.height - buttonBarHeight + 2, w, h);
-			x -= (w + 8);
+			x -= (w + BUTTON_SPACING);
 		}
 		if (showClearButton) {
+			x -= (3 * BUTTON_SPACING);
 			clearRectangle = new Rect(x, bounds.height - buttonBarHeight + 2, w, h);
-			x -= (w + 8);
+			x -= (w + 2 * BUTTON_SPACING);
 		}
 		zoomYRectangle = new Rect(x, bounds.height - buttonBarHeight + 2, w, h);
-		x -= (w + 8);
-		saveRectangle = new Rect(x, bounds.height - buttonBarHeight + 2, w, h);
+		x -= (w + BUTTON_SPACING);
+		if (showSaveButton) {
+			saveRectangle = new Rect(x, bounds.height - buttonBarHeight + 2, w, h);
+		}
+		
 		boolean showAllButtons = (x > (buttonWidth + BUTTON_SPACING) * 6);
 		x = BUTTON_SPACING;
 		if (isPaused() && showAllButtons) {

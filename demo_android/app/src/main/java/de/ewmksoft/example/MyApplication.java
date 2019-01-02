@@ -6,6 +6,7 @@ import android.app.Application;
 import android.content.Context;
 
 public class MyApplication extends Application {
+	private int currentDataStorageNum;
 	private IDataStorage dataStorage1;
 	private IDataStorage dataStorage2;
 	private IDataStorage dataStorage3;
@@ -13,16 +14,19 @@ public class MyApplication extends Application {
 	IDataStorage getDataStorage(int num, Context context) {
 		switch (num) {
 		case 1:
+			currentDataStorageNum = 1;
 			if (dataStorage1 == null) {
 				dataStorage1 = new DataStorage1();
 			}
 			return dataStorage1;
 		case 2:
+			currentDataStorageNum = 2;
 			if (dataStorage2 == null) {
 				dataStorage2 = new DataStorage2();
 			}
 			return dataStorage2;
 		case 3:
+			currentDataStorageNum = 3;
 			if (dataStorage3 == null) {
 				dataStorage3 = new DataStorage3(context);
 			}
@@ -31,5 +35,9 @@ public class MyApplication extends Application {
 			throw new NoSuchElementException();
 		}
 
+	}
+	
+	int getCurrentDataStorageNum() {
+		return currentDataStorageNum;
 	}
 }

@@ -23,10 +23,10 @@ android {
 
 dependencies {
     // Use the next line to fetch the library from jcenter
-    //implementation 'de.ewmksoft.xyplot:xyplot_android:1.3.14@aar'
+    //implementation 'de.ewmksoft.xyplot:xyplot_android:1.3.15@aar'
     // ... or this line to use the local archive
     implementation 'com.android.support:appcompat-v7:25.4.0'
-    implementation 'xyplot_android:xyplot_android:1.3.14@aar'
+    implementation 'xyplot_android:xyplot_android:1.3.15@aar'
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'com.github.tony19:logback-android:1.1.1-12'
 }
