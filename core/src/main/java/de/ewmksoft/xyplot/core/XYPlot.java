@@ -276,6 +276,9 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	public boolean removeDataHandler(XYPlotData dh) {
 		XYPlotData.lock();
 		boolean result = dataList.remove(dh);
+		if (currentPlotNo >= dataList.size()) {
+			currentPlotNo = 0;
+		}
 		XYPlotData.unlock();
 		return result;
 	}
@@ -283,6 +286,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	public void removeDataHandlers() {
 		XYPlotData.lock();
 		dataList.clear();
+		currentPlotNo = 0;
 		XYPlotData.unlock();
 	}
 
