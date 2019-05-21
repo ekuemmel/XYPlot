@@ -1,4 +1,4 @@
-package de.ewmksoft.example;
+package de.ewmksoft.xyplot.example;
 
 import java.util.NoSuchElementException;
 

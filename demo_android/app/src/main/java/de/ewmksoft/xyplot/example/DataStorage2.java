@@ -1,4 +1,4 @@
-package de.ewmksoft.example;
+package de.ewmksoft.xyplot.example;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,7 @@ class DataStorage2 implements IDataStorage {
     private Random random;
     private XYPlotData[] dhs;
     private double y = 0;
-    private static final int MAX_POINTS = 4096; // Total points in the plot
+    private static final int MAX_POINTS = 100000; // Total points in the plot
 
     private final String[] labels = {"Under Limit", "In Limit", "Above Limit"};
     private double xMin;
