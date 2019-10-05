@@ -70,6 +70,11 @@ Version 1.3.17
 -	Better support for large numbers of values in a graph
 -	Improved gesture zoom in Android
 
+Version 1.3.18
+2019-09-14
+-	Saving of cursor position in persisted files
+
+
 
 
 

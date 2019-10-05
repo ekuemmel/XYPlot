@@ -357,31 +357,47 @@ public interface IXYPlot {
 
 	/**
 	 * Set the legend box to visible or invisible
+	 * The method is deprecated due to a typo. Use the
+	 * correctly spelled name instead.
 	 *
 	 * @param value
 	 */
+	@Deprecated
 	abstract void setLegendVisisble(boolean value);
+	abstract void setLegendVisible(boolean value);
 
 	/**
-	 * Set the save button to visible or invisible
+	 * Set the save button to visible or invisible.
+	 * The method is deprecated due to a typo. Use the
+	 * correctly spelled name instead.
 	 *
 	 * @param value
 	 */
+	@Deprecated
 	abstract void setSaveButtonVisisble(boolean value);
+	abstract void setSaveButtonVisible(boolean value);
 
 	/**
 	 * Set the run/pause button to visible or invisible
+	 * The method is deprecated due to a typo. Use the
+	 * correctly spelled name instead.
 	 *
 	 * @param value
 	 */
+	@Deprecated
 	abstract void setStartButtonVisisble(boolean value);
+	abstract void setStartButtonVisible(boolean value);
 
 	/**
 	 * Set the delete plot button to visible or invisible
+	 * The method is deprecated due to a typo. Use the
+	 * correctly spelled name instead.
 	 *
 	 * @param value
 	 */
+	@Deprecated
 	abstract void setClearButtonVisisble(boolean value);
+	abstract void setClearButtonVisible(boolean value);
 
 	/**
 	 * Turn on/off of axis labels and legend. This allows to

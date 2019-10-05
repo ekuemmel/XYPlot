@@ -637,7 +637,7 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 		int dotWidth = getStringExtends(dots).x;
 		if (getStringExtends(s).x > w) {
 			w -= dotWidth;
-			while (s.length() > 0 && getStringExtends(s).x > w) {
+			while (s.length() > 0 && getStringExtends(s).x >= w) {
 				s = s.substring(0, s.length()-1);
 			}
 			s += dots;

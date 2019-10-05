@@ -201,9 +201,9 @@ public class MainActivity extends Activity implements Handler.Callback {
                         myHandler.sendEmptyMessageDelayed(MSG_TAG_SAVE, 100);
                     }
                 });
-        xyPlot.setFontSize(20, 30);
+        xyPlot.setFontSize(15, 20);
         xyPlot.setAxisLabels(true);
-        xyPlot.setSaveButtonVisisble(true);
+        xyPlot.setSaveButtonVisible(true);
         xyPlot.setAllowPauseOnDataClick(false);
 
         xyGraphView.initXRange(dataStorage.getXMin(), dataStorage.getXMax());

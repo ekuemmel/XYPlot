@@ -95,6 +95,7 @@ public class XYPlotPersistence {
 	private static final String PDATA = "pdata";
 	private static final String DATE = "createdate";
 	private static final String COMMENT = "comment";
+	private static final String CURSORPOS = "cursorpos";
 
 	private SimpleDateFormat sdf;
 	private String xtext;
@@ -184,6 +185,7 @@ public class XYPlotPersistence {
 				jsonObject.put(PDATA, parray);
 				jsonObject.put(LEGEND, data.getLegendText());
 				jsonObject.put(NUMBER, no++);
+				jsonObject.put(CURSORPOS, data.getCursorPos());
 				dhs.put(jsonObject);
 			}
 			root.put(DHS, dhs);
@@ -191,6 +193,7 @@ public class XYPlotPersistence {
 			root.put(XUNIT, xunit);
 			root.put(DATE, createdate);
 			root.put(COMMENT, comment);
+			
 			BufferedOutputStream out = new BufferedOutputStream(
 					new GZIPOutputStream(new FileOutputStream(fileName
 							+ GZIPEXT)));
@@ -269,6 +272,9 @@ public class XYPlotPersistence {
 							pdata.remove(k);
 						}
 					}
+				}
+				if (jsonObject.has(CURSORPOS)) {
+					dataList[no].setCursorPos(jsonObject.getInt(CURSORPOS));
 				}
 			}
 		} catch (JSONException e) {

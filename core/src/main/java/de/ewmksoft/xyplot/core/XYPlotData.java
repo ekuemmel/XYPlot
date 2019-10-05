@@ -479,7 +479,7 @@ public class XYPlotData {
 	 * 
 	 * @param visiblePointNum
 	 */
-	public void setVisiblePointNum(int visiblePointNum) {
+	void setVisiblePointNum(int visiblePointNum) {
 		this.visiblePointNum = visiblePointNum;
 	}
 
@@ -488,7 +488,7 @@ public class XYPlotData {
 	 * 
 	 * @return
 	 */
-	public int getVisiblePointNum() {
+	int getVisiblePointNum() {
 		return visiblePointNum;
 	}
 
@@ -496,7 +496,7 @@ public class XYPlotData {
 	 * @param lastDrawPoint
 	 *            the lastDrawPoint to set
 	 */
-	public void setLastDrawPointNum(int lastDrawPoint) {
+	void setLastDrawPointNum(int lastDrawPoint) {
 		if (lastDrawPoint >= 0 && lastDrawPoint < values.size()) {
 			lastDrawPointNum = lastDrawPoint;
 		}
@@ -505,7 +505,7 @@ public class XYPlotData {
 	/**
 	 * @return the lastDrawPoint
 	 */
-	public int getLastDrawPointNum() {
+	int getLastDrawPointNum() {
 		int result = lastDrawPointNum;
 		lastDrawPointNum = lastIndex;
 		lastIndex = values.size();
@@ -517,7 +517,7 @@ public class XYPlotData {
 	 * 
 	 * @return Pointer to scale object
 	 */
-	public ScaleData getScaleData() {
+	ScaleData getScaleData() {
 		return scaleData;
 	}
 
@@ -650,7 +650,7 @@ public class XYPlotData {
 	 * 
 	 * @return
 	 */
-	public boolean hasNewValues() {
+	boolean hasNewValues() {
 		boolean result = false;
 		if (newValues > 0) {
 			newValues = 0;
@@ -665,7 +665,7 @@ public class XYPlotData {
 	 * 
 	 * @return
 	 */
-	public boolean hasOtherChanges() {
+	boolean hasOtherChanges() {
 		boolean result = otherChanges;
 		otherChanges = false;
 		return result;
@@ -676,7 +676,7 @@ public class XYPlotData {
 	 * 
 	 * @return > 0 Array index -1 No index found
 	 */
-	public int locateIndexFromXValue(double xvalue) {
+	int locateIndexFromXValue(double xvalue) {
 		int xpos = -1;
 		accessLock.lock();
 		try {

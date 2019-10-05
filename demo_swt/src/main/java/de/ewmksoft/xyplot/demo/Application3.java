@@ -52,7 +52,8 @@ public class Application3 implements ITimeTicker {
 	private Display display;
 	private XYPlotCanvas xyPlotCanvas;
 	private TimeTicker timeTicker;
-	// private double last_rx;
+	private String loadFileName;
+	private String saveFileName;
 	private XYPlotData[] dhs;
 	private volatile long startTime;
 	private boolean isPaused = false;
@@ -61,8 +62,10 @@ public class Application3 implements ITimeTicker {
 
 	private String[] labels = { "Label 1", "Label 2 has a very long value and might be cut in some cases", "Label 3" };
 
-	public Application3(Display display) {
+	public Application3(Display display, String loadFileName, String saveFileName) {
 		this.display = display;
+		this.loadFileName = loadFileName;
+		this.saveFileName = saveFileName;
 		random = new Random();
 
 		shell = new Shell(display);
@@ -127,9 +130,6 @@ public class Application3 implements ITimeTicker {
 			}
 		});
 
-		for (XYPlotData dh : dhs) {
-			xyplot.addDataHandler(dh);
-		}
 		shell.open();
 		shell.pack();
 	}
@@ -139,35 +139,66 @@ public class Application3 implements ITimeTicker {
 	 * loops here until it is terminated.
 	 */
 	void run() {
+		Thread timerThread = null;
+		IXYPlot xyPlot = xyPlotCanvas.getXYPlot();
+		
 		startTime = System.currentTimeMillis();
-		IXYPlot xyplot = xyPlotCanvas.getXYPlot();
-		xyplot.setXRange(0, 40);
+		if (loadFileName != null) {
+			xyPlot.setPaused(true);
+			xyPlot.setStartButtonVisible(false);
+			xyPlot.setSaveButtonVisible(saveFileName != null);
+			
+			XYPlotPersistence xyPlotPersistence = new XYPlotPersistence();
+			try {
+				dhs = xyPlotPersistence.readData(loadFileName);
+				for (XYPlotData dh : dhs) {
+					xyPlot.addDataHandler(dh);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			xyPlot.initXRange(xyPlotPersistence.getXMin(), xyPlotPersistence.getXMax());
+		} else {
+			xyPlot.setXRange(0, 40);
 
-		timeTicker = new TimeTicker(this, UPDATE_DELAY);
-		Thread timerThread = new Thread(timeTicker);
-		timerThread.start();
+			for (XYPlotData dh : dhs) {
+				xyPlot.addDataHandler(dh);
+			}
+
+			timeTicker = new TimeTicker(this, UPDATE_DELAY);
+			timerThread = new Thread(timeTicker);
+			timerThread.start();
+		}
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				xyPlotCanvas.updateControl();
 				display.sleep();
 			}
 		}
-		timeTicker.shutdown();
-		try {
-			timerThread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		if (timeTicker != null) {	
+			timeTicker.shutdown();
 		}
+		
+		if (timerThread != null) {
+			try {
+				timerThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+			
 		xyPlotCanvas.close();
 		shell.dispose();
 
-		try {
-			XYPlotPersistence xyPlotPersistence = new XYPlotPersistence();
-			xyPlotPersistence.setComment("Test Save");
-			xyPlotPersistence.setXDescription(xyplot.getXAxisText(), xyplot.getXUnitText());
-			xyPlotPersistence.writeData("test", dhs);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (saveFileName != null) {
+			try {
+				XYPlotPersistence xyPlotPersistence = new XYPlotPersistence();
+				xyPlotPersistence.setComment("Test Save");
+				xyPlotPersistence.setXDescription(xyPlot.getXAxisText(), xyPlot.getXUnitText());
+				xyPlotPersistence.writeData(saveFileName, dhs);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

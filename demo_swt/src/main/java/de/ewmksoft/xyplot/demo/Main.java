@@ -29,7 +29,9 @@ public class Main {
 			Application2 appl = new Application2(display);
 			appl.run(); // does not return until application is closed
 		} else {
-			Application3 appl = new Application3(display);
+			String loadFileName = (args.length > 0 ?args[0]:null);
+			String saveFileName = (args.length > 1 ?args[1]:null);
+			Application3 appl = new Application3(display, loadFileName, saveFileName);
 			appl.run(); // does not return until application is closed
 		}
 

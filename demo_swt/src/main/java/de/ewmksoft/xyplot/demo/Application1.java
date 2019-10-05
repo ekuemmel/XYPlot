@@ -114,7 +114,7 @@ public class Application1 implements ITimeTicker {
 		xyplot.setXUnitText("s");
 		xyplot.setXRange(0, 0);
 		xyplot.setFontSize(12, 14);
-		xyplot.setSaveButtonVisisble(false);
+		xyplot.setSaveButtonVisible(false);
 
 		xyplot.registerEventHandler(new IXYPlotEvent() {
 			public void onEvent(KeyEvent event) {

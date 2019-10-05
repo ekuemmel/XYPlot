@@ -8,6 +8,7 @@
 
 
 apply plugin: 'java-library'
+apply plugin: 'maven'
 
 buildscript {
     
@@ -26,7 +27,7 @@ repositories {
 }
 
 
-version = '1.3.15'
+version = '1.3.18'
 
 sourceCompatibility = '1.6'
 targetCompatibility = '1.6'
@@ -44,6 +45,51 @@ jar {
         configurations.includeLibs.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
+
+task makePom {
+        pom {
+			groupId = 'de.ewmksoft.xyplot'
+			artifactId = 'xyplot_swt'
+			name = 'XYPlot Library for SWT'
+			description = 'Library for displaying an interactive XY Graph in SWT apps'
+            project {
+                licenses {
+                    license {
+						name 'Unlicense'
+                        url 'http://unlicense.org/'
+                    }
+                }
+            }
+        }.writeTo("${buildDir}/outputs/aar/xyplot_swt-${version}.pom")
+	doLast {
+		println("Created POM")
+	}
+}
+
+task copyDistribution(type: Copy) {
+	from file("$buildDir/libs")
+	include "xyplot_swt-${version}.*"
+	into file("${buildDir}/../bintray/de/ewmksoft/xyplot/xyplot_swt/${version}")
+	doLast {
+		println("Copied distribution")
+	}
+	dependsOn makePom
+}
+
+
+task buildDistribution(type: Zip) {
+	archiveName = "de-${version}.zip"
+	destinationDir = file("${buildDir}")
+	includeEmptyDirs = false
+	include("**/${version}/xyplot*")
+	from "${buildDir}/../bintray"
+	doLast {
+		println("Created ZIP")
+	}
+	dependsOn copyDistribution
+}
+
+build.finalizedBy buildDistribution
 
 dependencies {
 	includeLibs "xyplot:xyplot:$version"

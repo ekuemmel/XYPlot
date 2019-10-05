@@ -88,7 +88,7 @@ class DataStorage2 implements IDataStorage {
         }
         long now = System.currentTimeMillis();
         double delta = 0.001 * (now - startTime);
-        y = y + (random.nextDouble() - 0.5);
+        y = y + 10000.0 * (random.nextDouble() - 0.5);
         dhs[0].addValue(delta, y);
         if (y > 3) {
             dhs[1].addValue(delta, labels[2]);

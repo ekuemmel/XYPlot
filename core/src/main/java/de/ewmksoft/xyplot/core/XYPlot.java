@@ -77,6 +77,15 @@ import de.ewmksoft.xyplot.core.IXYGraphLibInt.Pt;
  * to allow zooming and defining a cursor position
  */
 public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
+    public static final int CMD_MOVE_LEFT = 1;
+    public static final int CMD_MOVE_RIGHT = 2;
+    public static final int CMD_LAST_DATA = 3;
+    public static final int CMD_NEXT_DATA = 4;
+    public static final int CMD_ZOOM_IN = 5;
+    public static final int CMD_ZOOM_OUT = 6;
+    public static final int CMD_SHOW_ALL = 7;
+
+
     private static final int ZOOMBOX_LAZY_UPDATE_DELAY = 10;
     private static final int DATA_UPDATE_DELAY = 500;
     private static final int MIN_DATA_UPDATE_DELAY = 10;
@@ -84,8 +93,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
     private static final int BUTTON_NUM = 10;
     private static final int BUTTON_SPACING = 10;
     private static final int MIN_BUTTON_WIDTH = 44;
-    private static final int LEGEND_BOX_BORDER = 4;
-    private static final int TICK_LEN = 4;
     private static final int PADDING_TOP = 3;
     private static final int PADDING_BUTTON = 5;
     private static final int PADDING_XR = 5;
@@ -104,14 +111,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
     // scaled format is shown as e.g. 1E4 instead of x 10000
     private static final int EXPO_E_MIN = 6;
     private static final int EXPO_E_MAX = -4;
-
-    private static final int CMD_MOVE_LEFT = 1;
-    private static final int CMD_MOVE_RIGHT = 2;
-    private static final int CMD_LAST_DATA = 3;
-    private static final int CMD_NEXT_DATA = 4;
-    private static final int CMD_ZOOM_IN = 5;
-    private static final int CMD_ZOOM_OUT = 6;
-    private static final int CMD_SHOW_ALL = 7;
 
     public static final boolean SUPPORT_PARTIAL_DRAW = false;
 
@@ -156,6 +155,8 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
     private Pt mouseCurrentPosition;
     private Pt mouseLastPosition;
     private ArrayList<XYPlotData> dataList;
+	private int legendBoxBorder;
+	private int tickLen;
     private int legendWidth;
     private int currentPlotNo;
     private int[] dividers = {10, 5, 2};
@@ -181,8 +182,10 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
     protected XYPlot(IXYGraphLib graphLib) {
         dataMinMax = new HashMap<Integer, XYPlotData.MinMax>();
         unitMinMax = new HashMap<String, XYPlotData.MinMax>();
-        this.graphLibInt = graphLib.getInt();
-        this.graphLibInt.registerXYPlot(this);
+        graphLibInt = graphLib.getInt();
+        graphLibInt.registerXYPlot(this);
+		tickLen = graphLibInt.getAverageCharacterSize().x;
+		legendBoxBorder = graphLibInt.getAverageCharacterSize().y;
         dataList = new ArrayList<XYPlotData>();
         xData = new XYPlotData.ScaleData();
         bounds = graphLibInt.getBounds();
@@ -851,7 +854,11 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
      * @param bounds Outer rectangle defining the plotting are
      */
     public void setBounds(Rect bounds) {
+		boolean boundsChanged = this.bounds.width != bounds.width || this.bounds.height != bounds.height;
         this.bounds = bounds;
+		if (boundsChanged) {
+			calculateScale(xData, AxisType.XAXIS, userxmin, userxmax);
+		}
         calculateButtonSize();
         scaleChanged = true;
     }
@@ -1207,9 +1214,13 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
     /*
      * (non-Javadoc)
      *
-     * @see de.ewmksoft.xyplot.core.IXYPlot#setSaveButtonVisisble(boolean)
+     * @see de.ewmksoft.xyplot.core.IXYPlot#setSaveButtonVisible(boolean)
      */
-    public void setSaveButtonVisisble(boolean value) {
+	@Deprecated 
+	public void setSaveButtonVisisble(boolean value) {
+		setSaveButtonVisible(value);
+	}
+    public void setSaveButtonVisible(boolean value) {
         XYPlotData.lock();
         boolean changed = (value != showSaveButton);
         if (changed) {
@@ -1223,9 +1234,13 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
     /*
      * (non-Javadoc)
      *
-     * @see de.ewmksoft.xyplot.core.IXYPlot#setRunPauseButtonVisisble(boolean)
+     * @see de.ewmksoft.xyplot.core.IXYPlot#setRunPauseButtonVisible(boolean)
      */
-    public void setStartButtonVisisble(boolean value) {
+	@Deprecated
+	public void setStartButtonVisisble(boolean value) {
+		setStartButtonVisible(value);
+	}
+    public void setStartButtonVisible(boolean value) {
         XYPlotData.lock();
         boolean changed = (value != showStartButton);
         if (changed) {
@@ -1239,9 +1254,13 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
     /*
      * (non-Javadoc)
      *
-     * @see de.ewmksoft.xyplot.core.IXYPlot#setDeleteButtonVisisble(boolean)
+     * @see de.ewmksoft.xyplot.core.IXYPlot#setDeleteButtonVisible(boolean)
      */
-    public void setClearButtonVisisble(boolean value) {
+	@Deprecated 
+	public void setClearButtonVisisble(boolean value) {
+		setClearButtonVisible(value);
+	}
+    public void setClearButtonVisible(boolean value) {
         XYPlotData.lock();
         boolean changed = (value != showClearButton);
         if (changed) {
@@ -1257,7 +1276,11 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
      *
      * @param value New value for visible state
      */
-    public void setLegendVisisble(boolean value) {
+	@Deprecated 
+	public void setLegendVisisble(boolean value) {
+		setLegendVisible(value);
+	}
+    public void setLegendVisible(boolean value) {
         XYPlotData.lock();
         boolean changed = (value != showLegend);
         if (changed) {
@@ -1433,16 +1456,16 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
             for (XYPlotData data : dataList) {
                 Rect r = data.getLegendRect();
                 if (r != null) {
-                    h += r.height + 1;
+                    h += r.height;
                 }
             }
         }
+		h += legendBoxBorder;
         int x = bounds.width - 4 - w;
         legendFrameRect = null;
         if (showLegend) {
-            int padding = 1;
             legendFrameRect = new Rect(x, y, w, h);
-            legendButtonRect = new Rect(x + 1 + padding, y + 1 + padding, w - 4 - padding, buttonHeight - 4 - padding);
+            legendButtonRect = new Rect(x + 2, y + 2, w - 4, buttonHeight);
             graphLibInt.setBgColor(BgColor.LEGENDBG);
             graphLibInt.setDashedLines(1);
             if (expandLegend) {
@@ -1467,10 +1490,11 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
         if (expandLegend) {
             graphLibInt.setNormalFont();
             Pt fontSize = graphLibInt.getAverageCharacterSize();
-            int x = bounds.width - legendWidth;
-            int itemHeight = fontSize.y * 2 + LEGEND_BOX_BORDER + 5;
-            int y = legendFrameRect.y + no * itemHeight + 4 + legendButtonRect.height;
-            data.setLegendRect(new Rect(x, y, legendWidth - 2 * LEGEND_BOX_BORDER, itemHeight));
+            int x = legendFrameRect.x + 2;
+            int itemHeight = fontSize.y * 2 + legendBoxBorder;
+            int y = legendButtonRect.y + legendButtonRect.height + 4 + no * itemHeight;
+			int itemWidth = legendFrameRect.width - 4;
+            data.setLegendRect(new Rect(x, y, itemWidth, itemHeight));
         } else {
             data.setLegendRect(null);
         }
@@ -1493,10 +1517,11 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
                 graphLibInt.setBgColor(BgColor.LEGENDSELECTBG);
             }
             graphLibInt.fillRectangle(r);
-            graphLibInt.drawTextRect(no + 1, data.getLegendText(), r);
+			Rect tp = new Rect(r.x, r.y + legendBoxBorder / 2, r.width, r.height);
+            graphLibInt.drawTextRect(no + 1, data.getLegendText(), tp);
             graphLibInt.setBgColor(BgColor.PLOTBG);
             graphLibInt.setFgPlotColor(no);
-            graphLibInt.drawRectangle(new Rect(r.x, r.y + r.height - 3, r.width, 2));
+            graphLibInt.drawRectangle(new Rect(r.x, r.y + r.height - legendBoxBorder / 4 - 1,  r.width, legendBoxBorder / 4));
             graphLibInt.setFgColor(FgColor.AXIS);
             if (data.length() > 0) {
                 int pos = data.length() - 1;
@@ -1510,7 +1535,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
                     graphLibInt.setBgColor(BgColor.LEGENDSELECTBG);
                 }
                 graphLibInt.setNormalFont();
-                graphLibInt.drawText(label, r.x, r.y + r.height / 2 - 2);
+                graphLibInt.drawText(label, r.x, r.y + r.height / 2 );
             }
         }
     }
@@ -1536,8 +1561,9 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
                     XYPlotData.DataValue dv = data.getValue(0);
                     xMax = Math.max(xMax, dv.x());
                     Pt p = scaleToScreenY0(dv.x());
-                    if (p.x > stopPointX.x)
+                    if (p.x > stopPointX.x) {
                         p.x = stopPointX.x;
+					}
                     w = Math.max(p.x - startPointY.x, w);
                 }
             }
@@ -1634,11 +1660,11 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
                     if (y >= 0 && y < labels.size()) {
                         Pt p = scaleToScreenX0(currentPlotNo, y * q);
                         p1 = new Pt(p.x, p.y);
-                        p2 = new Pt(p.x - TICK_LEN, p.y);
+                        p2 = new Pt(p.x - tickLen, p.y);
                         graphLibInt.setBgColor(BgColor.LEGENDSELECTBG);
                         String label = labels.get(y);
                         Pt shift = graphLibInt.getStringExtends(label);
-                        int tx = Math.max(p2.x - shift.x - TICK_LEN, 3);
+                        int tx = Math.max(p2.x - shift.x - tickLen, 3);
                         int ty = p2.y - shift.y;
                         graphLibInt.drawRectangle(tx - 2, ty - 6, shift.x + 8, shift.y + 6);
                         graphLibInt.setFgColor(FgColor.AXIS);
@@ -1651,7 +1677,8 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
                     double y = sd.tmin + sd.tdelta * i;
                     Pt p = scaleToScreenX0(currentPlotNo, y * q);
                     p1 = new Pt(p.x, p.y);
-                    p2 = new Pt(p.x - TICK_LEN, p.y);
+                    p2 = new Pt(p.x - tickLen/4*3, p.y);
+					Pt p3 = new Pt(p.x - tickLen, p.y);
                     graphLibInt.setFgColor(FgColor.AXIS);
                     graphLibInt.setSolidLines(1);
                     graphLibInt.drawLine(p1.x, p1.y, p2.x, p2.y);
@@ -1665,7 +1692,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
                         label = "0";
                     }
                     Pt shift = graphLibInt.getStringExtends(label);
-                    graphLibInt.drawText(label, p2.x - shift.x - TICK_LEN, p2.y - shift.y / 2);
+                    graphLibInt.drawText(label, p3.x - shift.x, p3.y - shift.y / 2);
                 }
             }
         }
@@ -1680,14 +1707,15 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
         if (showButtonsAndLegend) {
             String s = xAxisText;
             if (xUnit.length() > 0) {
-                s += " [" + xUnit + "]";
+                s += " [" + xUnit + "] ";
             }
             int xexp = (int) xData.dexpo;
             if (xexp != 0) {
                 s = s + EXPO_STUB + xexp;
             }
-            int unitPos = bounds.width - graphLibInt.getStringExtends(s).x - 10;
-            graphLibInt.drawText(s, unitPos, p2.y + TICK_LEN);
+			s = " " + s;
+            int unitPos = bounds.width - graphLibInt.getStringExtends(s + "_").x;
+            graphLibInt.drawText(s, unitPos, p2.y + tickLen);
             q = Math.pow(10, xData.dexpo);
             nf = NumberFormat.getInstance();
             nf.setGroupingUsed(GROUPING_USED);
@@ -1697,13 +1725,16 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
                 double xvalue = xData.tmin + xData.tdelta * i;
                 Pt p = scaleToScreenY0(xvalue * q);
                 p1 = new Pt(p.x, p.y);
-                p2 = new Pt(p.x, p.y + TICK_LEN);
+                p2 = new Pt(p.x, p.y + tickLen/4*3);
+				Pt p3 = new Pt(p.x, p.y + tickLen);
                 String label = nf.format(xvalue);
                 Pt shift = graphLibInt.getStringExtends(label);
                 int labelPos = p2.x - shift.x / 2;
-                if (labelPos > startPointX.x && labelPos + shift.x < unitPos) {
-                    graphLibInt.drawLine(p1.x, p1.y, p2.x, p2.y);
-                    graphLibInt.drawText(label, labelPos, p2.y + TICK_LEN);
+                if (p1.x > startPointX.x && p1.x < stopPointX.x) {
+					graphLibInt.drawLine(p1.x, p1.y, p2.x, p2.y);
+					if (labelPos + shift.x < unitPos) {
+						graphLibInt.drawText(label, labelPos, p3.y);
+					}
                 }
             }
         }
@@ -1948,7 +1979,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
             XYPlotData.ScaleData sd = data.getScaleData();
             if (xData == null || sd == null)
                 continue;
-            int bw = 3 * LEGEND_BOX_BORDER;
+            int bw = 3 * legendBoxBorder;
             graphLibInt.setNormalFont();
             lw = bw + graphLibInt.getStringExtends(data.getLegendText()).x;
             legendWidth = Math.max(legendWidth, lw);
@@ -1961,14 +1992,14 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 
             if (showButtonsAndLegend) {
                 graphLibInt.setNormalFont();
-                yox = Math.max(yox, (sd.gk + 4) * fontSize.x + TICK_LEN);
+                yox = Math.max(yox, (sd.gk + 1) * fontSize.x + tickLen);
                 int yexp = (int) sd.dexpo;
                 if (yexp != 0) {
                     int width = graphLibInt.getStringExtends(createExpoString(yexp)).x;
                     yox = Math.max(yox, width);
                 }
                 yoy = Math.max(yoy, buttonBarHeight + fontSize.y / 2);
-                yuy = Math.min(yuy, bounds.height - buttonBarHeight - PADDING_BUTTON * 2 - TICK_LEN - fontSize.y);
+                yuy = Math.min(yuy, bounds.height - buttonBarHeight - PADDING_BUTTON * 2 - tickLen - fontSize.y);
                 xrx = bounds.width - graphLibInt.getStringExtends(formatValue(true, xData, xData.vmax)).x;
                 xrx = Math.min(xrx, bounds.width - (PADDING_XR + 10));
             }

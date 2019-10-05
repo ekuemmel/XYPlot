@@ -13,7 +13,7 @@ buildscript {
     }
 }
 
-version = '1.3.17'
+version = '1.3.18'
 
 android {
 	compileSdkVersion 23
@@ -59,11 +59,18 @@ android {
     }
 }
 
+task deleteFiles(type: Delete) {
+	delete "${buildDir}/../libs"
+	doLast {
+		println("Removed libs folder")
+	}
+}
+
 task copyCore(type: Copy) {
 	from file("${buildDir}/../../../core/build/libs/xyplot-${version}.jar")
 	into file("${buildDir}/../libs")
 	doLast {
-		println("Copied core library")
+		println("Copied core library to libs")
 	}
 }
 
@@ -81,7 +88,7 @@ task makePom {
                     }
                 }
             }
-        }.writeTo("$buildDir/outputs/aar/xyplot_android-${version}.pom")
+        }.writeTo("${buildDir}/outputs/aar/xyplot_android-${version}.pom")
 	doLast {
 		println("Created POM")
 	}
@@ -110,7 +117,10 @@ task buildDistribution(type: Zip) {
 	dependsOn copyDistribution
 }
 
+clean.dependsOn deleteFiles
 assemble.dependsOn copyCore
+
+build.finalizedBy buildDistribution
 
 dependencies {
     testImplementation 'junit:junit:4.12'

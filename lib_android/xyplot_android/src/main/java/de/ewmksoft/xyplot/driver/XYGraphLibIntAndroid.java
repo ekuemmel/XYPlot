@@ -64,8 +64,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 import de.ewmksoft.xyplot.core.IXYGraphLib;
@@ -124,12 +126,15 @@ class XYGraphLibIntAndroid implements IXYGraphLibInt {
     private Bitmap saveCurveImage;
     private Drawable[] imageDrawables;
     private float buttonRatio = 1.0f * 25 / 40;
+    private float dp2px = 1;
     private View owner;
 
     @SuppressLint("UseSparseArrays")
     XYGraphLibIntAndroid(View owner, IXYGraphLib.Rect bounds) {
         this.owner = owner;
         setBounds(bounds);
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        dp2px = metrics.density;
         imageDrawables = new Drawable[ButtonImages.values().length];
         plotColor = new HashMap<Integer, Integer>();
         plotBgColor = Color.argb(255, 252, 252, 252);
@@ -519,11 +524,11 @@ class XYGraphLibIntAndroid implements IXYGraphLibInt {
     }
 
     public void setFontSize(int labelFontSize, int titleFontSize) {
-        this.labelFontSize = labelFontSize;
-        this.titleFontSize = titleFontSize;
+        this.labelFontSize = (int)(labelFontSize * dp2px);
+        this.titleFontSize = (int)(titleFontSize * dp2px);
         defCharSize = new Pt();
         android.graphics.Rect r = new android.graphics.Rect();
-        mBitmapPaint.setTextSize(labelFontSize);
+        mBitmapPaint.setTextSize(this.labelFontSize);
         mBitmapPaint.getTextBounds("g", 0, 1, r);
         defCharSize.x = r.width();
         defCharSize.y = (int) Math.round(CHAR_HEIGHT_SCALE_FACTOR * r.height());
