@@ -46,6 +46,12 @@ jar {
     }
 }
 
+task jarSources(type:Jar){
+	from sourceSets.main.java
+	from('../core/src/main/java')
+    classifier = 'source'
+}
+
 task makePom {
         pom {
 			groupId = 'de.ewmksoft.xyplot'
@@ -60,7 +66,7 @@ task makePom {
                     }
                 }
             }
-        }.writeTo("${buildDir}/outputs/aar/xyplot_swt-${version}.pom")
+        }.writeTo("${buildDir}/outputs/pom/xyplot_swt-${version}.pom")
 	doLast {
 		println("Created POM")
 	}
@@ -69,11 +75,12 @@ task makePom {
 task copyDistribution(type: Copy) {
 	from file("$buildDir/libs")
 	include "xyplot_swt-${version}.*"
+	include "xyplot_swt-${version}-source.*"
 	into file("${buildDir}/../bintray/de/ewmksoft/xyplot/xyplot_swt/${version}")
 	doLast {
 		println("Copied distribution")
 	}
-	dependsOn makePom
+	dependsOn makePom, jarSources
 }
 
 

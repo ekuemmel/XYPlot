@@ -34,6 +34,11 @@ jar {
     }
 }
 
+task jarSources(type:Jar){
+    from sourceSets.main.allSource
+    classifier = 'source'
+}
+
 dependencies {
     testCompile 'junit:junit:4.12'
 }
