@@ -245,7 +245,7 @@ public class XYPlotData {
 					}
 				}
 				yMinMax.min = 0;
-				yMinMax.max = labels.size()-1;
+				yMinMax.max = labels.size() - 1;
 			} else {
 				y = labels.indexOf(label);
 			}
@@ -331,7 +331,7 @@ public class XYPlotData {
 			return new DataValue(0, 0, false);
 		} finally {
 			accessLock.unlock();
-		}			
+		}
 	}
 
 	/*
@@ -519,6 +519,13 @@ public class XYPlotData {
 	 */
 	ScaleData getScaleData() {
 		return scaleData;
+	}
+
+	/**
+	 * Get the number of digits behind the decimal point.
+	 */
+	public int getNumberOfDecimalPlaces() {
+		return scaleData.nk;
 	}
 
 	/**
