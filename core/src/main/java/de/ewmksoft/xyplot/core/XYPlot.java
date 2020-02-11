@@ -1049,12 +1049,13 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
                 paintClickAreas(currentPlotNo);
             }
 
+			paintLegendArea();
             no = 0;
             for (XYPlotData data : dataList) {
                 calculateLegendBox(no, data);
                 no++;
             }
-            paintLegendArea();
+
             no = 0;
             for (XYPlotData data : dataList) {
                 paintLegendBox(no, data);

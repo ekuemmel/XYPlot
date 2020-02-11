@@ -106,12 +106,12 @@ public class XYPlotData {
 	private final List<String> labels = new ArrayList<String>();
 	private ArrayList<DataValue> values;
 
-	public XYPlotData(XYPlot owner, int maxvalue) {
+	public XYPlotData(XYPlot owner, int maxNum) {
 		this.owner = owner;
-		maxNum = maxvalue;
-		autoScale = true;
-		values = new ArrayList<DataValue>(maxNum);
-		scaleData = new ScaleData();
+		this.maxNum = maxNum;
+		this.autoScale = true;
+		this.values = new ArrayList<DataValue>(maxNum);
+		this.scaleData = new ScaleData();
 		init();
 	}
 
@@ -131,12 +131,18 @@ public class XYPlotData {
 		}
 	}
 
+	/**
+	 * Set the plot to which the data belong to.
+	 * 
+	 * @param owner
+	 *            The plot the data belong to
+	 */
 	public void setOwner(XYPlot owner) {
 		this.owner = owner;
 	}
 
 	/**
-	 * Nested class for one data value
+	 * Nested class for one data value.
 	 * 
 	 */
 	public static class DataValue {
@@ -298,12 +304,10 @@ public class XYPlotData {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Declare a break after the last added data point.
 	 * 
-	 * @see de.ewmksoft.xyplot.IXYPlotData#setPause()
 	 */
-
 	public void setPause() {
 		accessLock.lock();
 		try {
@@ -317,10 +321,11 @@ public class XYPlotData {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Get the data point on a given index position.
 	 * 
-	 * @see de.ewmksoft.xyplot.IXYPlotData#getValue(int)
+	 * @param index
+	 *            Position in data buffer
 	 */
 	public DataValue getValue(int index) {
 		accessLock.lock();
@@ -334,10 +339,12 @@ public class XYPlotData {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Set the legend text for this data handler.
 	 * 
-	 * @see de.ewmksoft.xyplot.IXYPlotData#setLegendText(java.lang.String)
+	 * @param text
+	 *            The legend text
+	 * 
 	 */
 	public void setLegendText(String text) {
 		boolean changed = true;
@@ -351,10 +358,9 @@ public class XYPlotData {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Get the legend text for this data handler.
 	 * 
-	 * @see de.ewmksoft.xyplot.IXYPlotData#getLegendText()
 	 */
 	public String getLegendText() {
 		String result = "-";
@@ -364,10 +370,11 @@ public class XYPlotData {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Set the unit string for this data handler e.g. km or miles.
 	 * 
-	 * @see de.ewmksoft.xyplot.IXYPlotData#setUnit(java.lang.String)
+	 * @param text
+	 *            The unit text.
 	 */
 	public void setUnit(String text) {
 		boolean changed = true;
@@ -394,28 +401,37 @@ public class XYPlotData {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Get the actual number of data points in this data handler.
 	 * 
-	 * @see de.ewmksoft.xyplot.IXYPlotData#length()
 	 */
 	public int length() {
 		return values.size();
 	}
-
-	/*
-	 * (non-Javadoc)
+	
+	
+	/**
+	 * Get the maximum number od points this data handler can store in
+	 * its ring buffer. 
 	 * 
-	 * @see de.ewmksoft.xyplot.IXYPlotData#isAutoScale()
+	 */
+	public int getMaxNumber() {
+		return maxNum;
+	}
+
+	/**
+	 * True in case y-axis autoscaling is on.
+	 * 
 	 */
 	public boolean isAutoScale() {
 		return autoScale;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Set autoscaling.
 	 * 
-	 * @see de.ewmksoft.xyplot.IXYPlotData#setAutoScale(boolean)
+	 * @param autoScale
+	 *            True/false
 	 */
 	public void setAutoScale(boolean autoScale) {
 		this.autoScale = autoScale;
@@ -584,10 +600,8 @@ public class XYPlotData {
 		legendRect = r;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.ewmksoft.xyplot.IXYPlotData#getXMax()
+	/**
+	 * Get the maximal value used on the x-axis.
 	 */
 	public double getXMax() {
 		double result = 0;
@@ -603,10 +617,8 @@ public class XYPlotData {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.ewmksoft.xyplot.IXYPlotData#getXMin()
+	/**
+	 * Get the minimal value used on the x-axis.
 	 */
 	public double getXMin() {
 		double result = 0;
@@ -621,10 +633,8 @@ public class XYPlotData {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.ewmksoft.xyplot.IXYPlotData#getYMax()
+	/**
+	 * Get the maximal value used on the y-axis.
 	 */
 	public double getYMax() {
 		accessLock.lock();
@@ -636,10 +646,8 @@ public class XYPlotData {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.ewmksoft.xyplot.IXYPlotData#getYMin()
+	/**
+	 * Get the minimal value used on the y-axis.
 	 */
 	public double getYMin() {
 		accessLock.lock();
@@ -762,18 +770,19 @@ public class XYPlotData {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Set the color for this data handler.
 	 * 
-	 * @see
-	 * de.ewmksoft.xyplot.IXYPlotData#setColor(de.ewmksoft.xyplot.IXYGraphLib
-	 * .RGB)
+	 * @param color
+	 *            Color for the data in the plot.
 	 */
 	public void setColor(RGB color) {
 		this.color = color;
 	}
 
 	/**
+	 * Get the color used for this data.
+	 * 
 	 * @return the color
 	 */
 	public RGB getColor() {
@@ -832,7 +841,6 @@ public class XYPlotData {
 
 	/**
 	 * Nested class containing all data relevant for the scaling
-	 * 
 	 * 
 	 */
 	static public class ScaleData {
