@@ -83,6 +83,7 @@ import de.ewmksoft.xyplot.core.IXYGraphLib.*;
  * @author Eberhard Kuemmel
  */
 class XYGraphLibIntAndroid implements IXYGraphLibInt {
+	final private double CHAR_WIDTH_SCALE_FACTOR = 1.1;
     final private double CHAR_HEIGHT_SCALE_FACTOR = 1.5;
 
     private Paint paint;
@@ -256,7 +257,7 @@ class XYGraphLibIntAndroid implements IXYGraphLibInt {
         Pt result = new Pt();
         android.graphics.Rect r = new android.graphics.Rect();
         paint.getTextBounds(s, 0, s.length(), r);
-        result.x = r.width();
+        result.x = (int) Math.round(CHAR_WIDTH_SCALE_FACTOR * r.width());
         result.y = (int) Math.round(CHAR_HEIGHT_SCALE_FACTOR * r.height());
         return result;
     }

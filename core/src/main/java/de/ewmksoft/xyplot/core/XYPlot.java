@@ -1049,13 +1049,15 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
                 paintClickAreas(currentPlotNo);
             }
 
-			paintLegendArea();
             no = 0;
             for (XYPlotData data : dataList) {
                 calculateLegendBox(no, data);
                 no++;
             }
 
+			calculateLegendArea();
+			paintLegendArea();
+			
             no = 0;
             for (XYPlotData data : dataList) {
                 paintLegendBox(no, data);
@@ -1445,15 +1447,14 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
     }
 
     /**
-     * Draw the surrounding box of the legend
+     * Calculate the surrounding box of the legend
      */
-    private void paintLegendArea() {
-        graphLibInt.setFgColor(FgColor.AXIS);
+    private void calculateLegendArea() {
         int y = PADDING_TOP;
         int w = buttonWidth;
         int h = buttonHeight;
         if (expandLegend) {
-            w = legendWidth;
+            w = legendWidth + 1;
             for (XYPlotData data : dataList) {
                 Rect r = data.getLegendRect();
                 if (r != null) {
@@ -1467,6 +1468,16 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
         if (showLegend) {
             legendFrameRect = new Rect(x, y, w, h);
             legendButtonRect = new Rect(x + 2, y + 2, w - 4, buttonHeight);
+        }
+    }
+
+
+    /**
+     * Draw the surrounding box of the legend
+     */
+    private void paintLegendArea() {
+        graphLibInt.setFgColor(FgColor.AXIS);
+        if (showLegend && legendFrameRect != null && legendButtonRect != null) {
             graphLibInt.setBgColor(BgColor.LEGENDBG);
             graphLibInt.setDashedLines(1);
             if (expandLegend) {
@@ -1485,16 +1496,13 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
      * @param no Number of plot
      */
     private void calculateLegendBox(int no, XYPlotData data) {
-        if (legendFrameRect == null) {
-            return;
-        }
-        if (expandLegend) {
+        if (expandLegend && legendButtonRect != null) {
             graphLibInt.setNormalFont();
             Pt fontSize = graphLibInt.getAverageCharacterSize();
-            int x = legendFrameRect.x + 2;
+            int x = bounds.width - 2 - legendWidth;
             int itemHeight = fontSize.y * 2 + legendBoxBorder;
             int y = legendButtonRect.y + legendButtonRect.height + 4 + no * itemHeight;
-			int itemWidth = legendFrameRect.width - 4;
+			int itemWidth = legendWidth - 4;
             data.setLegendRect(new Rect(x, y, itemWidth, itemHeight));
         } else {
             data.setLegendRect(null);
@@ -1632,10 +1640,11 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 
             Pt tw = graphLibInt.getStringExtends(ytext);
             // Draw current curve title in header
-            int titleXpos = startPointX.x + 40;
+			int colorBoxSize = tw.y / 2;
+            int titleXpos = startPointX.x + 2 * colorBoxSize;
             int titleYPos = PADDING_TOP;
             Rect titleRect = new Rect(titleXpos, titleYPos, stopPointX.x - startPointX.x - 50, tw.y);
-            Rect titleColorBox = new Rect(titleXpos - 30, titleYPos, 20, 20);
+            Rect titleColorBox = new Rect(startPointX.x + colorBoxSize/2 , titleYPos + colorBoxSize/2, colorBoxSize, colorBoxSize);
             graphLibInt.drawTextRect(0, ytext, titleRect);
             graphLibInt.setBgPlotColor(currentPlotNo);
             graphLibInt.fillRectangle(titleColorBox);

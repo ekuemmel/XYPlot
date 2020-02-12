@@ -19,24 +19,17 @@ class DataStorage2 implements IDataStorage {
     private Random random;
     private XYPlotData[] dhs;
     private double y = 0;
-    private static final int MAX_POINTS = 100000; // Total points in the plot
+    private double startX = 0;
+    private static final int MAX_POINTS = 200000; // Total points in the plot
 
     private final String[] labels = {"Under Limit", "In Limit", "Above Limit"};
     private double xMin;
     private double xMax;
 
     DataStorage2() {
-        dhs = new XYPlotData[2];
-        int plotPoints = MAX_POINTS / dhs.length;
-        dhs[0] = XYPlot
-                .createDataHandler(plotPoints, new RGB(255, 50, 150, 50));
-        dhs[0].setLegendText("Battery Voltage");
-        dhs[0].setUnit("Volt");
-        dhs[1] = XYPlot
-                .createDataHandler(plotPoints, new RGB(255, 150, 50, 50));
-        dhs[1].setLegendText("Limit");
         random = new Random();
         enabled = true;
+        dhs = new XYPlotData[2];
         clearData();
     }
 
@@ -47,11 +40,19 @@ class DataStorage2 implements IDataStorage {
      */
     @Override
     public void clearData() {
-        for (XYPlotData dh : dhs) {
-            dh.clear();
-        }
         y = 0;
+		startX = 0;
         startTime = System.currentTimeMillis();
+        dhs[0] = XYPlot
+                .createDataHandler(MAX_POINTS, new RGB(255, 50, 150, 50));
+        dhs[0].setLegendText("Battery Voltage");
+        dhs[0].setUnit("Volt");
+        dhs[0].clear();
+        dhs[1] = XYPlot
+                .createDataHandler(MAX_POINTS, new RGB(255, 150, 50, 50));
+        dhs[1].setLegendText("Limit");
+        dhs[1].getNumberOfDecimalPlaces();
+        dhs[1].clear();
     }
 
     /*
@@ -87,15 +88,15 @@ class DataStorage2 implements IDataStorage {
             return;
         }
         long now = System.currentTimeMillis();
-        double delta = 0.001 * (now - startTime);
+        double x = startX + 0.001 * (now - startTime);
         y = y + 10000.0 * (random.nextDouble() - 0.5);
-        dhs[0].addValue(delta, y);
+        dhs[0].addValue(x, y);
         if (y > 3) {
-            dhs[1].addValue(delta, labels[2]);
+            dhs[1].addValue(x, labels[2]);
         } else if (y < -3) {
-            dhs[1].addValue(delta, labels[0]);
+            dhs[1].addValue(x, labels[0]);
         } else {
-            dhs[1].addValue(delta, labels[1]);
+            dhs[1].addValue(x, labels[1]);
         }
     }
 
@@ -182,6 +183,9 @@ class DataStorage2 implements IDataStorage {
         XYPlotPersistence xyPlotPersistence = new XYPlotPersistence();
         dhs = xyPlotPersistence.readData(homePath + File.separator
                 + DATA_FILE_NAME);
+        setXMin(xyPlotPersistence.getXMin());
+        startX = xyPlotPersistence.getXMax();
+        setXMax(startX);
     }
 
 }

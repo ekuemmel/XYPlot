@@ -8,6 +8,7 @@ import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -26,10 +27,12 @@ public class MainActivity extends Activity implements Handler.Callback {
 
     private static final int MSG_TAG_UPDATE = 1;
     private static final int MSG_TAG_SAVE = 2;
+	private static final int MSG_TAG_LEGEND = 3;
     private IDataStorage dataStorage;
     private Thread dataThread;
     private XYGraphView xyGraphView;
     private Handler myHandler;
+	private int legendCount = 0;
 
     public MainActivity() {
         super();
@@ -43,6 +46,8 @@ public class MainActivity extends Activity implements Handler.Callback {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         xyGraphView = (XYGraphView) findViewById(R.id.xyPlot1);
 			
@@ -68,7 +73,8 @@ public class MainActivity extends Activity implements Handler.Callback {
 
             @Override
             public void onClick(View v) {
-                initGraph(2, false);
+				legendCount = 1;
+                initGraph(2, true);
             }
         });
         button3.setOnClickListener(new OnClickListener() {
@@ -143,6 +149,21 @@ public class MainActivity extends Activity implements Handler.Callback {
                         myHandler.sendEmptyMessageDelayed(MSG_TAG_UPDATE, 100);
                 }
                 break;
+            case MSG_TAG_LEGEND:
+				if (2 == legendCount) {
+					IXYPlot xyPlot = xyGraphView.getXYPlot();
+					xyPlot.setLegendExpanded(true);
+					xyGraphView.invalidate();
+					myHandler.sendEmptyMessageDelayed(MSG_TAG_LEGEND, 4000);
+					legendCount = 3;
+				} else
+				if (3 == legendCount) {				
+					IXYPlot xyPlot = xyGraphView.getXYPlot();
+					xyPlot.setLegendExpanded(false);
+					xyGraphView.invalidate();
+					legendCount = 4;
+				}
+                break;
             case MSG_TAG_SAVE:
                 if (dataStorage != null) {
                     dataStorage.setEnabled(false);
@@ -162,7 +183,7 @@ public class MainActivity extends Activity implements Handler.Callback {
         return true;
     }
 
-    private void initGraph(int dataStorageNum, boolean loadPrevData) {
+    private void initGraph(final int dataStorageNum, boolean loadPrevData) {
         MyApplication application = (MyApplication) getApplication();
 
         final IXYPlot xyPlot = xyGraphView.getXYPlot();
@@ -177,6 +198,7 @@ public class MainActivity extends Activity implements Handler.Callback {
         if (loadPrevData) {
             try {
                 dataStorage.restore();
+                dataStorage.setEnabled(false);
             } catch (IOException e) {
                 Toast.makeText(this, "Error: " + e.getMessage(),
                         Toast.LENGTH_SHORT).show();
@@ -186,7 +208,11 @@ public class MainActivity extends Activity implements Handler.Callback {
                 new IXYGraphView() {
                     public void setEnabled(boolean enabled) {
                         dataStorage.setEnabled(enabled);
-                        myHandler.sendEmptyMessageDelayed(1, 100);
+						if (!enabled && 1 == legendCount) {
+							myHandler.sendEmptyMessageDelayed(MSG_TAG_LEGEND, 2000);
+							legendCount = 2;
+						}
+                        myHandler.sendEmptyMessageDelayed(MSG_TAG_UPDATE, 100);
                     }
 
                     public boolean isEnabled() {
@@ -195,6 +221,7 @@ public class MainActivity extends Activity implements Handler.Callback {
 
                     public void clear() {
                         dataStorage.clearData();
+						initGraph(dataStorageNum, false);
                     }
 
                     public void save() {
@@ -205,7 +232,6 @@ public class MainActivity extends Activity implements Handler.Callback {
         xyPlot.setAxisLabels(true);
         xyPlot.setSaveButtonVisible(true);
         xyPlot.setAllowPauseOnDataClick(false);
-
         xyGraphView.initXRange(dataStorage.getXMin(), dataStorage.getXMax());
 
         myHandler.sendEmptyMessage(MSG_TAG_UPDATE);
