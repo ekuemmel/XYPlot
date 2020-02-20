@@ -230,10 +230,10 @@ public interface IXYPlot {
 	 *            Maximum x value to be displayed
 	 */
 	abstract void setXRange(double xmin, double xmax);
-	
+
 	/**
-	 * Same as setXRange but is always executed independent of the 
-	 * graphs current paused state.
+	 * Same as setXRange but is always executed independent of the graphs
+	 * current paused state.
 	 *
 	 * @param xmin
 	 *            Minimum x value to be displayed
@@ -356,52 +356,52 @@ public interface IXYPlot {
 	abstract boolean isLegendExpanded();
 
 	/**
-	 * Set the legend box to visible or invisible
-	 * The method is deprecated due to a typo. Use the
-	 * correctly spelled name instead.
+	 * Set the legend box to visible or invisible The method is deprecated due
+	 * to a typo. Use the correctly spelled name instead.
 	 *
 	 * @param value
 	 */
 	@Deprecated
 	abstract void setLegendVisisble(boolean value);
+
 	abstract void setLegendVisible(boolean value);
 
 	/**
-	 * Set the save button to visible or invisible.
-	 * The method is deprecated due to a typo. Use the
-	 * correctly spelled name instead.
+	 * Set the save button to visible or invisible. The method is deprecated due
+	 * to a typo. Use the correctly spelled name instead.
 	 *
 	 * @param value
 	 */
 	@Deprecated
 	abstract void setSaveButtonVisisble(boolean value);
+
 	abstract void setSaveButtonVisible(boolean value);
 
 	/**
-	 * Set the run/pause button to visible or invisible
-	 * The method is deprecated due to a typo. Use the
-	 * correctly spelled name instead.
+	 * Set the run/pause button to visible or invisible The method is deprecated
+	 * due to a typo. Use the correctly spelled name instead.
 	 *
 	 * @param value
 	 */
 	@Deprecated
 	abstract void setStartButtonVisisble(boolean value);
+
 	abstract void setStartButtonVisible(boolean value);
 
 	/**
-	 * Set the delete plot button to visible or invisible
-	 * The method is deprecated due to a typo. Use the
-	 * correctly spelled name instead.
+	 * Set the delete plot button to visible or invisible The method is
+	 * deprecated due to a typo. Use the correctly spelled name instead.
 	 *
 	 * @param value
 	 */
 	@Deprecated
 	abstract void setClearButtonVisisble(boolean value);
+
 	abstract void setClearButtonVisible(boolean value);
 
 	/**
-	 * Turn on/off of axis labels and legend. This allows to
-	 * create smaller diagrams.
+	 * Turn on/off of axis labels and legend. This allows to create smaller
+	 * diagrams.
 	 *
 	 * @param value
 	 *            true (default) or false
@@ -447,7 +447,8 @@ public interface IXYPlot {
 	 * bigger chunks but only as much as required. This causes more drawing
 	 * operations. Default is true.
 	 * 
-	 * @param smoothScroll True to scroll smoothly
+	 * @param smoothScroll
+	 *            True to scroll smoothly
 	 */
 	abstract void setSmoothScroll(boolean smoothScroll);
 }

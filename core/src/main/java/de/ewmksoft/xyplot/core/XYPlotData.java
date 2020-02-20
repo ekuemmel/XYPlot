@@ -408,11 +408,10 @@ public class XYPlotData {
 	public int length() {
 		return values.size();
 	}
-	
-	
+
 	/**
-	 * Get the maximum number od points this data handler can store in
-	 * its ring buffer. 
+	 * Get the maximum number od points this data handler can store in its ring
+	 * buffer.
 	 * 
 	 */
 	public int getMaxNumber() {

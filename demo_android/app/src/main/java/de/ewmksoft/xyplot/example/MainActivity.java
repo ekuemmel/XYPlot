@@ -146,8 +146,9 @@ public class MainActivity extends Activity implements Handler.Callback {
             case MSG_TAG_UPDATE:
                 if (dataStorage != null && dataStorage.isEnabled()) {
                         dataStorage.updateXAxis(xyGraphView);
-                        myHandler.sendEmptyMessageDelayed(MSG_TAG_UPDATE, 100);
                 }
+                myHandler.removeMessages(MSG_TAG_UPDATE);
+                myHandler.sendEmptyMessageDelayed(MSG_TAG_UPDATE, 100);
                 break;
             case MSG_TAG_LEGEND:
 				if (2 == legendCount) {
@@ -197,6 +198,7 @@ public class MainActivity extends Activity implements Handler.Callback {
 
         if (loadPrevData) {
             try {
+                xyPlot.setPaused(true);
                 dataStorage.restore();
                 dataStorage.setEnabled(false);
             } catch (IOException e) {
@@ -212,7 +214,6 @@ public class MainActivity extends Activity implements Handler.Callback {
 							myHandler.sendEmptyMessageDelayed(MSG_TAG_LEGEND, 2000);
 							legendCount = 2;
 						}
-                        myHandler.sendEmptyMessageDelayed(MSG_TAG_UPDATE, 100);
                     }
 
                     public boolean isEnabled() {
@@ -230,6 +231,7 @@ public class MainActivity extends Activity implements Handler.Callback {
                 });
         xyPlot.setFontSize(15, 20);
         xyPlot.setAxisLabels(true);
+        xyPlot.setLegendExpanded(true);
         xyPlot.setSaveButtonVisible(true);
         xyPlot.setAllowPauseOnDataClick(false);
         xyGraphView.initXRange(dataStorage.getXMin(), dataStorage.getXMax());
