@@ -48,10 +48,12 @@ class DataStorage3 implements IDataStorage, SensorEventListener {
         clearData();
         sensorManager = (SensorManager) context
                 .getSystemService(Context.SENSOR_SERVICE);
-        Sensor sensor = sensorManager
-                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, sensor,
-                SensorManager.SENSOR_DELAY_FASTEST);
+        if (sensorManager != null) {
+            Sensor sensor = sensorManager
+                    .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            sensorManager.registerListener(this, sensor,
+                    SensorManager.SENSOR_DELAY_FASTEST);
+        }
     }
 
     @Override
@@ -77,16 +79,16 @@ class DataStorage3 implements IDataStorage, SensorEventListener {
     public XYPlotData[] getDataHandlers() {
         return dhs;
     }
-	
-	@Override
-	public String getXName() {
-		return "Point";
-	}
 
-	@Override
-	public String getXUnit() {
-		return "";
-	}
+    @Override
+    public String getXName() {
+        return "Point";
+    }
+
+    @Override
+    public String getXUnit() {
+        return "";
+    }
 
     @Override
     public void update() {

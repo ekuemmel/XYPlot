@@ -6,36 +6,36 @@ import de.ewmksoft.xyplot.core.XYPlotData;
 import de.ewmksoft.xyplot.driver.XYGraphView;
 
 public interface IDataStorage {
-	public static final String EXT_FOLDER = "xyplot";
+	String EXT_FOLDER = "xyplot";
 
-	public abstract void updateXAxis(XYGraphView xyGraphView);
+	void updateXAxis(XYGraphView xyGraphView);
 
-	public abstract void clearData();
+	void clearData();
 
-	public abstract XYPlotData[] getDataHandlers();
+	XYPlotData[] getDataHandlers();
 	
-	public abstract String getXName();
+	String getXName();
 	
-	public abstract String getXUnit();
+	String getXUnit();
 
-	public abstract void update();
+	void update();
 
-	public abstract boolean isEnabled();
+	boolean isEnabled();
 
-	public abstract double getXMin();
+	double getXMin();
 
-	public abstract double getXMax();
+	double getXMax();
 
-	public abstract void setEnabled(boolean enabled);
+	void setEnabled(boolean enabled);
 
-    public abstract void setXMin(double xMin);
+    void setXMin(double xMin);
 
-    public abstract void setXMax(double xMax);
+    void setXMax(double xMax);
 
-	public abstract String save() throws IOException;
+	String save() throws IOException;
 
-	public abstract void restore() throws IOException;
+	void restore() throws IOException;
 
-	public void destroy();
+	void destroy();
 
 }
