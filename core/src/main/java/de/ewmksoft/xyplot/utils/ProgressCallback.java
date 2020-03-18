@@ -1,4 +1,4 @@
-package com.bosch.adx.esidroid.reports;
+package de.ewmksoft.xyplot.utils;
 
 /**
  * Interface for getting progress for saving AV data storing/loading.
