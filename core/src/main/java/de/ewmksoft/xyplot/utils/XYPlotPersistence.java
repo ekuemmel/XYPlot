@@ -78,6 +78,7 @@ import de.ewmksoft.xyplot.core.XYPlot;
 import de.ewmksoft.xyplot.core.XYPlotData;
 import de.ewmksoft.xyplot.core.IXYGraphLib.RGB;
 import de.ewmksoft.xyplot.core.XYPlotData.DataValue;
+import de.ewmksoft.xyplot.utils.ProgressCallback;
 
 public class XYPlotPersistence {
 	private static final String INPUT_CHARSET = "UTF8";
