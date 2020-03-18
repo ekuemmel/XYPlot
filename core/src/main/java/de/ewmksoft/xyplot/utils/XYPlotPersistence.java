@@ -152,64 +152,87 @@ public class XYPlotPersistence {
 	 * @throws IOException
 	 */
 
-	public void writeData(String fileName, XYPlotData[] dataList)
-			throws IOException {
-		try {
-			Date date = new Date();
-			createdate = sdf.format(date);
-			int no = 0;
-			int maxsize = 0;
-			JSONArray dhs = new JSONArray();
-			JSONObject root = new JSONObject();
-			for (XYPlotData data : dataList) {
-				if (data == null)
-					continue;
-				JSONArray parray = new JSONArray();
-				JSONArray xarray = new JSONArray();
-				JSONArray yarray = new JSONArray();
-				for (int i = 0; i < data.length(); ++i) {
-					DataValue dataValue = data.getValue(i);
-					xarray.put(dataValue.x());
-					yarray.put(dataValue.y());
-					if (i > maxsize)
-						maxsize = i;
-					if (dataValue.border()) {
-						parray.put(i);
-					}
-				}
-				JSONObject jsonObject = new JSONObject();
-				jsonObject.put(YUNIT, data.getUnit());
-				jsonObject.put(COLOR, data.getColor().toString());
-				jsonObject.put(XDATA, xarray);
-				jsonObject.put(YDATA, yarray);
-				jsonObject.put(PDATA, parray);
-				jsonObject.put(LEGEND, data.getLegendText());
-				jsonObject.put(NUMBER, no++);
-				jsonObject.put(CURSORPOS, data.getCursorPos());
-				dhs.put(jsonObject);
-			}
-			root.put(DHS, dhs);
-			root.put(XTEXT, xtext);
-			root.put(XUNIT, xunit);
-			root.put(DATE, createdate);
-			root.put(COMMENT, comment);
-			
-			BufferedOutputStream out = new BufferedOutputStream(
-					new GZIPOutputStream(new FileOutputStream(fileName
-							+ GZIPEXT)));
-			PrintWriter w = new PrintWriter(out);
-			try {
-				System.out.println("Writing file");
-				root.write(w);
-			} finally {
-				if (w != null) {
-					w.close();
-				}
-			}
-		} catch (JSONException e) {
-			throw new IOException(e.toString());
-		}
-	}
+	public void writeData(String fileName, XYPlotData[] dataList, ProgressCallback progressCallback) throws IOException {
+        	if (progressCallback != null) {
+            	progressCallback.onProgress(0);
+        	}
+        	int dataProgress = 0;
+        	int totalProgress = 0;
+        	try {
+            	Date date = new Date();
+            	this.createdate = this.sdf.format(date);
+            	int no = 0;
+            	int maxsize = 0;
+            	JSONArray dhs = new JSONArray();
+            	JSONObject root = new JSONObject();
+            	XYPlotData[] var8 = dataList;
+            	int var9 = dataList.length;
+
+            	for (int var10 = 0; var10 < var9; ++var10) {
+                	XYPlotData data = var8[var10];
+                	if (data != null) {
+                    	JSONArray parray = new JSONArray();
+                    	JSONArray xarray = new JSONArray();
+                    	JSONArray yarray = new JSONArray();
+
+                    	for (int i = 0; i < data.length(); ++i) {
+                        	DataValue dataValue = data.getValue(i);
+                        	xarray.put(dataValue.x());
+                        	yarray.put(dataValue.y());
+                        	if (i > maxsize) {
+                            	maxsize = i;
+                        	}
+
+                        	if (dataValue.border()) {
+                            	parray.put(i);
+                        	}
+
+                        	dataProgress = (i * 98 / var9) / data.length();
+                        	if (progressCallback != null) {
+                            	progressCallback.onProgress(totalProgress + dataProgress);
+                        	}
+                    	}
+                    	totalProgress = totalProgress + dataProgress;
+                    	dataProgress = 0;
+
+                    	JSONObject jsonObject = new JSONObject();
+                    	jsonObject.put("xunit", data.getUnit());
+                    	jsonObject.put("color", data.getColor().toString());
+                    	jsonObject.put("xdata", xarray);
+                    	jsonObject.put("ydata", yarray);
+                    	jsonObject.put("pdata", parray);
+                    	jsonObject.put("legend", data.getLegendText());
+                    	jsonObject.put("number", no++);
+                    	jsonObject.put("cursorpos", data.getCursorPos());
+                    	dhs.put(jsonObject);
+                	}
+            	}
+
+            	root.put("dhs", dhs);
+            	root.put("xtext", this.xtext);
+            	root.put("xunit", this.xunit);
+            	root.put("createdate", this.createdate);
+            	root.put("comment", this.comment);
+            	BufferedOutputStream out = new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(fileName + ".gzip")));
+            	PrintWriter w = new PrintWriter(out);
+
+            	try {
+                	System.out.println("Writing file");
+                	root.write(w);
+            	} finally {
+                	totalProgress = 100;
+                	if (progressCallback != null) {
+                    	progressCallback.onProgress(totalProgress);
+                	}
+                	if (w != null) {
+                    	w.close();
+                	}
+            	}
+
+        	} catch (JSONException var21) {
+            	throw new IOException(var21.toString());
+        	}
+    	}
 
 	/**
 	 * Read data from a file
@@ -218,72 +241,97 @@ public class XYPlotPersistence {
 	 *            Name of the file
 	 * @throws IOException
 	 */
-	public XYPlotData[] readData(String fileName) throws IOException {
-		if (!fileName.endsWith(GZIPEXT)) {
-			fileName += GZIPEXT;
-		}
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				new GZIPInputStream(new FileInputStream(fileName))));
-		BufferedReader reader = new BufferedReader(in);
-		StringBuffer sb = new StringBuffer();
-		XYPlotData[] dataList = null;
-		do {
-			int ch = reader.read();
-			if (ch >= 0) {
-				sb.append((char) ch);
-			} else {
-				break;
-			}
-		} while (true);
-		try {
-			JSONObject root = new JSONObject(sb.toString());
-			xtext = new String(root.getString(XTEXT).getBytes(), INPUT_CHARSET);
-			xunit = new String(root.getString(XUNIT).getBytes(), INPUT_CHARSET);
-			comment = new String(root.getString(COMMENT).getBytes(),
-					INPUT_CHARSET);
-			createdate = root.getString(DATE);
-			JSONArray ja = root.getJSONArray(DHS);
-			dataList = new XYPlotData[ja.length()];
-			for (int no = 0; no < ja.length(); ++no) {
-				JSONObject jsonObject = ja.getJSONObject(no);
-				String color = jsonObject.getString(COLOR);
-				String yunit = new String(jsonObject.getString(YUNIT)
-						.getBytes(), INPUT_CHARSET);
-				String legend = new String(jsonObject.getString(LEGEND)
-						.getBytes(), INPUT_CHARSET);
-				JSONArray xarray = jsonObject.getJSONArray(XDATA);
-				JSONArray yarray = jsonObject.getJSONArray(YDATA);
-				JSONArray pdata = jsonObject.getJSONArray(PDATA);
-				dataList[no] = XYPlot.createDataHandler(xarray.length(),
-						new RGB(color));
-				dataList[no].setLegendText(legend);
-				dataList[no].setUnit(yunit);
-				for (int i = 0; i < xarray.length(); ++i) {
-					double x = xarray.getDouble(i);
-					double y = yarray.getDouble(i);
-					if (x < xmin)
-						xmin = x;
-					if (x > xmax)
-						xmax = x;
-					dataList[no].addValue(x, y);
-					for (int k = 0; k < pdata.length(); ++k) {
-						if (pdata.getInt(k) == i) {
-							dataList[no].setPause();
-							pdata.remove(k);
-						}
-					}
-				}
-				if (jsonObject.has(CURSORPOS)) {
-					dataList[no].setCursorPos(jsonObject.getInt(CURSORPOS));
-				}
-			}
-		} catch (JSONException e) {
-			throw new IOException(e.toString());
-		} finally {
-			reader.close();
-		}
-		return dataList;
-	}
+	public XYPlotData[] readData(String fileName, ProgressCallback progressCallback) throws IOException {
+        	if (!fileName.endsWith(".gzip")) {
+            	fileName = fileName + ".gzip";
+        	}
+
+        	BufferedReader in = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(fileName))));
+        	BufferedReader reader = new BufferedReader(in);
+        	StringBuffer sb = new StringBuffer();
+        	XYPlotData[] dataList = null;
+        	if (progressCallback != null) {
+            	progressCallback.onProgress(0);
+        	}
+        	int dataProgress = 0;
+        	int totalProgress = 0;
+
+        	while (true) {
+            	int ch = reader.read();
+            	if (ch < 0) {
+                	try {
+                    	JSONObject root = new JSONObject(sb.toString());
+                    	this.xtext = new String(root.getString("xtext").getBytes(), "UTF8");
+                    	this.xunit = new String(root.getString("xunit").getBytes(), "UTF8");
+                    	this.comment = new String(root.getString("comment").getBytes(), "UTF8");
+                    	this.createdate = root.getString("createdate");
+                    	JSONArray ja = root.getJSONArray("dhs");
+                    	dataList = new XYPlotData[ja.length()];
+
+                    	for (int no = 0; no < ja.length(); ++no) {
+                        	JSONObject jsonObject = ja.getJSONObject(no);
+                        	String color = jsonObject.getString("color");
+                        	String yunit = new String(jsonObject.getString("xunit").getBytes(), "UTF8");
+                        	String legend = new String(jsonObject.getString("legend").getBytes(), "UTF8");
+                        	JSONArray xarray = jsonObject.getJSONArray("xdata");
+                        	JSONArray yarray = jsonObject.getJSONArray("ydata");
+                        	JSONArray pdata = jsonObject.getJSONArray("pdata");
+                        	dataList[no] = XYPlot.createDataHandler(xarray.length(), new RGB(color));
+                        	dataList[no].setLegendText(legend);
+                        	dataList[no].setUnit(yunit);
+
+                        	for (int i = 0; i < xarray.length(); ++i) {
+                            	double x = xarray.getDouble(i);
+                            	double y = yarray.getDouble(i);
+                            	if (x < this.xmin) {
+                                	this.xmin = x;
+                            	}
+
+                            	if (x > this.xmax) {
+                                	this.xmax = x;
+                            	}
+
+                            	dataList[no].addValue(x, y);
+
+                            	for (int k = 0; k < pdata.length(); ++k) {
+                                	if (pdata.getInt(k) == i) {
+                                    	dataList[no].setPause();
+                                    	pdata.remove(k);
+                                	}
+                            	}
+                            	dataProgress = (i * 100 / ja.length()) / xarray.length();
+                            	if (progressCallback != null) {
+                                	progressCallback.onProgress(totalProgress + dataProgress);
+                            	}
+                        	}
+
+                        	totalProgress = totalProgress + dataProgress;
+                        	dataProgress = 0;
+
+                        	if (jsonObject.has("cursorpos")) {
+                            	dataList[no].setCursorPos(jsonObject.getInt("cursorpos"));
+                        	}
+                    	}
+                	} catch (JSONException var25) {
+                    	throw new IOException(var25.toString());
+                	} finally {
+                    	reader.close();
+                	}
+
+                	return dataList;
+            	}
+
+            	sb.append((char) ch);
+        	}
+    	}
+	
+    	public void writeData(String fileName, XYPlotData[] dataList) throws IOException {
+        	writeData(fileName, dataList, null);
+    	}
+
+    	public XYPlotData[] readData(String fileName) throws IOException {
+        	return readData(fileName, null);
+    	}
 
 	public double getXMin() {
 		return xmin;
