@@ -26,5 +26,5 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'com.github.tony19:logback-android:1.1.1-12'
 
-    implementation 'de.ewmksoft.xyplot:xyplot_android:1.3.22@aar'
+    implementation 'de.ewmksoft.xyplot:xyplot_android:1.3.23@aar'
 }

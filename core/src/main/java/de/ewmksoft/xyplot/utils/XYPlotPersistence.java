@@ -80,6 +80,22 @@ import de.ewmksoft.xyplot.core.IXYGraphLib.RGB;
 import de.ewmksoft.xyplot.core.XYPlotData.DataValue;
 
 public class XYPlotPersistence {
+
+	/**
+	 * Interface for getting progress for reading/writing XYPlotData arrays.
+	 */
+	public interface ProgressCallback {
+
+		/**
+		 * This method is called with increasing progress of the read or write
+		 * operation. The progress value is between 0 and 100.
+		 *
+		 * @param progress
+		 *            progress in percentage (0..100).
+		 */
+		void onProgress(int progress);
+	}
+
 	private static final String INPUT_CHARSET = "UTF8";
 	private static final String DATEFORMAT = "yyyyMMdd.HHmmssZ";
 	private static final String GZIPEXT = ".gzip";
@@ -145,14 +161,17 @@ public class XYPlotPersistence {
 	}
 
 	/**
-	 * Save plot data into a file
+	 * Save plot data into a file.
 	 * 
 	 * @param fileName
 	 *            Name of the file
+	 * @param dataList
+	 *            An plot data handler array
+	 * @param progressCallback
+	 *            A progress callback
 	 * @throws IOException
 	 */
-
-	public void writeData(String fileName, XYPlotData[] dataList)
+	public void writeData(String fileName, XYPlotData[] dataList, ProgressCallback progressCallback)
 			throws IOException {
 		try {
 			Date date = new Date();
@@ -161,9 +180,18 @@ public class XYPlotPersistence {
 			int maxsize = 0;
 			JSONArray dhs = new JSONArray();
 			JSONObject root = new JSONObject();
+			int maxCount = 1;
 			for (XYPlotData data : dataList) {
-				if (data == null)
+				if (data != null) {
+					maxCount += data.length();
+				}
+			}
+			int interval = Math.max(1, maxCount / 20);
+			int count = 0;
+			for (XYPlotData data : dataList) {
+				if (data == null) {
 					continue;
+				}
 				JSONArray parray = new JSONArray();
 				JSONArray xarray = new JSONArray();
 				JSONArray yarray = new JSONArray();
@@ -176,6 +204,11 @@ public class XYPlotPersistence {
 					if (dataValue.border()) {
 						parray.put(i);
 					}
+					if (progressCallback != null && count % interval == 0) {
+						int progress = Math.min((80 * count) / maxCount, 99);
+						progressCallback.onProgress(progress);
+					}
+					count++;
 				}
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.put(YUNIT, data.getUnit());
@@ -193,18 +226,19 @@ public class XYPlotPersistence {
 			root.put(XUNIT, xunit);
 			root.put(DATE, createdate);
 			root.put(COMMENT, comment);
-			
+
 			BufferedOutputStream out = new BufferedOutputStream(
-					new GZIPOutputStream(new FileOutputStream(fileName
-							+ GZIPEXT)));
+					new GZIPOutputStream(new FileOutputStream(fileName + GZIPEXT)));
 			PrintWriter w = new PrintWriter(out);
 			try {
-				System.out.println("Writing file");
 				root.write(w);
 			} finally {
 				if (w != null) {
 					w.close();
 				}
+			}
+			if (progressCallback != null) {
+				progressCallback.onProgress(100);
 			}
 		} catch (JSONException e) {
 			throw new IOException(e.toString());
@@ -212,18 +246,35 @@ public class XYPlotPersistence {
 	}
 
 	/**
+	 * Save plot data into a file.
+	 * 
+	 * @param fileName
+	 *            Name of the file
+	 * @param dataList
+	 *            An plot data handler array
+	 * @throws IOException
+	 */
+	public void writeData(String fileName, XYPlotData[] dataList) throws IOException {
+		this.writeData(fileName, dataList, null);
+	}
+
+	/**
 	 * Read data from a file
 	 * 
 	 * @param fileName
 	 *            Name of the file
+	 * @param dataList
+	 *            An plot data handler array
+	 * @param progressCallback
+	 *            A progress callback
 	 * @throws IOException
 	 */
-	public XYPlotData[] readData(String fileName) throws IOException {
+	public XYPlotData[] readData(String fileName, ProgressCallback progressCallback) throws IOException {
 		if (!fileName.endsWith(GZIPEXT)) {
 			fileName += GZIPEXT;
 		}
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				new GZIPInputStream(new FileInputStream(fileName))));
+		BufferedReader in = new BufferedReader(
+				new InputStreamReader(new GZIPInputStream(new FileInputStream(fileName))));
 		BufferedReader reader = new BufferedReader(in);
 		StringBuffer sb = new StringBuffer();
 		XYPlotData[] dataList = null;
@@ -239,23 +290,30 @@ public class XYPlotPersistence {
 			JSONObject root = new JSONObject(sb.toString());
 			xtext = new String(root.getString(XTEXT).getBytes(), INPUT_CHARSET);
 			xunit = new String(root.getString(XUNIT).getBytes(), INPUT_CHARSET);
-			comment = new String(root.getString(COMMENT).getBytes(),
-					INPUT_CHARSET);
+			comment = new String(root.getString(COMMENT).getBytes(), INPUT_CHARSET);
 			createdate = root.getString(DATE);
 			JSONArray ja = root.getJSONArray(DHS);
+
+			int maxCount = 1;
+			for (int no = 0; no < ja.length(); ++no) {
+				JSONObject jsonObject = ja.getJSONObject(no);
+				JSONArray xarray = jsonObject.getJSONArray(XDATA);
+				maxCount += xarray.length();
+			}
+
+			int interval = Math.max(1, maxCount / 20);
+			int count = 0;
+
 			dataList = new XYPlotData[ja.length()];
 			for (int no = 0; no < ja.length(); ++no) {
 				JSONObject jsonObject = ja.getJSONObject(no);
 				String color = jsonObject.getString(COLOR);
-				String yunit = new String(jsonObject.getString(YUNIT)
-						.getBytes(), INPUT_CHARSET);
-				String legend = new String(jsonObject.getString(LEGEND)
-						.getBytes(), INPUT_CHARSET);
+				String yunit = new String(jsonObject.getString(YUNIT).getBytes(), INPUT_CHARSET);
+				String legend = new String(jsonObject.getString(LEGEND).getBytes(), INPUT_CHARSET);
 				JSONArray xarray = jsonObject.getJSONArray(XDATA);
 				JSONArray yarray = jsonObject.getJSONArray(YDATA);
 				JSONArray pdata = jsonObject.getJSONArray(PDATA);
-				dataList[no] = XYPlot.createDataHandler(xarray.length(),
-						new RGB(color));
+				dataList[no] = XYPlot.createDataHandler(xarray.length(), new RGB(color));
 				dataList[no].setLegendText(legend);
 				dataList[no].setUnit(yunit);
 				for (int i = 0; i < xarray.length(); ++i) {
@@ -272,6 +330,11 @@ public class XYPlotPersistence {
 							pdata.remove(k);
 						}
 					}
+					if (progressCallback != null && count % interval == 0) {
+						int progress = Math.min((100 * count) / maxCount, 99);
+						progressCallback.onProgress(progress);
+					}
+					count++;
 				}
 				if (jsonObject.has(CURSORPOS)) {
 					dataList[no].setCursorPos(jsonObject.getInt(CURSORPOS));
@@ -282,14 +345,41 @@ public class XYPlotPersistence {
 		} finally {
 			reader.close();
 		}
+		if (progressCallback != null) {
+			progressCallback.onProgress(100);
+		}
 		return dataList;
 	}
 
+	/**
+	 * Read data from a file
+	 * 
+	 * @param fileName
+	 *            Name of the file
+	 * @param dataList
+	 *            An plot data handler array
+	 * @throws IOException
+	 */
+	public XYPlotData[] readData(String fileName) throws IOException {
+		return this.readData(fileName, null);
+	}
+
+	/**
+	 * Get the minimal X value used in this persisted data
+	 * 
+	 * @return Minimal X value
+	 */
 	public double getXMin() {
 		return xmin;
 	}
 
+	/**
+	 * Get the maximal X value used in this persisted data
+	 * 
+	 * @return Maximal X value
+	 */
 	public double getXMax() {
 		return xmax;
 	}
+
 }

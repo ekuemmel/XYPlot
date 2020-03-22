@@ -19,7 +19,20 @@ repositories {
 	}
 }
 
-version = '1.3.18'
+jar {
+    manifest {
+        attributes('Implementation-Title': project.name,
+                   'Implementation-Version': project.version,
+				   'Main-Class':'de.ewmksoft.xyplot.demo.Main')
+    }
+	from {
+		configurations.compile.collect {it.isDirectory() ? it : zipTree(it) }
+	}
+	exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+}
+
+
+version = '1.3.23'
 
 dependencies {
     compile 'org.slf4j:slf4j-api:1.7.25'

@@ -26,6 +26,7 @@ import de.ewmksoft.xyplot.core.XYPlotData;
 import de.ewmksoft.xyplot.driver.XYGraphLibSWT;
 import de.ewmksoft.xyplot.driver.XYPlotCanvas;
 import de.ewmksoft.xyplot.utils.XYPlotPersistence;
+import de.ewmksoft.xyplot.utils.XYPlotPersistence.ProgressCallback;
 
 /**
  * Main class of the application
@@ -40,7 +41,7 @@ public class Application3 implements ITimeTicker {
 	public static final int OFS_Y = 100; // 100
 
 	public static final int UPDATE_DELAY = 50; // Update interval [ms]
-	private static final int MAX_POINTS = 1000; // Total points in the plot
+	private static final int MAX_POINTS = 100000; // Total points in the plot
 
 	private static boolean clearOnStart = false;
 
@@ -124,6 +125,25 @@ public class Application3 implements ITimeTicker {
 					newStart = true;
 					clearOnStart = true;
 					break;
+				case KEY_SAVE:
+					if (saveFileName != null) {
+						try {
+							IXYPlot xyPlot = xyPlotCanvas.getXYPlot();
+							XYPlotPersistence xyPlotPersistence = new XYPlotPersistence();
+							xyPlotPersistence.setComment("Test Save");
+							xyPlotPersistence.setXDescription(xyPlot.getXAxisText(), xyPlot.getXUnitText());
+							xyPlotPersistence.writeData(saveFileName, dhs, new ProgressCallback() {
+
+								@Override
+								public void onProgress(int progress) {
+									System.out.println(String.format("Write progress: %d", progress));
+								}
+							});
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					break;
 				default:
 					break;
 				}
@@ -141,16 +161,22 @@ public class Application3 implements ITimeTicker {
 	void run() {
 		Thread timerThread = null;
 		IXYPlot xyPlot = xyPlotCanvas.getXYPlot();
-		
+
 		startTime = System.currentTimeMillis();
 		if (loadFileName != null) {
 			xyPlot.setPaused(true);
 			xyPlot.setStartButtonVisible(false);
-			xyPlot.setSaveButtonVisible(saveFileName != null);
-			
+			xyPlot.setSaveButtonVisible(false);
+
 			XYPlotPersistence xyPlotPersistence = new XYPlotPersistence();
 			try {
-				dhs = xyPlotPersistence.readData(loadFileName);
+				dhs = xyPlotPersistence.readData(loadFileName, new ProgressCallback() {
+
+					@Override
+					public void onProgress(int progress) {
+						System.out.println(String.format("Read progress: %d", progress));
+					}
+				});
 				for (XYPlotData dh : dhs) {
 					xyPlot.addDataHandler(dh);
 				}
@@ -159,6 +185,7 @@ public class Application3 implements ITimeTicker {
 			}
 			xyPlot.initXRange(xyPlotPersistence.getXMin(), xyPlotPersistence.getXMax());
 		} else {
+			xyPlot.setSaveButtonVisible(saveFileName != null);
 			xyPlot.setXRange(0, 40);
 
 			for (XYPlotData dh : dhs) {
@@ -175,10 +202,10 @@ public class Application3 implements ITimeTicker {
 				display.sleep();
 			}
 		}
-		if (timeTicker != null) {	
+		if (timeTicker != null) {
 			timeTicker.shutdown();
 		}
-		
+
 		if (timerThread != null) {
 			try {
 				timerThread.join();
@@ -186,20 +213,9 @@ public class Application3 implements ITimeTicker {
 				e.printStackTrace();
 			}
 		}
-			
+
 		xyPlotCanvas.close();
 		shell.dispose();
-
-		if (saveFileName != null) {
-			try {
-				XYPlotPersistence xyPlotPersistence = new XYPlotPersistence();
-				xyPlotPersistence.setComment("Test Save");
-				xyPlotPersistence.setXDescription(xyPlot.getXAxisText(), xyPlot.getXUnitText());
-				xyPlotPersistence.writeData(saveFileName, dhs);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	/**

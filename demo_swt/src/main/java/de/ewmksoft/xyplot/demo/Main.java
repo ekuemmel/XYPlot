@@ -29,8 +29,16 @@ public class Main {
 			Application2 appl = new Application2(display);
 			appl.run(); // does not return until application is closed
 		} else {
-			String loadFileName = (args.length > 0 ?args[0]:null);
-			String saveFileName = (args.length > 1 ?args[1]:null);
+			String loadFileName = null;
+			String saveFileName = null;
+			for (String arg : args) {
+				if (arg.startsWith("r=")) {
+					loadFileName = arg.substring(2);
+				}
+				if (arg.startsWith("w=")) {
+					saveFileName = arg.substring(2);
+				}
+			}
 			Application3 appl = new Application3(display, loadFileName, saveFileName);
 			appl.run(); // does not return until application is closed
 		}
