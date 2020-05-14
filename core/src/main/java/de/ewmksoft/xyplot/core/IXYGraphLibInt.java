@@ -84,6 +84,10 @@ public interface IXYGraphLibInt {
 	public abstract void setCursorColor(int r, int g, int b);
 
 	public abstract void setCursorBgColor(int r, int g, int b);
+	
+	public abstract void setLegendBgColor(int r, int g, int b);
+	
+	public abstract void setLegendSelectBgColor(int r, int g, int b);
 
 	abstract public void setFontSize(int labelFontSize, int titleFontSize);
 

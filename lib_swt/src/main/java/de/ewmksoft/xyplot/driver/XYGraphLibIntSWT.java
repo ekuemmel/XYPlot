@@ -83,7 +83,7 @@ import de.ewmksoft.xyplot.core.IXYGraphLibInt;
  */
 public class XYGraphLibIntSWT implements IXYGraphLibInt {
 	private final int MAX_TOOLTIPS = 20;
-	
+
 	private final Display display;
 	private IXYGraphLibAdapter xyPlotAdapter;
 	private GC currentGc;
@@ -111,7 +111,7 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 
 	private Font normalFont;
 	private Font boldFont;
-	
+
 	private Rectangle[] toolTipRects;
 	private String[] toolTipStrings;
 
@@ -132,15 +132,15 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 
 	public XYGraphLibIntSWT(Display dp) {
 		this.display = dp;
-		
-        toolTipRects = new Rectangle[MAX_TOOLTIPS];
+
+		toolTipRects = new Rectangle[MAX_TOOLTIPS];
 		toolTipStrings = new String[MAX_TOOLTIPS];
 		for (int i = 0; i < toolTipRects.length; ++i) {
 			toolTipRects[i] = new Rectangle(0, 0, 0, 0);
 		}
-		
+
 		defCharSize = new Pt(10, 15);
-		this.bounds = new Rectangle(0,0,10,10);
+		this.bounds = new Rectangle(0, 0, 10, 10);
 		bkImage = new Image(display, bounds);
 
 		updatePool = Executors.newCachedThreadPool();
@@ -160,83 +160,57 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 		setFontSize(8, 12);
 
 		InputStream is;
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/down.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/down.png");
 		downImage = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/up.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/up.png");
 		upImage = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/left.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/left.png");
 		leftImage[0] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/left_g.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/left_g.png");
 		leftImage[1] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/right.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/right.png");
 		rightImage[0] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/right_g.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/right_g.png");
 		rightImage[1] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/plus.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/plus.png");
 		plusImage[0] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/plus_g.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/plus_g.png");
 		plusImage[1] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/minus.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/minus.png");
 		minusImage[0] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/minus_g.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/minus_g.png");
 		minusImage[1] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/start.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/start.png");
 		startImage[0] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/start_g.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/start_g.png");
 		startImage[1] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/waste.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/waste.png");
 		clearImage[0] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/waste_g.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/waste_g.png");
 		clearImage[1] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/pause.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/pause.png");
 		pauseImage[0] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/pause_g.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/pause_g.png");
 		pauseImage[1] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/leftleft.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/leftleft.png");
 		pos1Image[0] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/leftleft_g.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/leftleft_g.png");
 		pos1Image[1] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/rightright.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/rightright.png");
 		endImage[0] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/rightright_g.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/rightright_g.png");
 		endImage[1] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/toggleup.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/toggleup.png");
 		zoomUpImage[0] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/toggleup_g.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/toggleup_g.png");
 		zoomUpImage[1] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/toggledown.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/toggledown.png");
 		zoomDownImage[0] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/toggledown_g.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/toggledown_g.png");
 		zoomDownImage[1] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/savecurve.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/savecurve.png");
 		saveCurveImage[0] = new Image(display, is);
-		is = this.getClass().getClassLoader()
-				.getResourceAsStream("images/savecurve_g.png");
+		is = this.getClass().getClassLoader().getResourceAsStream("images/savecurve_g.png");
 		saveCurveImage[1] = new Image(display, is);
 	}
 
@@ -325,7 +299,7 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 			lastWakeUpCall = msTime;
 		}
 	}
-	
+
 	Rectangle[] getToolTipRects() {
 		return toolTipRects;
 	}
@@ -335,8 +309,7 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 	}
 
 	public IXYGraphLib.Rect getBounds() {
-		return new IXYGraphLib.Rect(bounds.x, bounds.y, bounds.width,
-				bounds.height);
+		return new IXYGraphLib.Rect(bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 
 	public void setBounds(IXYGraphLib.Rect rect) {
@@ -346,13 +319,14 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 		xyPlotAdapter.setBounds(rect);
 	}
 
+	@Override
 	public void setFontSize(int labelFontSize, int titleFontSize) {
 		String fontName = "Arial";
 		setFontSize(fontName, labelFontSize, titleFontSize);
 	}
 
-	public void setFontSize(String fontName, int labelFontSize,
-			int titleFontSize) {
+	@Override
+	public void setFontSize(String fontName, int labelFontSize, int titleFontSize) {
 		try {
 			if (normalFont != null) {
 				normalFont.dispose();
@@ -371,6 +345,7 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 		}
 	}
 
+	@Override
 	public void setAxisColor(int r, int g, int b) {
 		if (lineColor != null) {
 			lineColor.dispose();
@@ -378,6 +353,7 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 		lineColor = new Color(display, r, g, b);
 	}
 
+	@Override
 	public void setCursorColor(int r, int g, int b) {
 		if (cursorColor != null) {
 			cursorColor.dispose();
@@ -385,6 +361,7 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 		cursorColor = new Color(display, r, g, b);
 	}
 
+	@Override
 	public void setCursorBgColor(int r, int g, int b) {
 		if (cursorBgColor != null) {
 			cursorBgColor.dispose();
@@ -392,6 +369,7 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 		cursorBgColor = new Color(display, r, g, b);
 	}
 
+	@Override
 	public void setBgColor(int r, int g, int b) {
 		if (bgColor != null) {
 			bgColor.dispose();
@@ -403,6 +381,24 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 		legendBgColor = new Color(display, r, g, b);
 	}
 
+
+	@Override
+	public void setLegendBgColor(int r, int g, int b) {
+		if (legendBgColor != null) {
+			legendBgColor.dispose();
+		}
+		legendBgColor = new Color(display, r, g, b);
+	}
+
+	@Override
+	public void setLegendSelectBgColor(int r, int g, int b) {
+		if (legendSelectBgColor != null) {
+			legendSelectBgColor.dispose();
+		}
+		legendSelectBgColor = new Color(display, r, g, b);
+	}
+
+	@Override
 	public void setDrawAreaBgColor(int r, int g, int b) {
 		if (plotBgColor != null) {
 			plotBgColor.dispose();
@@ -413,7 +409,8 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 		}
 		legendSelectBgColor = new Color(display, r, g, b);
 	}
-
+	
+	@Override
 	public void setFgPlotColor(int no) {
 		Color c = plotColor.get(no);
 		if (c != null) {
@@ -421,6 +418,7 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 		}
 	}
 
+	@Override
 	public void setBgPlotColor(int no) {
 		Color c = plotColor.get(no);
 		if (c != null) {
@@ -431,8 +429,7 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 	public void createColor(int no, IXYGraphLib.RGB value) {
 		Color c = plotColor.get(no);
 		if (c == null) {
-			plotColor.put(no, new Color(display, value.red, value.green,
-					value.blue));
+			plotColor.put(no, new Color(display, value.red, value.green, value.blue));
 		}
 	}
 
@@ -527,8 +524,7 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 		currentGc.drawRectangle(x, y, width, height);
 	}
 
-	public void drawImage(IXYGraphLib.Rect rect, ButtonImages button,
-			boolean enabled) {
+	public void drawImage(IXYGraphLib.Rect rect, ButtonImages button, boolean enabled) {
 		int picNum = (enabled ? 0 : 1);
 		Image image = null;
 		switch (button) {
@@ -617,13 +613,11 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 	}
 
 	public void drawRoundRectangle(IXYGraphLib.Rect rect, int radius) {
-		currentGc.drawRoundRectangle(rect.x, rect.y, rect.width, rect.height,
-				radius, radius);
+		currentGc.drawRoundRectangle(rect.x, rect.y, rect.width, rect.height, radius, radius);
 	}
 
 	public void fillRoundRectangle(IXYGraphLib.Rect rect, int radius) {
-		currentGc.fillRoundRectangle(rect.x + 1, rect.y + 1, rect.width - 1,
-				rect.height - 1, radius, radius);
+		currentGc.fillRoundRectangle(rect.x + 1, rect.y + 1, rect.width - 1, rect.height - 1, radius, radius);
 	}
 
 	public void drawText(String label, int x, int y) {
@@ -638,7 +632,7 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 		if (getStringExtends(s).x > w) {
 			w -= dotWidth;
 			while (s.length() > 0 && getStringExtends(s).x >= w) {
-				s = s.substring(0, s.length()-1);
+				s = s.substring(0, s.length() - 1);
 			}
 			s += dots;
 		}
@@ -658,7 +652,7 @@ public class XYGraphLibIntSWT implements IXYGraphLibInt {
 	}
 
 	public float getButtonRatio() {
-		return 1.0f*25/40;
+		return 1.0f * 25 / 40;
 	}
 
 	public boolean hasOwnButtonDrawing(ButtonImages button) {

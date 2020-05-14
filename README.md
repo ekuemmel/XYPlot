@@ -22,26 +22,27 @@ Maybe the library is useful for someone<br>
 <br>
 Eberhard Kümmel<br>
 <br>
-2015-05-30	Created repository<br>
-2015-09-06	Created tag for version 1.0.4<br>
-2016-09-02	New version 1.0.5 available (Features: Display mode without axis scale)<br>
-2016-09-17	New version 1.0.6 available (Fixed class version problem with persistence support)<br>
-2017-03-26	New version 1.0.7 available (Axis and scale can be hidden)<br>
-2018-04-01  New version 1.3.0 available (New repository)<br>
-2018-05-14  New version 1.3.3 published on JCenter<br>
-2018-06-24  Dropped repository and re-created it again due to change of complete file structure and switch to Gradle scripts<br>
-2018-07-12  Improved gesture zoom on Android<br>
-2018-07-30  New version 1.3.4 published on JCenter<br>
-2018-09-04  New version 1.3.5 published on JCenter<br>
-2018-10-10  New version 1.3.8 published on JCenter<br>
-2018-11-08  New version 1.3.10 published on JCenter<br>
-2018-12-27  New version 1.3.14 published on JCenter<br>
-2019-01-13  New version 1.3.15 published on JCenter<br>
-2019-01-22  New version 1.3.16 published on JCenter<br>
-2019-05-21  New version 1.3.17 published on JCenter<br>
-2019-10-05	New version 1.3.18 published on JCenter<br>
-2020-02-21	New version 1.3.22 published on JCenter<br>
-2020-03-22  New version 1.3.23 published on JCenter<br>
+2015-05-30   Created repository<br>
+2015-09-06   Created tag for version 1.0.4<br>
+2016-09-02   New version 1.0.5 available (Features: Display mode without axis scale)<br>
+2016-09-17   New version 1.0.6 available (Fixed class version problem with persistence support)<br>
+2017-03-26   New version 1.0.7 available (Axis and scale can be hidden)<br>
+2018-04-01   New version 1.3.0 available (New repository)<br>
+2018-05-14   New version 1.3.3 published on JCenter<br>
+2018-06-24   Dropped repository and re-created it again due to change of complete file structure and switch to Gradle scripts<br>
+2018-07-12   Improved gesture zoom on Android<br>
+2018-07-30   New version 1.3.4 published on JCenter<br>
+2018-09-04   New version 1.3.5 published on JCenter<br>
+2018-10-10   New version 1.3.8 published on JCenter<br>
+2018-11-08   New version 1.3.10 published on JCenter<br>
+2018-12-27   New version 1.3.14 published on JCenter<br>
+2019-01-13   New version 1.3.15 published on JCenter<br>
+2019-01-22   New version 1.3.16 published on JCenter<br>
+2019-05-21   New version 1.3.17 published on JCenter<br>
+2019-10-05   New version 1.3.18 published on JCenter<br>
+2020-02-21   New version 1.3.22 published on JCenter<br>
+2020-03-22   New version 1.3.23 published on JCenter<br>
+2020-05-14   New version 1.3.24 published on JCenter<br>
 </p>
 <h2>How to use on Android</h2>
 <p>

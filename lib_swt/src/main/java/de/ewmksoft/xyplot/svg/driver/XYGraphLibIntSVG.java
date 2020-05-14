@@ -359,6 +359,14 @@ public class XYGraphLibIntSVG implements IXYGraphLibInt {
 	}
 
 	@Override
+	public void setLegendBgColor(int r, int g, int b) {		
+	}
+
+	@Override
+	public void setLegendSelectBgColor(int r, int g, int b) {		
+	}
+	
+	@Override
 	public void setDrawAreaBgColor(int r, int g, int b) {
 	}
 

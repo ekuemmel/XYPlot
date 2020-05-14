@@ -74,9 +74,8 @@ import de.ewmksoft.xyplot.core.IXYGraphLib.RGB;
 /**
  * XYPlotData class encapsulates the data values shown in the XYPlot
  * 
- * @param maxvalue
- *            Maximum number of data points for this plot. If more data points
- *            are added, the first points are lost (ring buffer)
+ * @param maxvalue Maximum number of data points for this plot. If more data
+ *                 points are added, the first points are lost (ring buffer)
  */
 public class XYPlotData {
 	private static Lock accessLock = new ReentrantLock();
@@ -134,8 +133,7 @@ public class XYPlotData {
 	/**
 	 * Set the plot to which the data belong to.
 	 * 
-	 * @param owner
-	 *            The plot the data belong to
+	 * @param owner The plot the data belong to
 	 */
 	public void setOwner(XYPlot owner) {
 		this.owner = owner;
@@ -170,13 +168,11 @@ public class XYPlotData {
 	}
 
 	/**
-	 * Add a value to the data ring buffer. If the buffer is full, the oldest
-	 * value (lowest x value) will be dropped
+	 * Add a value to the data ring buffer. If the buffer is full, the oldest value
+	 * (lowest x value) will be dropped
 	 * 
-	 * @param x
-	 *            X-Value
-	 * @param y
-	 *            Y-Value
+	 * @param x X-Value
+	 * @param y Y-Value
 	 * @return Current number of values in the buffer
 	 */
 	public int addValue(double x, double y) {
@@ -230,10 +226,8 @@ public class XYPlotData {
 	/**
 	 * Add a switch value with text and value.
 	 * 
-	 * @param label
-	 *            Text of the switch state.
-	 * @param y
-	 *            Value of the state.
+	 * @param label Text of the switch state.
+	 * @param y     Value of the state.
 	 * @return
 	 */
 	public int addValue(double x, String label) {
@@ -275,11 +269,10 @@ public class XYPlotData {
 	}
 
 	/**
-	 * Exchange all values in the current ring buffer. The number of values is
-	 * not changes and also not the x values
+	 * Exchange all values in the current ring buffer. The number of values is not
+	 * changes and also not the x values
 	 * 
-	 * @param y
-	 *            Array with new y values
+	 * @param y Array with new y values
 	 */
 	public void changeValues(double[] y) {
 		accessLock.lock();
@@ -324,8 +317,7 @@ public class XYPlotData {
 	/**
 	 * Get the data point on a given index position.
 	 * 
-	 * @param index
-	 *            Position in data buffer
+	 * @param index Position in data buffer
 	 */
 	public DataValue getValue(int index) {
 		accessLock.lock();
@@ -342,8 +334,7 @@ public class XYPlotData {
 	/**
 	 * Set the legend text for this data handler.
 	 * 
-	 * @param text
-	 *            The legend text
+	 * @param text The legend text
 	 * 
 	 */
 	public void setLegendText(String text) {
@@ -373,8 +364,7 @@ public class XYPlotData {
 	/**
 	 * Set the unit string for this data handler e.g. km or miles.
 	 * 
-	 * @param text
-	 *            The unit text.
+	 * @param text The unit text.
 	 */
 	public void setUnit(String text) {
 		boolean changed = true;
@@ -429,8 +419,7 @@ public class XYPlotData {
 	/**
 	 * Set autoscaling.
 	 * 
-	 * @param autoScale
-	 *            True/false
+	 * @param autoScale True/false
 	 */
 	public void setAutoScale(boolean autoScale) {
 		this.autoScale = autoScale;
@@ -439,10 +428,8 @@ public class XYPlotData {
 	/**
 	 * Set manual minimum, maximum values for y axis *
 	 * 
-	 * @param min
-	 *            Minimum y value
-	 * @param max
-	 *            Maximum y value
+	 * @param min Minimum y value
+	 * @param max Maximum y value
 	 */
 	public void setManualScale(double min, double max) {
 		boolean changed = (min != fixedYMinValue || max != fixedYMaxValue);
@@ -460,8 +447,7 @@ public class XYPlotData {
 	/**
 	 * Make sure that this minimum value is always visible on the y axis *
 	 * 
-	 * @param value
-	 *            Any value
+	 * @param value Any value
 	 */
 	public void setManualScaleMin(double value) {
 		boolean changed = value != fixedYMinValue;
@@ -477,8 +463,7 @@ public class XYPlotData {
 	/**
 	 * Make sure that this value is always visible on the y axis *
 	 * 
-	 * @param value
-	 *            Any value
+	 * @param value Any value
 	 */
 	public void clearManualScale() {
 		hasFixedYMinValue = false;
@@ -508,8 +493,7 @@ public class XYPlotData {
 	}
 
 	/**
-	 * @param lastDrawPoint
-	 *            the lastDrawPoint to set
+	 * @param lastDrawPoint the lastDrawPoint to set
 	 */
 	void setLastDrawPointNum(int lastDrawPoint) {
 		if (lastDrawPoint >= 0 && lastDrawPoint < values.size()) {
@@ -555,8 +539,7 @@ public class XYPlotData {
 	/**
 	 * Set the position of the cursor (index)
 	 * 
-	 * @param cursorPos
-	 *            New cursor position
+	 * @param cursorPos New cursor position
 	 * @return true if position has changed
 	 */
 	public boolean setCursorPos(int cursorPos) {
@@ -579,8 +562,8 @@ public class XYPlotData {
 	}
 
 	/**
-	 * Get the position and size of the area where the description of the data
-	 * set is located within the global legend area.
+	 * Get the position and size of the area where the description of the data set
+	 * is located within the global legend area.
 	 * 
 	 * @return Rectangle containing the legend area
 	 */
@@ -589,11 +572,10 @@ public class XYPlotData {
 	}
 
 	/**
-	 * Set the rectangle where the legend of the data set is displayed in the
-	 * global legend area of the plot
+	 * Set the rectangle where the legend of the data set is displayed in the global
+	 * legend area of the plot
 	 * 
-	 * @param r
-	 *            Rectangle containing the legend
+	 * @param r Rectangle containing the legend
 	 */
 	public void setLegendRect(IXYGraphLib.Rect r) {
 		legendRect = r;
@@ -659,8 +641,7 @@ public class XYPlotData {
 	}
 
 	/**
-	 * Return true if new data have been added since the last call of this
-	 * method
+	 * Return true if new data have been added since the last call of this method
 	 * 
 	 * @return
 	 */
@@ -688,7 +669,7 @@ public class XYPlotData {
 	/**
 	 * Locate the closest data index from a given x value
 	 * 
-	 * @return > 0 Array index -1 No index found
+	 * @return Array index or -1 for index not found
 	 */
 	int locateIndexFromXValue(double xvalue) {
 		int xpos = -1;
@@ -772,8 +753,7 @@ public class XYPlotData {
 	/**
 	 * Set the color for this data handler.
 	 * 
-	 * @param color
-	 *            Color for the data in the plot.
+	 * @param color Color for the data in the plot.
 	 */
 	public void setColor(RGB color) {
 		this.color = color;
@@ -796,20 +776,22 @@ public class XYPlotData {
 	 */
 	private MinMax findMinMax(int minIndex, int maxIndex) {
 		MinMax result = new MinMax();
-		result.max = MIN_DOUBLE_VALUE;
-		result.min = MAX_DOUBLE_VALUE;
 		if (minIndex > maxIndex) {
 			int tmp = minIndex;
 			minIndex = maxIndex;
 			maxIndex = tmp;
 		}
+		if (maxIndex < 0 || minIndex >= values.size()) {
+			return result;
+		}
+
 		if (minIndex < 0) {
 			minIndex = 0;
 		}
 		if (maxIndex >= values.size()) {
 			maxIndex = values.size() - 1;
 		}
-		for (int i = minIndex; i <= maxIndex; ++i) {
+		for (int i = minIndex; i >= 0 && i <= maxIndex; ++i) {
 			DataValue dv = values.get(i);
 			double vy = dv.y;
 			if (vy > result.max) {

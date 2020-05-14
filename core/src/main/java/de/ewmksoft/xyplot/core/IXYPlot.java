@@ -68,8 +68,7 @@ public interface IXYPlot {
 	/**
 	 * Register a handler to receive clicks on the start/stop, pause keys.
 	 *
-	 * @param h
-	 *            Receiver object for the events
+	 * @param h Receiver object for the events
 	 */
 	abstract void registerEventHandler(IXYPlotEvent h);
 
@@ -101,12 +100,12 @@ public interface IXYPlot {
 	abstract void removeDataHandlers();
 
 	/**
-	 * Set the delay of the repaint operation. The delay controls how much time
-	 * may expire until the class tells its owner via getRedrawArea() that a
-	 * repaint is necessary. A repaint is only requested when required (new data
-	 * or user activity in the graph). This delay here defines how much
-	 * additional time is waited before such an request is actually triggered.
-	 * (Note there is a minimum set internally which can not be exceeded)
+	 * Set the delay of the repaint operation. The delay controls how much time may
+	 * expire until the class tells its owner via getRedrawArea() that a repaint is
+	 * necessary. A repaint is only requested when required (new data or user
+	 * activity in the graph). This delay here defines how much additional time is
+	 * waited before such an request is actually triggered. (Note there is a minimum
+	 * set internally which can not be exceeded)
 	 *
 	 * @return Value in [ms]
 	 */
@@ -131,62 +130,65 @@ public interface IXYPlot {
 	/**
 	 * Set color of global background
 	 *
-	 * @param r
-	 *            R value of RGB
-	 * @param g
-	 *            G value of RGB
-	 * @param b
-	 *            B value of RGB
+	 * @param r R value of RGB
+	 * @param g G value of RGB
+	 * @param b B value of RGB
 	 */
 	abstract void setBgColor(int r, int g, int b);
 
 	/**
 	 * Set color of curve draw area background
 	 *
-	 * @param r
-	 *            R value of RGB
-	 * @param g
-	 *            G value of RGB
-	 * @param b
-	 *            B value of RGB
+	 * @param r R value of RGB
+	 * @param g G value of RGB
+	 * @param b B value of RGB
 	 */
 	abstract void setDrawAreaBgColor(int r, int g, int b);
 
 	/**
 	 * Set color of axis
 	 *
-	 * @param r
-	 *            R value of RGB
-	 * @param g
-	 *            G value of RGB
-	 * @param b
-	 *            B value of RGB
+	 * @param r R value of RGB
+	 * @param g G value of RGB
+	 * @param b B value of RGB
 	 */
 	abstract void setAxisColor(int r, int g, int b);
 
 	/**
 	 * Set color of cursor
 	 *
-	 * @param r
-	 *            R value of RGB
-	 * @param g
-	 *            G value of RGB
-	 * @param b
-	 *            B value of RGB
+	 * @param r R value of RGB
+	 * @param g G value of RGB
+	 * @param b B value of RGB
 	 */
 	abstract void setCursorColor(int r, int g, int b);
 
 	/**
 	 * Set color of cursor box background
 	 *
-	 * @param r
-	 *            R value of RGB
-	 * @param g
-	 *            G value of RGB
-	 * @param b
-	 *            B value of RGB
+	 * @param r R value of RGB
+	 * @param g G value of RGB
+	 * @param b B value of RGB
 	 */
 	abstract void setCursorBgColor(int r, int g, int b);
+
+	/**
+	 * Set background color of the legend area.
+	 *
+	 * @param r R value of RGB
+	 * @param g G value of RGB
+	 * @param b B value of RGB
+	 */
+	abstract void setLegendBgColor(int r, int g, int b);
+
+	/**
+	 * Set background color of selected data in legend.
+	 *
+	 * @param r R value of RGB
+	 * @param g G value of RGB
+	 * @param b B value of RGB
+	 */
+	abstract void setLegendSelectBgColor(int r, int g, int b);
 
 	/**
 	 * Get the text for the X axis unit
@@ -198,8 +200,7 @@ public interface IXYPlot {
 	/**
 	 * Set the text for the X axis unit
 	 *
-	 * @param s
-	 *            Unit text i.e. "s" for seconds. Do not add brackets [] here
+	 * @param s Unit text i.e. "s" for seconds. Do not add brackets [] here
 	 */
 	abstract void setXUnitText(String s);
 
@@ -213,32 +214,27 @@ public interface IXYPlot {
 	/**
 	 * Set the text for the X axis unit
 	 *
-	 * @param s
-	 *            Unit text i.e. "s" for seconds. Do not use brackets [] here,
-	 *            they are added automatically
+	 * @param s Unit text i.e. "s" for seconds. Do not use brackets [] here, they
+	 *          are added automatically
 	 */
 	abstract void setXAxisText(String s);
 
 	/**
 	 * Set the range for the X axis. The class takes this values to calculate a
-	 * proper scaling for the axis. Note: If the graph is in zoomed mode, the
-	 * new values will be active after the zoomed mode has been left
+	 * proper scaling for the axis. Note: If the graph is in zoomed mode, the new
+	 * values will be active after the zoomed mode has been left
 	 *
-	 * @param xmin
-	 *            Minimum x value to be displayed
-	 * @param xmax
-	 *            Maximum x value to be displayed
+	 * @param xmin Minimum x value to be displayed
+	 * @param xmax Maximum x value to be displayed
 	 */
 	abstract void setXRange(double xmin, double xmax);
 
 	/**
-	 * Same as setXRange but is always executed independent of the graphs
-	 * current paused state.
+	 * Same as setXRange but is always executed independent of the graphs current
+	 * paused state.
 	 *
-	 * @param xmin
-	 *            Minimum x value to be displayed
-	 * @param xmax
-	 *            Maximum x value to be displayed
+	 * @param xmin Minimum x value to be displayed
+	 * @param xmax Maximum x value to be displayed
 	 */
 	abstract void initXRange(double xmin, double xmax);
 
@@ -253,11 +249,10 @@ public interface IXYPlot {
 	abstract double getXMax();
 
 	/**
-	 * Method to be called by the owner of the plot to inform about a key
-	 * stroke.
+	 * Method to be called by the owner of the plot to inform about a key stroke.
 	 *
-	 * @return true The key changed the plot display false The key did not
-	 *         change anything
+	 * @return true The key changed the plot display false The key did not change
+	 *         anything
 	 */
 	abstract boolean evalKey(int key);
 
@@ -265,13 +260,11 @@ public interface IXYPlot {
 	 * Method to be called by the owner of the plot to inform about mouse click
 	 * events.
 	 *
-	 * @param x
-	 *            x coordinate of the mouse down click
-	 * @param y
-	 *            y coordinate of the mouse down click
-	 * @return true The click was in a click sensitive area false. The click did
-	 *         not change the plot display false The click did not change
-	 *         anything because it did not hit a sensitive area
+	 * @param x x coordinate of the mouse down click
+	 * @param y y coordinate of the mouse down click
+	 * @return true The click was in a click sensitive area false. The click did not
+	 *         change the plot display false The click did not change anything
+	 *         because it did not hit a sensitive area
 	 */
 	abstract boolean evalMouseEvent(MouseEvent event, int x, int y);
 
@@ -287,16 +280,14 @@ public interface IXYPlot {
 	 * Returns true if the graph needs to be repainted. This call should be used
 	 * before drawing to avoid unnecessary updates.
 	 *
-	 * @return true Graph needs to be repainted false No need to repaint the
-	 *         graph
+	 * @return true Graph needs to be repainted false No need to repaint the graph
 	 */
 	abstract boolean isOutdated();
 
 	/**
 	 * Set the boundaries of the component in absolute coordinates of the canvas
 	 *
-	 * @param bounds
-	 *            Outer rectangle defining the plotting are
+	 * @param bounds Outer rectangle defining the plotting are
 	 */
 	abstract void setBounds(Rect bounds);
 
@@ -309,17 +300,16 @@ public interface IXYPlot {
 	abstract int getZoomBoxLacyUpdateDelay();
 
 	/**
-	 * This value in [ms] is used to delay the update of the zoom box when
-	 * changing the size. It is useful to set a higher value on devices with a
-	 * lower graphic performance.
+	 * This value in [ms] is used to delay the update of the zoom box when changing
+	 * the size. It is useful to set a higher value on devices with a lower graphic
+	 * performance.
 	 *
 	 * @param zoomBoxLacyUpdateDelay
 	 */
 	abstract void setZoomBoxLacyUpdateDelay(int zoomBoxLacyUpdateDelay);
 
 	/**
-	 * Returns the current state of the flag. See
-	 * {@link setAllowPauseOnDataClick}.
+	 * Returns the current state of the flag. See {@link setAllowPauseOnDataClick}.
 	 *
 	 * @return Current State
 	 */
@@ -328,8 +318,7 @@ public interface IXYPlot {
 	/**
 	 * Allow that a click into the graph switches the state to pause mode.
 	 *
-	 * @param New
-	 *            state
+	 * @param New state
 	 */
 	abstract void setAllowPauseOnDataClick(boolean allowPauseOnDataClick);
 
@@ -356,8 +345,8 @@ public interface IXYPlot {
 	abstract boolean isLegendExpanded();
 
 	/**
-	 * Set the legend box to visible or invisible The method is deprecated due
-	 * to a typo. Use the correctly spelled name instead.
+	 * Set the legend box to visible or invisible The method is deprecated due to a
+	 * typo. Use the correctly spelled name instead.
 	 *
 	 * @param value
 	 */
@@ -367,8 +356,8 @@ public interface IXYPlot {
 	abstract void setLegendVisible(boolean value);
 
 	/**
-	 * Set the save button to visible or invisible. The method is deprecated due
-	 * to a typo. Use the correctly spelled name instead.
+	 * Set the save button to visible or invisible. The method is deprecated due to
+	 * a typo. Use the correctly spelled name instead.
 	 *
 	 * @param value
 	 */
@@ -378,8 +367,8 @@ public interface IXYPlot {
 	abstract void setSaveButtonVisible(boolean value);
 
 	/**
-	 * Set the run/pause button to visible or invisible The method is deprecated
-	 * due to a typo. Use the correctly spelled name instead.
+	 * Set the run/pause button to visible or invisible The method is deprecated due
+	 * to a typo. Use the correctly spelled name instead.
 	 *
 	 * @param value
 	 */
@@ -389,8 +378,8 @@ public interface IXYPlot {
 	abstract void setStartButtonVisible(boolean value);
 
 	/**
-	 * Set the delete plot button to visible or invisible The method is
-	 * deprecated due to a typo. Use the correctly spelled name instead.
+	 * Set the delete plot button to visible or invisible The method is deprecated
+	 * due to a typo. Use the correctly spelled name instead.
 	 *
 	 * @param value
 	 */
@@ -403,8 +392,7 @@ public interface IXYPlot {
 	 * Turn on/off of axis labels and legend. This allows to create smaller
 	 * diagrams.
 	 *
-	 * @param value
-	 *            true (default) or false
+	 * @param value true (default) or false
 	 */
 	abstract void setAxisLabels(boolean value);
 
@@ -433,22 +421,28 @@ public interface IXYPlot {
 	/**
 	 * Zoom x-Axis at given position by a factor
 	 *
-	 * @param position
-	 *            X-position on the screen in pixels
-	 * @param factor
-	 *            Factor to scale
+	 * @param position X-position on the screen in pixels
+	 * @param factor   Factor to scale
 	 * 
 	 * @return True in case a zoom was done
 	 */
 	abstract boolean zoomAt(int position, double factor);
 
 	/**
-	 * Set smooth scrolling. Smooth means, that the graph is not shifted in
-	 * bigger chunks but only as much as required. This causes more drawing
-	 * operations. Default is true.
+	 * Set smooth scrolling. Smooth means, that the graph is not shifted in bigger
+	 * chunks but only as much as required. This causes more drawing operations.
+	 * Default is true.
 	 * 
-	 * @param smoothScroll
-	 *            True to scroll smoothly
+	 * @param smoothScroll True to scroll smoothly
 	 */
 	abstract void setSmoothScroll(boolean smoothScroll);
+
+	/**
+	 * Large data sets consume a lot of time for drawing the lines. If turned on,
+	 * the optimization prevents drawing of lines which are fully placed undern
+	 * other lines. Default is true.
+	 * 
+	 * @param optimizedDraw True to optimize drawing
+	 */
+	abstract void setOptimizedLineDrawing(boolean optimizedDraw);
 }

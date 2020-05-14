@@ -287,7 +287,7 @@ public class XYGraphView extends View implements Handler.Callback {
             xyPlot.setFontSize(labelFontSize, titleFontSize);
         }
         xyPlot.registerEventHandler(xyPlotEvent);
-        setVisibleXRange(xyPlot.getXMin(), xyPlot.getXMax());
+        initXRange(xyPlot.getXMin(), xyPlot.getXMax());
     }
 
     @Override

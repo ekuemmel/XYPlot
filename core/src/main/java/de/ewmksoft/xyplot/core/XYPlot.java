@@ -88,13 +88,13 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	private static final int ZOOMBOX_LAZY_UPDATE_DELAY = 10;
 	private static final int DATA_UPDATE_DELAY = 500;
 	private static final int MIN_DATA_UPDATE_DELAY = 10;
-	private static final double DEF_Y_DIFF = 0.1;
 	private static final int BUTTON_NUM = 10;
 	private static final int BUTTON_SPACING = 10;
 	private static final int MIN_BUTTON_WIDTH = 44;
 	private static final int PADDING_TOP = 3;
 	private static final int PADDING_BUTTON = 5;
-	private static final int PADDING_XR = 5;
+	private static final int PADDING_LEGEND = 5;
+	private static final int PADDING_XR = 15;
 	private static final int MOVES_PER_SCREEN = 20;
 	private static final int MIN_ZOOM_RECT_SIZE = 10;
 	private static final int MIN_MOVE_DETECT_SIZE = 5;
@@ -104,12 +104,15 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	private static final boolean GROUPING_USED = false;
 	// The next two values define from which exponent the
 	// display switches to a scaled format
-	private static final int NON_EXPO_MAX = 3;
-	private static final int NON_EXPO_MIN = -2;
+	private static final int NON_EXPO_MAX = 4;
+	private static final int NON_EXPO_MIN = -3;
 	// The next two values define from which exponent the
 	// scaled format is shown as e.g. 1E4 instead of x 10000
 	private static final int EXPO_E_MIN = 6;
 	private static final int EXPO_E_MAX = -4;
+
+	// Smallest difference shown on the axis
+	private static final double DEF_Y_DIFF = 1E-20;
 
 	public static final boolean SUPPORT_PARTIAL_DRAW = false;
 
@@ -174,6 +177,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	private boolean showSaveButton = false;
 	private boolean showButtonsAndLegend = true;
 	private boolean smoothScroll = true;
+	private boolean optimizedLineDrawing = true;
 	private int zoomBoxLacyUpdateDelay = ZOOMBOX_LAZY_UPDATE_DELAY;
 	private HashMap<Integer, XYPlotData.MinMax> dataMinMax;
 	private HashMap<String, XYPlotData.MinMax> unitMinMax;
@@ -206,8 +210,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Static method to create an XYPlot instance
 	 *
-	 * @param graphLib
-	 *            Interface to the graphic library
+	 * @param graphLib Interface to the graphic library
 	 * @return Interface to the XYPlot graph
 	 */
 	static public IXYPlot createXYPlot(IXYGraphLib graphLib) {
@@ -217,8 +220,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Register a handler to receive clicks on the start/stop, pause keys.
 	 *
-	 * @param h
-	 *            Receiver object for the events
+	 * @param h Receiver object for the events
 	 */
 	public void registerEventHandler(IXYPlotEvent h) {
 		plotEvent = h;
@@ -227,10 +229,8 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Create a new data set to be displayed in the XY plot.
 	 *
-	 * @param max
-	 *            Maximum number of XY values to be stored in the set
-	 * @param color
-	 *            Color of the data to be displayed in the plot
+	 * @param max   Maximum number of XY values to be stored in the set
+	 * @param color Color of the data to be displayed in the plot
 	 * @return Data Handler Object
 	 */
 
@@ -254,8 +254,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.ewmksoft.xyplot.IXYPlot#addDataHandler(de.ewmksoft.xyplot.XYPlotData)
+	 * @see de.ewmksoft.xyplot.IXYPlot#addDataHandler(de.ewmksoft.xyplot.XYPlotData)
 	 */
 	public boolean addDataHandler(XYPlotData dh) {
 		XYPlotData.lock();
@@ -328,22 +327,19 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 * Returns true if the graph needs to be repainted. This call should be used
 	 * before drawing to avoid unnecessary updates.
 	 *
-	 * @return true Graph needs to be repainted false No need to repaint the
-	 *         graph
+	 * @return true Graph needs to be repainted false No need to repaint the graph
 	 */
 	public boolean isOutdated() {
 		return isOutdated(true);
 	}
 
 	/**
-	 * Returns true if the graph needs to be repainted. This can be used to
-	 * avoid unnecessary updates by only drawing if something has changed.
+	 * Returns true if the graph needs to be repainted. This can be used to avoid
+	 * unnecessary updates by only drawing if something has changed.
 	 *
-	 * @param resetState
-	 *            Reset the internal flag by calling this method (true) or check
-	 *            only the state (false)
-	 * @return true Graph needs to be repainted false No need to repaint the
-	 *         graph
+	 * @param resetState Reset the internal flag by calling this method (true) or
+	 *                   check only the state (false)
+	 * @return true Graph needs to be repainted false No need to repaint the graph
 	 */
 	private boolean isOutdated(boolean resetState) {
 		boolean result = this.needsRedraw;
@@ -427,6 +423,24 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/*
 	 * (non-Javadoc)
 	 *
+	 * @see de.ewmksoft.xyplot.IXYPlot#setLegendSelectBgColor(int, int, int)
+	 */
+	public void setLegendBgColor(int r, int g, int b) {
+		graphLibInt.setLegendBgColor(r, g, b);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.ewmksoft.xyplot.IXYPlot#setLegendSelectBgColor(int, int, int)
+	 */
+	public void setLegendSelectBgColor(int r, int g, int b) {
+		graphLibInt.setLegendSelectBgColor(r, g, b);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see de.ewmksoft.xyplot.IXYPlot#setCursorBgColor(int, int, int)
 	 */
 	public void setCursorBgColor(int r, int g, int b) {
@@ -446,12 +460,20 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		graphLibInt.setFontSize(fontName, labelFontSize, titleFontSize);
 	}
 
-	/**
-	 * Method to be called by the owner of the plot to inform about a key
-	 * stroke.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @return true The key changed the plot display false The key did not
-	 *         change anything
+	 * @see de.ewmksoft.xyplot.IXYPlot#setOptimizedLineDrawing(boolean)
+	 */
+	public void setOptimizedLineDrawing(boolean optimizedDraw) {
+		this.optimizedLineDrawing = optimizedDraw;
+	}
+
+	/**
+	 * Method to be called by the owner of the plot to inform about a key stroke.
+	 *
+	 * @return true The key changed the plot display false The key did not change
+	 *         anything
 	 */
 	public boolean evalKey(int key) {
 		if (dataList.isEmpty() || startPointX == null) {
@@ -536,12 +558,10 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 * Method to be called by the owner of the plot to inform about mouse click
 	 * events.
 	 *
-	 * @param x
-	 *            x coordinate of the mouse down click
-	 * @param y
-	 *            y coordinate of the mouse down click
-	 * @return true: The click was in a click sensitive area. false: The click
-	 *         did not change anything because it did not hit a sensitive area
+	 * @param x x coordinate of the mouse down click
+	 * @param y y coordinate of the mouse down click
+	 * @return true: The click was in a click sensitive area. false: The click did
+	 *         not change anything because it did not hit a sensitive area
 	 */
 	public boolean evalMouseEvent(MouseEvent event, int x, int y) {
 		if (dataList.isEmpty() || startPointX == null) {
@@ -806,11 +826,10 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * The plot can host multiple XY data sets. However there is only one Y-Axis
 	 * always showing the data of one selected set at a time. With this call one
-	 * data set can be selected. A data set must have been created before it can
-	 * be selected.
+	 * data set can be selected. A data set must have been created before it can be
+	 * selected.
 	 *
-	 * @param no
-	 *            Number of the data set
+	 * @param no Number of the data set
 	 */
 	private void setCurrentPlot(int no) {
 		if (no < dataList.size() && dataList.get(no).getScaleData() != null) {
@@ -858,8 +877,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Set the boundaries of the component in absolute coordinates of the canvas
 	 *
-	 * @param bounds
-	 *            Outer rectangle defining the plotting are
+	 * @param bounds Outer rectangle defining the plotting are
 	 */
 	public void setBounds(Rect bounds) {
 		boolean boundsChanged = this.bounds.width != bounds.width || this.bounds.height != bounds.height;
@@ -916,10 +934,8 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 * Set the range for the Y axis. The class takes this values to calculate a
 	 * proper scaling for the Y axis
 	 *
-	 * @param ymin
-	 *            Minimum y value to be displayed
-	 * @param ymax
-	 *            Maximum y value to be displayed
+	 * @param ymin Minimum y value to be displayed
+	 * @param ymax Maximum y value to be displayed
 	 */
 	public void setYRange(XYPlotData data, double ymin, double ymax) {
 		XYPlotData.lock();
@@ -949,13 +965,16 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see de.ewmksoft.xyplot.IXYPlot#initXRange(double, double, boolean)
+	 * @see de.ewmksoft.xyplot.IXYPlot#initXRange(double, double)
 	 */
 	public void initXRange(double xmin, double xmax) {
 		XYPlotData.lock();
 		userxmin = xmin;
 		userxmax = xmax;
+		boolean save = smoothScroll;
+		smoothScroll = true;
 		calculateScale(xData, AxisType.XAXIS, xmin, xmax);
+		smoothScroll = save;
 		scaleChanged = true;
 		setOutdated();
 		needsRedraw = true;
@@ -1121,11 +1140,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 					if (showButtonsAndLegend) {
 						double xvalue = dv.x();
 						double yvalue = dv.y();
-						NumberFormat nf = NumberFormat.getInstance();
-						nf.setGroupingUsed(GROUPING_USED);
-						nf.setMaximumFractionDigits(xData.nk + 1);
-						nf.setMinimumFractionDigits(xData.nk + 1);
-						String xs = nf.format(xvalue);
+						String xs = formatValue(false, xData, xvalue);
 						String ys = formatValue(false, sd, yvalue);
 						String label = xs.trim() + " / " + ys.trim();
 						Pt pt = graphLibInt.getStringExtends(label);
@@ -1158,12 +1173,11 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	}
 
 	/**
-	 * This value in [ms] is used to delay the update of the zoom box when
-	 * changing the size. It is useful to set a higher value on devices with a
-	 * lower graphic performance.
+	 * This value in [ms] is used to delay the update of the zoom box when changing
+	 * the size. It is useful to set a higher value on devices with a lower graphic
+	 * performance.
 	 *
-	 * @param zoomBoxLacyUpdateDelay
-	 *            New value for update delay
+	 * @param zoomBoxLacyUpdateDelay New value for update delay
 	 */
 	public void setZoomBoxLacyUpdateDelay(int zoomBoxLacyUpdateDelay) {
 		this.zoomBoxLacyUpdateDelay = zoomBoxLacyUpdateDelay;
@@ -1181,8 +1195,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Allow that a click into the graph switches the state to pause mode.
 	 *
-	 * @param allowPauseOnDataClick
-	 *            True to pause graph if clicked
+	 * @param allowPauseOnDataClick True to pause graph if clicked
 	 */
 	public void setAllowPauseOnDataClick(boolean allowPauseOnDataClick) {
 		this.allowPauseOnDataClick = allowPauseOnDataClick;
@@ -1191,8 +1204,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Expand (true) ore collapse (false) the legend box
 	 *
-	 * @param value
-	 *            New value for legend expand state
+	 * @param value New value for legend expand state
 	 */
 	public void setLegendExpanded(boolean value) {
 		XYPlotData.lock();
@@ -1292,8 +1304,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Set the legend box to visible.
 	 *
-	 * @param value
-	 *            New value for visible state
+	 * @param value New value for visible state
 	 */
 	@Deprecated
 	public void setLegendVisisble(boolean value) {
@@ -1319,8 +1330,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 * Set graph in paused mode. In this mode the cursor appears Note: In paused
 	 * mode, a setXRange() call is not executed immediately.
 	 *
-	 * @param paused
-	 *            New value for paused state
+	 * @param paused New value for paused state
 	 */
 	public void setPaused(boolean paused) {
 		if (!this.paused && paused) {
@@ -1340,14 +1350,10 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Paint the curve
 	 *
-	 * @param no
-	 *            Number of the curve
-	 * @param data
-	 *            Plot data
-	 * @param start
-	 *            Start index
-	 * @param stop
-	 *            Stop index
+	 * @param no    Number of the curve
+	 * @param data  Plot data
+	 * @param start Start index
+	 * @param stop  Stop index
 	 * @return Number of visible points
 	 */
 	private int drawXYData(int no, XYPlotData data, int start, int stop) {
@@ -1366,22 +1372,44 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			Pt p1 = null;
 			int visible = data.getVisiblePointNum();
 			int[] points = new int[(stop - start + 1) * 2];
+			int min = Integer.MAX_VALUE;
+			int max = Integer.MIN_VALUE;
 			for (int i = start; i < stop; ++i) {
 				XYPlotData.DataValue dv = data.getValue(i);
 				if (i == start && dv.border())
 					continue;
 				boolean drawIt = (p1 == null);
+				int visibleAdd = 0;
 				Pt p2 = scaleToScreen(no, dv.x(), dv.y());
 				if (p1 != null && clipDataLine(p1, p2)) {
-					if (pointNum >= 2)
-						pointNum -= 2;
-					points[pointNum++] = p1.x;
-					if (p1.x != p2.x) {
-						points[pointNum++] = p1.y;
-						points[pointNum++] = p2.x;
-						points[pointNum++] = p2.y;
+					if (optimizedLineDrawing && p1.x == p2.x) {
+						min = Math.min(min, p1.y);
+						max = Math.max(max, p1.y);
+						min = Math.min(min, p2.y);
+						max = Math.max(max, p2.y);
 					} else {
-						points[pointNum++] = p2.y;
+						if (max != Integer.MIN_VALUE) {
+							if (pointNum + 3 < points.length) {
+								points[pointNum++] = p1.x;
+								points[pointNum++] = min;
+								points[pointNum++] = p1.x;
+								points[pointNum++] = max;
+							}
+							visibleAdd += 2;
+							max = Integer.MIN_VALUE;
+							min = Integer.MAX_VALUE;
+						} else {
+							if (pointNum >= 2) {
+								pointNum -= 2;
+							}
+							if (pointNum + 3 < points.length) {
+								points[pointNum++] = p1.x;
+								points[pointNum++] = p1.y;
+								points[pointNum++] = p2.x;
+								points[pointNum++] = p2.y;
+								visibleAdd += 1;
+							}
+						}
 					}
 					if (isPaused() && (p2.x - p1.x) > POINT_DISTANCE_FOR_CIRCLES) {
 						graphLibInt.drawCircle(p1.x, p1.y, 3);
@@ -1390,7 +1418,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 				}
 				if (dv.border() || !drawIt) {
 					graphLibInt.drawPolyline(points, pointNum);
-					visible += pointNum / 2;
+					visible += visibleAdd;
 					pointNum = 0;
 					if (dv.border()) {
 						p2 = null;
@@ -1514,8 +1542,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Calculate size and position of legend box.
 	 *
-	 * @param no
-	 *            Number of plot
+	 * @param no Number of plot
 	 */
 	private void calculateLegendBox(int no, XYPlotData data) {
 		if (expandLegend) {
@@ -1548,7 +1575,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 				graphLibInt.setBgColor(BgColor.LEGENDSELECTBG);
 			}
 			graphLibInt.fillRectangle(r);
-			Rect tp = new Rect(r.x, r.y + legendBoxBorder / 2, r.width, r.height);
+			Rect tp = new Rect(r.x + PADDING_LEGEND, r.y + legendBoxBorder / 2, r.width, r.height);
 			graphLibInt.drawTextRect(no + 1, data.getLegendText(), tp);
 			graphLibInt.setBgColor(BgColor.PLOTBG);
 			graphLibInt.setFgPlotColor(no);
@@ -1567,7 +1594,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 					graphLibInt.setBgColor(BgColor.LEGENDSELECTBG);
 				}
 				graphLibInt.setNormalFont();
-				graphLibInt.drawText(label, r.x, r.y + r.height / 2);
+				graphLibInt.drawText(label, r.x + PADDING_LEGEND, r.y + r.height / 2);
 			}
 		}
 	}
@@ -1575,9 +1602,8 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Draw plot area background
 	 *
-	 * @param full
-	 *            true: paint from scratch false: paint only the additional area
-	 *            at the right end
+	 * @param full true: paint from scratch false: paint only the additional area at
+	 *             the right end
 	 */
 	private void paintPlotArea(boolean full) {
 		int w = stopPointX.x - startPointX.x;
@@ -1727,7 +1753,8 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 						label = "0";
 					}
 					Pt shift = graphLibInt.getStringExtends(label);
-					graphLibInt.drawText(label, p3.x - shift.x, p3.y - shift.y / 2);
+					int x = Math.min(p3.x, shift.x);
+					graphLibInt.drawText(label, p3.x - x, p3.y - shift.y / 2);
 				}
 			}
 		}
@@ -1875,10 +1902,8 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 * Draw a line with clipping at start/end of X or Y axis. The argument point
 	 * values x/y are returned modified if clipping is required.
 	 *
-	 * @param p1
-	 *            Start point
-	 * @param p2
-	 *            Stop point
+	 * @param p1 Start point
+	 * @param p2 Stop point
 	 * @return True if line is (at least partially) visible
 	 */
 	private boolean clipDataLine(Pt p1, Pt p2) {
@@ -1960,12 +1985,9 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Draw a mouse sensitive area
 	 *
-	 * @param r
-	 *            Rectangle of button
-	 * @param button
-	 *            Button index
-	 * @param enabled
-	 *            True if button is enabled
+	 * @param r       Rectangle of button
+	 * @param button  Button index
+	 * @param enabled True if button is enabled
 	 */
 	private void drawImageButton(Rect r, ButtonImages button, boolean enabled) {
 		graphLibInt.setFgColor(FgColor.BUTTON);
@@ -1987,8 +2009,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Calculate the start/stop positions of the axis in screen positions
 	 * <p>
-	 * The locations of the points (*) for drawing the axis a shown in this
-	 * figure:
+	 * The locations of the points (*) for drawing the axis a shown in this figure:
 	 * <p>
 	 *
 	 * <pre>
@@ -2021,11 +2042,11 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 				continue;
 			int bw = 3 * legendBoxBorder;
 			graphLibInt.setNormalFont();
-			lw = bw + graphLibInt.getStringExtends(data.getLegendText()).x;
+			lw = bw + PADDING_LEGEND + graphLibInt.getStringExtends(data.getLegendText()).x;
 			legendWidth = Math.max(legendWidth, lw);
-			lw = bw + graphLibInt.getStringExtends(formatValueUnit(true, data, sd.vmax)).x;
+			lw = bw + PADDING_LEGEND + graphLibInt.getStringExtends(formatValueUnit(true, data, sd.vmax)).x;
 			legendWidth = Math.max(legendWidth, lw);
-			lw = bw + graphLibInt.getStringExtends(formatValueUnit(true, data, sd.vmin)).x;
+			lw = bw + PADDING_LEGEND + graphLibInt.getStringExtends(formatValueUnit(true, data, sd.vmin)).x;
 			legendWidth = Math.max(legendWidth, lw);
 
 			legendWidth = Math.min(2 * bounds.width / 3, legendWidth);
@@ -2041,7 +2062,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 				yoy = Math.max(yoy, buttonBarHeight + fontSize.y / 2);
 				yuy = Math.min(yuy, bounds.height - buttonBarHeight - PADDING_BUTTON * 2 - tickLen - fontSize.y);
 				xrx = bounds.width - graphLibInt.getStringExtends(formatValue(true, xData, xData.vmax)).x;
-				xrx = Math.min(xrx, bounds.width - (PADDING_XR + 10));
+				xrx = Math.min(xrx, bounds.width - PADDING_XR);
 			}
 			double diff = sd.vmax - sd.vmin;
 			if (diff != 0)
@@ -2065,11 +2086,10 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	}
 
 	/**
-	 * If the Y values exceed a predefined size the will be shown with an
-	 * additional exponent factor This display is called the scaled display
+	 * If the Y values exceed a predefined size the will be shown with an additional
+	 * exponent factor This display is called the scaled display
 	 *
-	 * @param yexp
-	 *            Exponential factor (e.g 3 means 1000)
+	 * @param yexp Exponential factor (e.g 3 means 1000)
 	 * @return String for exponential value
 	 */
 	private String createExpoString(int yexp) {
@@ -2095,8 +2115,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Calculate a x value for a given screen coordinate
 	 *
-	 * @param screenX
-	 *            Screen position in pixels
+	 * @param screenX Screen position in pixels
 	 * @return X value of the plot on the screenX position
 	 */
 	private double screenToScaleX(int screenX) {
@@ -2110,10 +2129,8 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Calculate a screen position on the y axis (x==0) for a given y value
 	 *
-	 * @param no
-	 *            Number of the data set
-	 * @param y
-	 *            Y value
+	 * @param no Number of the data set
+	 * @param y  Y value
 	 * @return Point object
 	 */
 	private Pt scaleToScreenX0(int no, double y) {
@@ -2126,8 +2143,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Calculate a screen position on the x axis (y==0) for a given x value
 	 *
-	 * @param x
-	 *            X value
+	 * @param x X value
 	 * @return Point object
 	 */
 	private Pt scaleToScreenY0(double x) {
@@ -2139,12 +2155,9 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Calculate a screen position for a given X/Y value
 	 *
-	 * @param no
-	 *            Number of the data set
-	 * @param x
-	 *            X value
-	 * @param y
-	 *            Y value
+	 * @param no Number of the data set
+	 * @param x  X value
+	 * @param y  Y value
 	 * @return Point object
 	 */
 	private Pt scaleToScreen(int no, double x, double y) {
@@ -2157,14 +2170,10 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Calculate the internal data required for drawing the scale
 	 *
-	 * @param sd
-	 *            Scale data
-	 * @param axis
-	 *            Axis type (X or Y)
-	 * @param min
-	 *            Minimum value
-	 * @param max
-	 *            Maximum value
+	 * @param sd   Scale data
+	 * @param axis Axis type (X or Y)
+	 * @param min  Minimum value
+	 * @param max  Maximum value
 	 * @return True if scale has changed
 	 */
 	private boolean calculateScale(XYPlotData.ScaleData sd, AxisType axis, double min, double max) {
@@ -2172,6 +2181,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		boolean result = false;
 		boolean calcPointNum = false;
 		Pt fontSize = graphLibInt.getAverageCharacterSize();
+
 		switch (axis) {
 		case XAXIS: {
 			maxticks = bounds.width / (fontSize.x * 25) + 1;
@@ -2184,17 +2194,18 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		}
 		sd.lmin = min;
 		sd.lmax = max;
+
 		if (Math.abs(max - min) < DEF_Y_DIFF) {
-			double q = Math.max(Math.abs(min), Math.abs(max));
-			double diff = q * DEF_Y_DIFF;
-			if (diff == 0) {
-				diff = DEF_Y_DIFF;
-			}
-			min = min - diff / 2;
-			max = max + diff / 2;
+			double center = (min + max) / 2;
+			double diff = 0.5f * Math.pow(10, NON_EXPO_MIN + 1);
+			min = center - diff;
+			max = center + diff;
+			result = true;
 		}
+
 		int expo = (int) Math.floor(Math.log10(max - min));
 		int dexpo = 0;
+
 		if (expo > NON_EXPO_MAX || expo < NON_EXPO_MIN) {
 			dexpo = expo;
 			double q = Math.pow(10, dexpo);
@@ -2202,7 +2213,9 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			max = max / q;
 			expo = 0;
 		}
+
 		double delta = Math.pow(10, expo) / 10;
+
 		long ticks = (long) Math.floor((max - min) / delta) + 1;
 		int ticktype = 0;
 		int loopcount = 0;
@@ -2237,19 +2250,31 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 				break;
 			}
 		}
-		sd.vk = (int) Math.round(Math.log10(max));
-		if (sd.vk <= 0)
-			sd.vk = 1;
-		sd.nk = 0;
-		if (expo <= 0) {
-			sd.nk = (int) (Math.round(0.499 + Math.abs(Math.log10(delta))));
+		int vk = (int) Math.round(Math.log10(Math.abs(max)));
+		if (vk <= 0) {
+			vk = 1;
 		}
-		sd.gk = sd.vk + Math.abs(sd.nk) + 2;
+		if (vk != sd.vk) {
+			sd.vk = vk;
+			result = true;
+		}
+
+		int nk = 0;
+		if (expo <= 0) {
+			nk = (int) Math.round(0.499 + Math.abs(Math.log10(delta)));
+		}
+		if (nk != sd.nk) {
+			sd.nk = nk;
+			result = true;
+		}
+
+		sd.gk = sd.vk + sd.nk + (max < 0 || min < 0 ? 3 : 2);
+
 		double smin = Math.round(min / delta) * delta;
 		if (min < smin) {
 			smin -= delta;
 		}
-		if (Math.abs(smin - sd.smin) > delta / 10) {
+		if (Math.abs(smin - sd.smin) > delta / 10 || delta != sd.tdelta) {
 			sd.tmin = smin;
 			result = true;
 		}
@@ -2257,10 +2282,11 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		if (max > smax) {
 			smax += delta;
 		}
-		if (Math.abs(smax - sd.smax) > delta / 10) {
+		if (Math.abs(smax - sd.smax) > delta / 10 || delta != sd.tdelta) {
 			sd.tmax = smax;
 			result = true;
 		}
+
 		if ((isPaused() || smoothScroll) && AxisType.XAXIS.equals(axis)) {
 			if (sd.smin != min || sd.smax != max) {
 				result = true;
@@ -2274,6 +2300,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		if (sd.isSwitch && delta < 1) {
 			delta = 1;
 		}
+
 		ticks = Math.round((sd.tmax - sd.tmin) / delta) + 1;
 		double q = Math.pow(10, dexpo);
 		sd.vmin = sd.smin * q;
@@ -2283,9 +2310,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		sd.ticks = ticks;
 		sd.maxticks = maxticks;
 		sd.ticktype = ticktype;
-		int nk = sd.nk + 1 - dexpo;
-		if (nk < 0)
-			nk = 0;
 		if (calcPointNum) {
 			for (XYPlotData data : dataList) {
 				int visible = 0;
@@ -2376,14 +2400,12 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	}
 
 	/**
-	 * Zoom into the data visible on the screen. The zoom is done symetrically
-	 * to the left and right of the current cursor position, so the cursor moved
-	 * to the middle.
+	 * Zoom into the data visible on the screen. The zoom is done symetrically to
+	 * the left and right of the current cursor position, so the cursor moved to the
+	 * middle.
 	 *
-	 * @param data
-	 *            Currently selected plot data
-	 * @param range
-	 *            New range for x axis
+	 * @param data  Currently selected plot data
+	 * @param range New range for x axis
 	 * @return True in case a zoom was done
 	 */
 	private boolean zoomScreen(XYPlotData data, double range) {
@@ -2425,15 +2447,11 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	}
 
 	/**
-	 * Zoom into the data visible on the screen. The zoom is done to a given
-	 * range
+	 * Zoom into the data visible on the screen. The zoom is done to a given range
 	 *
-	 * @param data
-	 *            Currently selected plot data
-	 * @param xmin
-	 *            New minimum x value
-	 * @param xmax
-	 *            New maximum x value
+	 * @param data Currently selected plot data
+	 * @param xmin New minimum x value
+	 * @param xmax New maximum x value
 	 * @return True in case a zoom was done
 	 */
 	private boolean zoomScreen(XYPlotData data, final double xmin, final double xmax) {
@@ -2466,8 +2484,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Zoom out the data visible on the screen
 	 *
-	 * @param data
-	 *            Data area
+	 * @param data Data area
 	 */
 	private void zoomScreenOut(XYPlotData data) {
 		int cp = data.getCursorPos();
@@ -2525,8 +2542,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Set the cursor to be visible
 	 *
-	 * @param data
-	 *            Data of which the cursor should be visible
+	 * @param data Data of which the cursor should be visible
 	 * @return True if operation was successful
 	 */
 	private boolean setCursorVisible(XYPlotData data) {
@@ -2593,10 +2609,8 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Trim a text to fit into a given width.
 	 *
-	 * @param text
-	 *            Text to trim
-	 * @param width
-	 *            Max allowed width in pixels.
+	 * @param text  Text to trim
+	 * @param width Max allowed width in pixels.
 	 * @return Text fitting into the width
 	 */
 	private String trimText(final String text, final int width) {
@@ -2617,15 +2631,12 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Convert an y value into a string
 	 *
-	 * @param scaled
-	 *            Display the value eventually reduced by an exponent as shown
-	 *            on the y axis. (Example: y axis shows values 1, 2, 3 and the
-	 *            scale factor x 1E3 at top of the axis. If scaled is true 1234
-	 *            will be converted to String 1,234 else 1234)
-	 * @param data
-	 *            Data context of the value
-	 * @param value
-	 *            The value to be displayed.
+	 * @param scaled Display the value eventually reduced by an exponent as shown on
+	 *               the y axis. (Example: y axis shows values 1, 2, 3 and the scale
+	 *               factor x 1E3 at top of the axis. If scaled is true 1234 will be
+	 *               converted to String 1,234 else 1234)
+	 * @param data   Data context of the value
+	 * @param value  The value to be displayed.
 	 * @return String for y axis
 	 */
 	private String formatValueUnit(boolean scaled, XYPlotData data, double value) {
@@ -2649,25 +2660,20 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/**
 	 * Convert an y value into a string
 	 *
-	 * @param scaled
-	 *            Display the value eventually reduced by an exponent as shown
-	 *            on the y axis. (Example: y axis shows values 1, 2, 3 and the
-	 *            scale factor x 1E3 at top of the axis. If scaled is true 1234
-	 *            will be converted to String 1,234 else 1234)
-	 * @param sd
-	 *            Scale data for the value
-	 * @param value
-	 *            The value to be displayed
+	 * @param scaled Display the value eventually reduced by an exponent as shown on
+	 *               the y axis. (Example: y axis shows values 1, 2, 3 and the scale
+	 *               factor x 1E3 at top of the axis. If scaled is true 1234 will be
+	 *               converted to String 1,234 else 1234)
+	 * @param sd     Scale data for the value
+	 * @param value  The value to be displayed
 	 * @return String for y axis
 	 */
 	private String formatValue(boolean scaled, XYPlotData.ScaleData sd, double value) {
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setGroupingUsed(GROUPING_USED);
-		int nk = sd.nk - (int) sd.dexpo;
-		if (nk < 0)
-			nk = 0;
-		nf.setMaximumFractionDigits(nk + 1);
-		nf.setMinimumFractionDigits(nk + 1);
+		int nk = (int) (xData.dexpo < 0 ? -xData.dexpo : sd.nk) + 1;
+		nf.setMaximumFractionDigits(nk);
+		nf.setMinimumFractionDigits(nk);
 		return nf.format(value);
 	}
 

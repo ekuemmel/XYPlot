@@ -60,8 +60,10 @@ package de.ewmksoft.xyplot.utils;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -90,8 +92,7 @@ public class XYPlotPersistence {
 		 * This method is called with increasing progress of the read or write
 		 * operation. The progress value is between 0 and 100.
 		 *
-		 * @param progress
-		 *            progress in percentage (0..100).
+		 * @param progress progress in percentage (0..100).
 		 */
 		void onProgress(int progress);
 	}
@@ -163,12 +164,9 @@ public class XYPlotPersistence {
 	/**
 	 * Save plot data into a file.
 	 * 
-	 * @param fileName
-	 *            Name of the file
-	 * @param dataList
-	 *            An plot data handler array
-	 * @param progressCallback
-	 *            A progress callback
+	 * @param fileName         Name of the file
+	 * @param dataList         An plot data handler array
+	 * @param progressCallback A progress callback
 	 * @throws IOException
 	 */
 	public void writeData(String fileName, XYPlotData[] dataList, ProgressCallback progressCallback)
@@ -205,7 +203,7 @@ public class XYPlotPersistence {
 						parray.put(i);
 					}
 					if (progressCallback != null && count % interval == 0) {
-						int progress = Math.min((80 * count) / maxCount, 99);
+						int progress = Math.min((50 * count) / maxCount, 50);
 						progressCallback.onProgress(progress);
 					}
 					count++;
@@ -229,7 +227,8 @@ public class XYPlotPersistence {
 
 			BufferedOutputStream out = new BufferedOutputStream(
 					new GZIPOutputStream(new FileOutputStream(fileName + GZIPEXT)));
-			PrintWriter w = new PrintWriter(out);
+			// One entry consumes about 22 bytes in average
+			ProgressPrintWriter w = new ProgressPrintWriter(out, 22 * maxCount, 50, progressCallback);
 			try {
 				root.write(w);
 			} finally {
@@ -248,10 +247,8 @@ public class XYPlotPersistence {
 	/**
 	 * Save plot data into a file.
 	 * 
-	 * @param fileName
-	 *            Name of the file
-	 * @param dataList
-	 *            An plot data handler array
+	 * @param fileName Name of the file
+	 * @param dataList An plot data handler array
 	 * @throws IOException
 	 */
 	public void writeData(String fileName, XYPlotData[] dataList) throws IOException {
@@ -261,27 +258,35 @@ public class XYPlotPersistence {
 	/**
 	 * Read data from a file
 	 * 
-	 * @param fileName
-	 *            Name of the file
-	 * @param dataList
-	 *            An plot data handler array
-	 * @param progressCallback
-	 *            A progress callback
+	 * @param fileName         Name of the file
+	 * @param dataList         An plot data handler array
+	 * @param progressCallback A progress callback
+	 * @return Array of XYPlotData objects or null if nothing can be read.
+	 * 
 	 * @throws IOException
 	 */
 	public XYPlotData[] readData(String fileName, ProgressCallback progressCallback) throws IOException {
 		if (!fileName.endsWith(GZIPEXT)) {
 			fileName += GZIPEXT;
 		}
-		BufferedReader in = new BufferedReader(
-				new InputStreamReader(new GZIPInputStream(new FileInputStream(fileName))));
+		File file = new File(fileName);
+		BufferedReader in = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file))));
 		BufferedReader reader = new BufferedReader(in);
 		StringBuffer sb = new StringBuffer();
 		XYPlotData[] dataList = null;
+		long size = file.length();
+		long interval = Math.max(1, size / 10);
+		long count = 0;
 		do {
 			int ch = reader.read();
 			if (ch >= 0) {
 				sb.append((char) ch);
+				if (progressCallback != null && size > 0 && count % interval == 0) {
+					// Assuming a packing of 2:5
+					int progress = (int) Math.min((20 * count) / size, 50);
+					progressCallback.onProgress(progress);
+				}
+				count++;
 			} else {
 				break;
 			}
@@ -294,15 +299,15 @@ public class XYPlotPersistence {
 			createdate = root.getString(DATE);
 			JSONArray ja = root.getJSONArray(DHS);
 
-			int maxCount = 1;
+			long maxCount = 1;
 			for (int no = 0; no < ja.length(); ++no) {
 				JSONObject jsonObject = ja.getJSONObject(no);
 				JSONArray xarray = jsonObject.getJSONArray(XDATA);
 				maxCount += xarray.length();
 			}
 
-			int interval = Math.max(1, maxCount / 20);
-			int count = 0;
+			interval = Math.max(1, maxCount / 20);
+			count = 0;
 
 			dataList = new XYPlotData[ja.length()];
 			for (int no = 0; no < ja.length(); ++no) {
@@ -331,7 +336,7 @@ public class XYPlotPersistence {
 						}
 					}
 					if (progressCallback != null && count % interval == 0) {
-						int progress = Math.min((100 * count) / maxCount, 99);
+						int progress = (int) Math.min(50 + (50 * count) / maxCount, 99);
 						progressCallback.onProgress(progress);
 					}
 					count++;
@@ -354,10 +359,8 @@ public class XYPlotPersistence {
 	/**
 	 * Read data from a file
 	 * 
-	 * @param fileName
-	 *            Name of the file
-	 * @param dataList
-	 *            An plot data handler array
+	 * @param fileName Name of the file
+	 * @param dataList An plot data handler array
 	 * @throws IOException
 	 */
 	public XYPlotData[] readData(String fileName) throws IOException {
@@ -380,6 +383,45 @@ public class XYPlotPersistence {
 	 */
 	public double getXMax() {
 		return xmax;
+	}
+
+	private class ProgressPrintWriter extends PrintWriter {
+		private int count = 0;
+		private int nextProgress = 0;
+		private int expectedSize;
+		private int progressOffset;
+		private ProgressCallback progressCallback;
+
+		public ProgressPrintWriter(OutputStream out, int expectedSize, int progressOffset,
+				ProgressCallback progressCallback) {
+			super(out);
+			this.expectedSize = Math.max(1, expectedSize);
+			this.progressOffset = progressOffset;
+			this.progressCallback = progressCallback;
+		}
+
+		@Override
+		public void write(int c) {
+			count += 1;
+			super.write(c);
+		}
+
+		@Override
+		public void write(String s) {
+			count += s.length();
+			super.write(s);
+			if (progressCallback != null) {
+				int progress = Math.min((100 * count) / expectedSize, 99);
+				if (progress > nextProgress) {
+					nextProgress = progress + 5;
+					progressCallback.onProgress(progressOffset + progressOffset * progress / 100);
+				}
+			}
+		}
+
+		int getCount() {
+			return count;
+		}
 	}
 
 }

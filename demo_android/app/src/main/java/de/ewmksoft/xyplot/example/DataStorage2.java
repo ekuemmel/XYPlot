@@ -162,7 +162,12 @@ class DataStorage2 implements IDataStorage {
         }
         XYPlotPersistence xyPlotPersistence = new XYPlotPersistence();
         String result = home.getPath() + File.separator + DATA_FILE_NAME;
-        xyPlotPersistence.writeData(result, dhs);
+        xyPlotPersistence.writeData(result, dhs, new XYPlotPersistence.ProgressCallback() {
+            @Override
+            public void onProgress(int i) {
+
+            }
+        });
         return result;
     }
 
