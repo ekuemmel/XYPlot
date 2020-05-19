@@ -552,7 +552,7 @@ class XYGraphLibIntAndroid implements IXYGraphLibInt {
 	public void setCursorBgColor(int r, int g, int b) {
 		cursorBgColor = Color.argb(255, r, g, b);
 	}
-	
+
 	@Override
 	public void setLegendBgColor(int r, int g, int b) {
 		legendBgColor = Color.argb(255, r, g, b);

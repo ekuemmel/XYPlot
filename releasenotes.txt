@@ -83,7 +83,7 @@ Version 1.3.23
 - Added progress bar in XYPlotPersistence.
 
 Version 1.3.24
-2020-05-14
+2020-05-19
 - Large data sets: Improved display and progress during saving. Fixed some scale presentation issues
 
 

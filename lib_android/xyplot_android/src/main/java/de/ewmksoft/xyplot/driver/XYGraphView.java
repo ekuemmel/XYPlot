@@ -83,439 +83,440 @@ import de.ewmksoft.xyplot.core.XYPlot;
 import de.ewmksoft.xyplot.core.XYPlotData;
 
 public class XYGraphView extends View implements Handler.Callback {
-    private Handler myHandler;
-    private IXYGraphLib.Rect rect;
-    private IXYPlotEvent xyPlotEvent;
-    private IXYGraphView listener;
-    private XYPlotData[] dh;
-    private XYGraphLibAndroid graphLib;
-    private IXYPlot xyPlot;
-    private boolean autoFontSize;
-    private GestureDetector gestureDetector;
-    private ScaleGestureDetector scaleDetector;
-    private boolean shiftPending = false;
-    private boolean zoomPending = false;
-    private int lastXPos;
-    private int zoomCenterPos;
-    private long blockMoveUntil;
+	private Handler myHandler;
+	private IXYGraphLib.Rect rect;
+	private IXYPlotEvent xyPlotEvent;
+	private IXYGraphView listener;
+	private XYPlotData[] dh;
+	private XYGraphLibAndroid graphLib;
+	private IXYPlot xyPlot;
+	private boolean autoFontSize;
+	private GestureDetector gestureDetector;
+	private ScaleGestureDetector scaleDetector;
+	private boolean shiftPending = false;
+	private boolean zoomPending = false;
+	private int lastXPos;
+	private int zoomCenterPos;
+	private long blockMoveUntil;
 
-    private static final int MSG_MOVE = 1;
-    private static final int MSG_ZOOM = 2;
-    private static final int MSG_FLING = 3;
+	private static final int MSG_MOVE = 1;
+	private static final int MSG_ZOOM = 2;
+	private static final int MSG_FLING = 3;
 
-    private static final String PARAM_XPOS = "xpos";
-    private static final String PARAM_ZOOM = "zoom";
-    private static final String PARAM_SHIFT = "shift";
-    private static final String PARAM_LAST = "last";
+	private static final String PARAM_XPOS = "xpos";
+	private static final String PARAM_ZOOM = "zoom";
+	private static final String PARAM_SHIFT = "shift";
+	private static final String PARAM_LAST = "last";
 
-    private double zoomBoost = 2.0;
+	private double zoomBoost = 2.0;
 
-    public XYGraphView(Context context) {
-        super(context);
-        init("", "", new XYPlotData[0], null);
-    }
+	public XYGraphView(Context context) {
+		super(context);
+		init("", "", new XYPlotData[0], null);
+	}
 
-    public XYGraphView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init("", "", new XYPlotData[0], null);
-        initAttributes(context, attrs);
-    }
+	public XYGraphView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		init("", "", new XYPlotData[0], null);
+		initAttributes(context, attrs);
+	}
 
-    public XYGraphView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init("", "", new XYPlotData[0], null);
-        initAttributes(context, attrs);
-    }
+	public XYGraphView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		init("", "", new XYPlotData[0], null);
+		initAttributes(context, attrs);
+	}
 
-    public void initAttributes(Context context, AttributeSet attrs) {
-        if (context != null && attrs != null) {
-            TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.XYGraphView, 0, 0);
-            autoFontSize = false;
-            Drawable drawable;
-            try {
-                drawable = a.getDrawable(R.styleable.XYGraphView_buttonDownImage);
-                graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.DOWN, drawable);
-                drawable = a.getDrawable(R.styleable.XYGraphView_buttonUpImage);
-                graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.UP, drawable);
-                drawable = a.getDrawable(R.styleable.XYGraphView_buttonPlusImage);
-                graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.PLUS, drawable);
-                drawable = a.getDrawable(R.styleable.XYGraphView_buttonMinusImage);
-                graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.MINUS, drawable);
+	public void initAttributes(Context context, AttributeSet attrs) {
+		if (context != null && attrs != null) {
+			TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.XYGraphView, 0, 0);
+			autoFontSize = false;
+			Drawable drawable;
+			try {
+				drawable = a.getDrawable(R.styleable.XYGraphView_buttonDownImage);
+				graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.DOWN, drawable);
+				drawable = a.getDrawable(R.styleable.XYGraphView_buttonUpImage);
+				graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.UP, drawable);
+				drawable = a.getDrawable(R.styleable.XYGraphView_buttonPlusImage);
+				graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.PLUS, drawable);
+				drawable = a.getDrawable(R.styleable.XYGraphView_buttonMinusImage);
+				graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.MINUS, drawable);
 
-                drawable = a.getDrawable(R.styleable.XYGraphView_buttonLeftImage);
-                graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.LEFT, drawable);
-                drawable = a.getDrawable(R.styleable.XYGraphView_buttonRightImage);
-                graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.RIGHT, drawable);
+				drawable = a.getDrawable(R.styleable.XYGraphView_buttonLeftImage);
+				graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.LEFT, drawable);
+				drawable = a.getDrawable(R.styleable.XYGraphView_buttonRightImage);
+				graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.RIGHT, drawable);
 
-                drawable = a.getDrawable(R.styleable.XYGraphView_buttonStartImage);
-                if (drawable != null) {
-                    graphLib.setButtonSizeRatio(drawable.getIntrinsicHeight() / drawable.getIntrinsicWidth());
-                }
-                graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.START, drawable);
-                drawable = a.getDrawable(R.styleable.XYGraphView_buttonPauseImage);
-                graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.PAUSE, drawable);
-                drawable = a.getDrawable(R.styleable.XYGraphView_buttonStopImage);
-                graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.STOP, drawable);
+				drawable = a.getDrawable(R.styleable.XYGraphView_buttonStartImage);
+				if (drawable != null) {
+					graphLib.setButtonSizeRatio(drawable.getIntrinsicHeight() / drawable.getIntrinsicWidth());
+				}
+				graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.START, drawable);
+				drawable = a.getDrawable(R.styleable.XYGraphView_buttonPauseImage);
+				graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.PAUSE, drawable);
+				drawable = a.getDrawable(R.styleable.XYGraphView_buttonStopImage);
+				graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.STOP, drawable);
 
-                drawable = a.getDrawable(R.styleable.XYGraphView_buttonClearImage);
-                graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.CLEAR, drawable);
-                drawable = a.getDrawable(R.styleable.XYGraphView_buttonZoomUpImage);
-                graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.ZOOM_UP, drawable);
-                drawable = a.getDrawable(R.styleable.XYGraphView_buttonZoomDownImage);
-                graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.ZOOM_DOWN, drawable);
-                drawable = a.getDrawable(R.styleable.XYGraphView_buttonSaveImage);
-                graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.SAVE_CURVE, drawable);
-                drawable = a.getDrawable(R.styleable.XYGraphView_buttonPos1Image);
-                graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.POS1, drawable);
-                drawable = a.getDrawable(R.styleable.XYGraphView_buttonEndImage);
-                graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.END, drawable);
+				drawable = a.getDrawable(R.styleable.XYGraphView_buttonClearImage);
+				graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.CLEAR, drawable);
+				drawable = a.getDrawable(R.styleable.XYGraphView_buttonZoomUpImage);
+				graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.ZOOM_UP, drawable);
+				drawable = a.getDrawable(R.styleable.XYGraphView_buttonZoomDownImage);
+				graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.ZOOM_DOWN, drawable);
+				drawable = a.getDrawable(R.styleable.XYGraphView_buttonSaveImage);
+				graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.SAVE_CURVE, drawable);
+				drawable = a.getDrawable(R.styleable.XYGraphView_buttonPos1Image);
+				graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.POS1, drawable);
+				drawable = a.getDrawable(R.styleable.XYGraphView_buttonEndImage);
+				graphLib.setImageDrawable(IXYGraphLibInt.ButtonImages.END, drawable);
 				// set axis color.
 				int axisColor = a.getColor(R.styleable.XYGraphView_axis_color, Color.GRAY);
-                setAxisColor(axisColor);
+				setAxisColor(axisColor);
 
-            } finally {
-                a.recycle();
-            }
-        }
-    }
+			} finally {
+				a.recycle();
+			}
+		}
+	}
 
-    public void init(String xTitle, String xUnit, XYPlotData[] xyPlotData, IXYGraphView alistener) {
-        if (myHandler == null) {
-            myHandler = new Handler(this);
-        }
-        if (rect == null) {
-            rect = new IXYGraphLib.Rect(0, 0, 10, 10);
-        }
-        if (graphLib == null) {
-            graphLib = new XYGraphLibAndroid(this, rect);
-            xyPlot = XYPlot.createXYPlot(graphLib);
-            gestureDetector = new GestureDetector(getContext(), new XYGestureListener());
-            scaleDetector = new ScaleGestureDetector(getContext(), new ZoomListener());
-            setOnTouchListener(new OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    performClick();
-                    boolean result = false;
-                    if (gestureDetector.onTouchEvent(event)) {
-                        result = true;
-                    } else if (scaleDetector.onTouchEvent(event)) {
-                        result = true;
-                    }
-                    return result;
-                }
-            });
-        }
-        graphLib.setBounds(rect);
-        this.dh = xyPlotData;
-        this.listener = alistener;
-        xyPlot.setXRange(0, 0);
-        xyPlot.removeDataHandlers();
-        for (XYPlotData data : dh) {
-            xyPlot.addDataHandler(data);
-        }
-        xyPlot.setXAxisText(xTitle);
-        xyPlot.setXUnitText(xUnit);
+	public void init(String xTitle, String xUnit, XYPlotData[] xyPlotData, IXYGraphView aListener) {
+		if (myHandler == null) {
+			myHandler = new Handler(this);
+		}
+		if (rect == null) {
+			rect = new IXYGraphLib.Rect(0, 0, 10, 10);
+		}
+		if (graphLib == null) {
+			graphLib = new XYGraphLibAndroid(this, rect);
+			xyPlot = XYPlot.createXYPlot(graphLib);
+			gestureDetector = new GestureDetector(getContext(), new XYGestureListener());
+			scaleDetector = new ScaleGestureDetector(getContext(), new ZoomListener());
+			setOnTouchListener(new OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					performClick();
+					boolean result = false;
+					if (gestureDetector.onTouchEvent(event)) {
+						result = true;
+					} else if (scaleDetector.onTouchEvent(event)) {
+						result = true;
+					}
+					return result;
+				}
+			});
+		}
+		graphLib.setBounds(rect);
+		this.dh = xyPlotData;
+		setKeyListener(aListener);
+		xyPlot.setXRange(0, 0);
+		xyPlot.removeDataHandlers();
+		for (XYPlotData data : dh) {
+			xyPlot.addDataHandler(data);
+		}
+		xyPlot.setXAxisText(xTitle);
+		xyPlot.setXUnitText(xUnit);
+	}
 
+	public void setKeyListener(IXYGraphView aListener) {
+		this.listener = aListener;
 		if (listener != null) {
 			xyPlot.setPaused(!listener.isEnabled());
 		}
-		
-        xyPlotEvent = new IXYPlotEvent() {
-            public void onEvent(KeyEvent event) {
-                switch (event) {
-                    case KEY_START:
-                        if (listener != null) {
-                            listener.setEnabled(true);
-                        }
-                        break;
-                    case KEY_PAUSE:
-                        if (listener != null) {
-                            listener.setEnabled(false);
-                        }
-                        for (XYPlotData xyPlotData : dh) {
-                            xyPlotData.setPause();
-                        }
-                        break;
-                    case KEY_CLEAR:
-                        if (listener != null) {
-                            listener.clear();
-                        }
-                        break;
-                    case KEY_SAVE:
-                        if (listener != null) {
-                            listener.save();
-                        }
-                        break;
-                    case KEY_STOP:
-                        break;
-                    default:
-                        break;
-                }
-            }
-        };
-    }
 
-    @Override
-    protected boolean onSetAlpha(int alpha) {
-        return true;
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int heightMeasure = MeasureSpec.getSize(heightMeasureSpec);
-        heightMeasureSpec = MeasureSpec.makeMeasureSpec(heightMeasure, MeasureSpec.EXACTLY);
-        setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        int yofs = 3;
-
-        super.onLayout(changed, left, top, right, bottom);
-        bottom = bottom - top;
-        top = 0;
-        rect.x = 0;
-        rect.y = top + yofs;
-        rect.width = right - left;
-        rect.height = bottom - top - yofs;
-        graphLib.setBounds(rect);
-        if (autoFontSize) {
-            int x = Math.min(rect.width, rect.height);
-            int labelFontSize = x / 15;
-            int titleFontSize = (int) (labelFontSize * 1.2);
-            xyPlot.setFontSize(labelFontSize, titleFontSize);
-        }
-        xyPlot.registerEventHandler(xyPlotEvent);
-        initXRange(xyPlot.getXMin(), xyPlot.getXMax());
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        graphLib.paint(canvas);
-    }
-
-    /**
-     * Define which value range is visible on the X-axis. The range is [xmax -
-     * visibleRange, xmax]
-     *
-     * @param visibleRange range in x axis units
-     */
-    public void setVisibleLastX(double visibleRange) {
-        if (xyPlot != null) {
-            if (dh.length > 0) {
-                double xmax = dh[0].getXMax();
-                double xmin = Math.max(dh[0].getXMin(), xmax - visibleRange);
-                xyPlot.setXRange(xmin, xmax);
-                if (xyPlot.isOutdated()) {
-                    invalidate();
-                }
-            }
-        }
-    }
-	
-	/**
-	 * Same as setXRange but is always executed independent of the 
-	 * graphs current mode.
-	 *
-	 * @param xmin
-	 *            Minimum x value to be displayed
-	 * @param xmax
-	 *            Maximum x value to be displayed
-	 */
-	public void initXRange(double xmin, double xmax) {
-        if (xyPlot != null) {
-			xyPlot.initXRange(xmin, xmax);
-			invalidate();
-		}			
+		xyPlotEvent = new IXYPlotEvent() {
+			public void onEvent(KeyEvent event) {
+				switch (event) {
+				case KEY_START:
+					if (listener != null) {
+						listener.setEnabled(true);
+					}
+					break;
+				case KEY_PAUSE:
+					if (listener != null) {
+						listener.setEnabled(false);
+					}
+					for (XYPlotData xyPlotData : dh) {
+						xyPlotData.setPause();
+					}
+					break;
+				case KEY_CLEAR:
+					if (listener != null) {
+						listener.clear();
+					}
+					break;
+				case KEY_SAVE:
+					if (listener != null) {
+						listener.save();
+					}
+					break;
+				case KEY_STOP:
+					break;
+				default:
+					break;
+				}
+			}
+		};
 	}
 
-    /**
-     * Set a given range on the x axis to be visible
-     *
-     * @param xmin minimum x value
-     * @param xmax maximum x value
-     */
-    public void setVisibleXRange(double xmin, double xmax) {
-        if (xyPlot != null) {
-            xyPlot.setXRange(xmin, xmax);
-            if (xyPlot.isOutdated()) {
-                invalidate();
-            }
-        }
-    }
+	@Override
+	protected boolean onSetAlpha(int alpha) {
+		return true;
+	}
 
-    @Override
-    public boolean performClick() {
-        return super.performClick();
-    }
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		int heightMeasure = MeasureSpec.getSize(heightMeasureSpec);
+		heightMeasureSpec = MeasureSpec.makeMeasureSpec(heightMeasure, MeasureSpec.EXACTLY);
+		setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+	}
 
-    public IXYPlot getXYPlot() {
-        return xyPlot;
-    }
+	@Override
+	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+		int yofs = 3;
 
-    @Override
-    public boolean handleMessage(Message msg) {
-        Bundle b = msg.getData();
-        switch (msg.what) {
-            case MSG_MOVE:
-            case MSG_FLING:
-                if (System.currentTimeMillis() > blockMoveUntil) {
-                    int shift = b.getInt(PARAM_SHIFT);
-                    int last = b.getInt(PARAM_LAST);
-                    boolean ContinueMove = xyPlot.moveByPixels(shift);
-                    if (last == 0 && ContinueMove) {
-                        shift = shift / 2;
-                        if (Math.abs(shift) > 2) {
-                            Message msg2 = myHandler.obtainMessage();
-                            msg2.what = MSG_MOVE;
-                            Bundle b2 = msg2.getData();
-                            b2.putInt(PARAM_SHIFT, shift);
-                            b2.putInt(PARAM_LAST, 0);
-                            msg2.setData(b2);
-                            myHandler.sendMessageDelayed(msg2, 100);
-                        } else {
-                            shiftPending = false;
-                        }
-                    }
-                    invalidate();
-                }
-                break;
-            case MSG_ZOOM:
-                int xPos = b.getInt(PARAM_XPOS);
-                double factor = (0.000001d * b.getLong(PARAM_ZOOM) - 1) * zoomBoost + 1;
-                boolean valid = Math.abs(factor - 1) > 0.0;
-                blockMoveUntil = System.currentTimeMillis() + 500;
-                if (valid) {
-                    if (xyPlot.zoomAt(xPos, factor)) {
-                        invalidate();
-                    } else {
-                        invalidate();
-                    }
-                }
-                break;
-        }
-        return true;
-    }
+		super.onLayout(changed, left, top, right, bottom);
+		bottom = bottom - top;
+		top = 0;
+		rect.x = 0;
+		rect.y = top + yofs;
+		rect.width = right - left;
+		rect.height = bottom - top - yofs;
+		graphLib.setBounds(rect);
+		if (autoFontSize) {
+			int x = Math.min(rect.width, rect.height);
+			int labelFontSize = x / 15;
+			int titleFontSize = (int) (labelFontSize * 1.2);
+			xyPlot.setFontSize(labelFontSize, titleFontSize);
+		}
+		xyPlot.registerEventHandler(xyPlotEvent);
+		initXRange(xyPlot.getXMin(), xyPlot.getXMax());
+	}
 
-    public void setAxisColor(int axisColor) {
-        int red = Color.red(axisColor);
-        int green = Color.green(axisColor);
-        int blue = Color.blue(axisColor);
-        graphLib.setAxisColor(red, green, blue);
-    }
+	@Override
+	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
+		graphLib.paint(canvas);
+	}
 
-    private class ZoomListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            float scaleFactor = detector.getScaleFactor();
+	/**
+	 * Define which value range is visible on the X-axis. The range is [xmax -
+	 * visibleRange, xmax]
+	 *
+	 * @param visibleRange range in x axis units
+	 */
+	public void setVisibleLastX(double visibleRange) {
+		if (xyPlot != null) {
+			if (dh.length > 0) {
+				double xmax = dh[0].getXMax();
+				double xmin = Math.max(dh[0].getXMin(), xmax - visibleRange);
+				xyPlot.setXRange(xmin, xmax);
+				if (xyPlot.isOutdated()) {
+					invalidate();
+				}
+			}
+		}
+	}
 
-            if (Math.abs(1.0f - scaleFactor) > 0.01f) {
-                Message msg = myHandler.obtainMessage();
-                msg.what = MSG_ZOOM;
-                Bundle b = new Bundle();
-                long zoom = Math.round(1000000.0d * scaleFactor);
-                int xPos = (int) detector.getFocusX();
-                if (0 == zoomCenterPos) {
-                    zoomCenterPos = xPos;
-                }
-                b.putInt(PARAM_XPOS, zoomCenterPos);
-                b.putLong(PARAM_ZOOM, zoom);
-                msg.setData(b);
-                myHandler.sendMessage(msg);
-                zoomPending = true;
-                return true;
-            }
-            return false;
-        }
-    }
+	/**
+	 * Same as setXRange but is always executed independent of the graphs current
+	 * mode.
+	 *
+	 * @param xmin Minimum x value to be displayed
+	 * @param xmax Maximum x value to be displayed
+	 */
+	public void initXRange(double xmin, double xmax) {
+		if (xyPlot != null) {
+			xyPlot.initXRange(xmin, xmax);
+			invalidate();
+		}
+	}
 
-    private class XYGestureListener extends GestureDetector.SimpleOnGestureListener {
+	/**
+	 * Set a given range on the x axis to be visible
+	 *
+	 * @param xmin minimum x value
+	 * @param xmax maximum x value
+	 */
+	public void setVisibleXRange(double xmin, double xmax) {
+		if (xyPlot != null) {
+			xyPlot.setXRange(xmin, xmax);
+			if (xyPlot.isOutdated()) {
+				invalidate();
+			}
+		}
+	}
 
-        @Override
-        public boolean onDoubleTapEvent(MotionEvent ev) {
-            if (ev.getAction() == 0) {
-                int x = (int) ev.getX();
-                int y = (int) ev.getY();
-                xyPlot.evalMouseEvent(MouseEvent.MOUSEDOUBLETAP, x, y);
-                invalidate();
-                return true;
-            }
-            return false;
-        }
+	@Override
+	public boolean performClick() {
+		return super.performClick();
+	}
 
-        @Override
-        public boolean onSingleTapUp(MotionEvent ev) {
-            int x = (int) ev.getX();
-            int y = (int) ev.getY();
-            xyPlot.evalMouseEvent(MouseEvent.MOUSESINGLETAP, x, y);
-            xyPlot.evalMouseEvent(MouseEvent.MOUSEUP, x, y);
-            invalidate();
-            return true;
-        }
+	public IXYPlot getXYPlot() {
+		return xyPlot;
+	}
 
-        @Override
-        public boolean onDown(MotionEvent ev) {
-            shiftPending = false;
-            zoomPending = false;
-            lastXPos = (int) ev.getX();
-            int x = lastXPos;
-            int y = (int) ev.getY();
-            zoomCenterPos = 0;
-            xyPlot.evalMouseEvent(MouseEvent.MOUSEDOWN, x, y);
-            xyPlot.evalMouseEvent(MouseEvent.MOUSEUP, x, y);
-            invalidate();
-            return true;
-        }
+	@Override
+	public boolean handleMessage(Message msg) {
+		Bundle b = msg.getData();
+		switch (msg.what) {
+		case MSG_MOVE:
+		case MSG_FLING:
+			if (System.currentTimeMillis() > blockMoveUntil) {
+				int shift = b.getInt(PARAM_SHIFT);
+				int last = b.getInt(PARAM_LAST);
+				boolean ContinueMove = xyPlot.moveByPixels(shift);
+				if (last == 0 && ContinueMove) {
+					shift = shift / 2;
+					if (Math.abs(shift) > 2) {
+						Message msg2 = myHandler.obtainMessage();
+						msg2.what = MSG_MOVE;
+						Bundle b2 = msg2.getData();
+						b2.putInt(PARAM_SHIFT, shift);
+						b2.putInt(PARAM_LAST, 0);
+						msg2.setData(b2);
+						myHandler.sendMessageDelayed(msg2, 100);
+					} else {
+						shiftPending = false;
+					}
+				}
+				invalidate();
+			}
+			break;
+		case MSG_ZOOM:
+			int xPos = b.getInt(PARAM_XPOS);
+			double factor = (0.000001d * b.getLong(PARAM_ZOOM) - 1) * zoomBoost + 1;
+			boolean valid = Math.abs(factor - 1) > 0.0;
+			blockMoveUntil = System.currentTimeMillis() + 500;
+			if (valid) {
+				if (xyPlot.zoomAt(xPos, factor)) {
+					invalidate();
+				} else {
+					invalidate();
+				}
+			}
+			break;
+		}
+		return true;
+	}
 
-        @Override
-        public void onShowPress(MotionEvent ev) {
-        }
+	public void setAxisColor(int axisColor) {
+		int red = Color.red(axisColor);
+		int green = Color.green(axisColor);
+		int blue = Color.blue(axisColor);
+		graphLib.setAxisColor(red, green, blue);
+	}
 
-        @Override
-        public void onLongPress(MotionEvent ev) {
-        }
+	private class ZoomListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+		@Override
+		public boolean onScale(ScaleGestureDetector detector) {
+			float scaleFactor = detector.getScaleFactor();
 
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            boolean multiTouch = e2.getPointerCount() > 1;
-            if (!zoomPending && multiTouch && Math.abs(distanceX) > 3) {
-                shiftPending = true;
-                int delta = (int) distanceX;
-                if (Math.abs(delta) > 2) {
-                    Message msg = myHandler.obtainMessage();
-                    msg.what = MSG_MOVE;
-                    Bundle b = new Bundle();
-                    b.putInt(PARAM_SHIFT, delta);
-                    b.putInt(PARAM_LAST, 1);
-                    msg.setData(b);
-                    myHandler.sendMessage(msg);
-                    return true;
-                }
-            }
-            return false;
-        }
+			if (Math.abs(1.0f - scaleFactor) > 0.01f) {
+				Message msg = myHandler.obtainMessage();
+				msg.what = MSG_ZOOM;
+				Bundle b = new Bundle();
+				long zoom = Math.round(1000000.0d * scaleFactor);
+				int xPos = (int) detector.getFocusX();
+				if (0 == zoomCenterPos) {
+					zoomCenterPos = xPos;
+				}
+				b.putInt(PARAM_XPOS, zoomCenterPos);
+				b.putLong(PARAM_ZOOM, zoom);
+				msg.setData(b);
+				myHandler.sendMessage(msg);
+				zoomPending = true;
+				return true;
+			}
+			return false;
+		}
+	}
 
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            if (shiftPending) {
-                int factor = Math.max(1, (int) (Math.abs(velocityX / 1000.0f)));
-                int delta = factor * (int) (e1.getX() - e2.getX());
-                boolean doFling = Math.abs(delta) > 2;
-                if (doFling) {
-                    Message msg = myHandler.obtainMessage();
-                    Bundle b = new Bundle();
-                    msg.what = MSG_FLING;
-                    b.putInt(PARAM_SHIFT, delta);
-                    b.putInt(PARAM_LAST, 0);
-                    msg.setData(b);
-                    myHandler.sendMessage(msg);
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
+	private class XYGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+		@Override
+		public boolean onDoubleTapEvent(MotionEvent ev) {
+			if (ev.getAction() == 0) {
+				int x = (int) ev.getX();
+				int y = (int) ev.getY();
+				xyPlot.evalMouseEvent(MouseEvent.MOUSEDOUBLETAP, x, y);
+				invalidate();
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public boolean onSingleTapUp(MotionEvent ev) {
+			int x = (int) ev.getX();
+			int y = (int) ev.getY();
+			xyPlot.evalMouseEvent(MouseEvent.MOUSESINGLETAP, x, y);
+			xyPlot.evalMouseEvent(MouseEvent.MOUSEUP, x, y);
+			invalidate();
+			return true;
+		}
+
+		@Override
+		public boolean onDown(MotionEvent ev) {
+			shiftPending = false;
+			zoomPending = false;
+			lastXPos = (int) ev.getX();
+			int x = lastXPos;
+			int y = (int) ev.getY();
+			zoomCenterPos = 0;
+			xyPlot.evalMouseEvent(MouseEvent.MOUSEDOWN, x, y);
+			xyPlot.evalMouseEvent(MouseEvent.MOUSEUP, x, y);
+			invalidate();
+			return true;
+		}
+
+		@Override
+		public void onShowPress(MotionEvent ev) {
+		}
+
+		@Override
+		public void onLongPress(MotionEvent ev) {
+		}
+
+		@Override
+		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+			boolean multiTouch = e2.getPointerCount() > 1;
+			if (!zoomPending && multiTouch && Math.abs(distanceX) > 3) {
+				shiftPending = true;
+				int delta = (int) distanceX;
+				if (Math.abs(delta) > 2) {
+					Message msg = myHandler.obtainMessage();
+					msg.what = MSG_MOVE;
+					Bundle b = new Bundle();
+					b.putInt(PARAM_SHIFT, delta);
+					b.putInt(PARAM_LAST, 1);
+					msg.setData(b);
+					myHandler.sendMessage(msg);
+					return true;
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+			if (shiftPending) {
+				int factor = Math.max(1, (int) (Math.abs(velocityX / 1000.0f)));
+				int delta = factor * (int) (e1.getX() - e2.getX());
+				boolean doFling = Math.abs(delta) > 2;
+				if (doFling) {
+					Message msg = myHandler.obtainMessage();
+					Bundle b = new Bundle();
+					msg.what = MSG_FLING;
+					b.putInt(PARAM_SHIFT, delta);
+					b.putInt(PARAM_LAST, 0);
+					msg.setData(b);
+					myHandler.sendMessage(msg);
+					return true;
+				}
+			}
+			return false;
+		}
+	}
 
 }

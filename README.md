@@ -42,20 +42,18 @@ Eberhard Kümmel<br>
 2019-10-05   New version 1.3.18 published on JCenter<br>
 2020-02-21   New version 1.3.22 published on JCenter<br>
 2020-03-22   New version 1.3.23 published on JCenter<br>
-2020-05-14   New version 1.3.24 published on JCenter<br>
+2020-05-19   New version 1.3.24 published on JCenter<br>
 </p>
 <h2>How to use on Android</h2>
 <p>
-The Android archive is available on JCenter. Include the library into your gradle script via:<br>
-implementation 'xyplot_android:xyplot_android:1.3.4@aar'<br>
-<br>
 Use the following grade dependency to fetch the library from JCenter<br>
-implementation 'de.ewmksoft.xyplot:xyplot_android:1.3.5@aar'<br>
+implementation 'de.ewmksoft.xyplot:xyplot_android:1.3.24@aar'<br>
 <br>
 </p>
 <h2>How to build</h2>
 <p>
-The build for xyplot is actually not a real gradle multi build. The different parts must be compiled separately on the command line using gradle in the respective folders.
-First the core must be build, then the libraries, then the demo projects.
+The build for xyplot is actually not a gradle multi build. The different parts must be compiled 
+separately on the command line using gradle in the respective folders.
+First core must be build, then the libraries, then the demo projects.
 </p>
 

@@ -61,11 +61,11 @@ package de.ewmksoft.xyplot.driver;
 
 public interface IXYGraphView {
 
-    boolean isEnabled();
+	boolean isEnabled();
 
-    void setEnabled(boolean enabled);
+	void setEnabled(boolean enabled);
 
-    void clear();
+	void clear();
 
-    void save();
+	void save();
 }

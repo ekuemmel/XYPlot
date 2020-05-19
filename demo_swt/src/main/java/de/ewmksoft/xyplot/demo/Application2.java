@@ -81,15 +81,13 @@ public class Application2 implements ITimeTicker {
 		});
 
 		dhs = new XYPlotData[2];
-		dhs[0] = XYPlot.createDataHandler(MAX_POINTS, new XYGraphLibSWT.RGB(
-				255, 50, 200, 50));
+		dhs[0] = XYPlot.createDataHandler(MAX_POINTS, new XYGraphLibSWT.RGB(255, 50, 200, 50));
 		dhs[0].setLegendText("Voltage");
 		dhs[0].setUnit("V");
 		dhs[0].setManualScaleMin(0);
 		dhs[0].setManualScale(-10, 10);
 
-		dhs[1] = XYPlot.createDataHandler(MAX_POINTS, new XYGraphLibSWT.RGB(55,
-				250, 200, 50));
+		dhs[1] = XYPlot.createDataHandler(MAX_POINTS, new XYGraphLibSWT.RGB(55, 250, 200, 50));
 		dhs[1].setLegendText("Ampere");
 		dhs[1].setUnit("A");
 		dhs[1].setManualScaleMin(0);
@@ -105,7 +103,6 @@ public class Application2 implements ITimeTicker {
 		xyplot.setAxisColor(255, 255, 255);
 		xyplot.setCursorColor(0, 255, 0);
 		xyplot.setCursorBgColor(50, 50, 50);
-		xyplot.setSmoothScroll(true);
 
 		xyplot.registerEventHandler(new IXYPlotEvent() {
 			public void onEvent(KeyEvent event) {
@@ -135,8 +132,8 @@ public class Application2 implements ITimeTicker {
 	}
 
 	/**
-	 * Main loop of the application called in the main method. The application
-	 * loops here until it is terminated.
+	 * Main loop of the application called in the main method. The application loops
+	 * here until it is terminated.
 	 */
 	void run() {
 		startTime = System.currentTimeMillis();
@@ -164,8 +161,7 @@ public class Application2 implements ITimeTicker {
 		try {
 			XYPlotPersistence xyPlotPersistence = new XYPlotPersistence();
 			xyPlotPersistence.setComment("Test Save");
-			xyPlotPersistence.setXDescription(xyplot.getXAxisText(),
-					xyplot.getXUnitText());
+			xyPlotPersistence.setXDescription(xyplot.getXAxisText(), xyplot.getXUnitText());
 			xyPlotPersistence.writeData("test", dhs);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -173,8 +169,8 @@ public class Application2 implements ITimeTicker {
 	}
 
 	/**
-	 * React on a timer event. Create new data to be shown in the XY plot by
-	 * calling {@link shiftGraph()}
+	 * React on a timer event. Create new data to be shown in the XY plot by calling
+	 * {@link shiftGraph()}
 	 */
 	public void onTimer() {
 		if (newStart) {

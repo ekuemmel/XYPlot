@@ -1588,7 +1588,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 					pos = data.getCursorPos();
 				}
 				String label = formatValueUnit(false, data, data.getValue(pos).y());
-				label = trimText(label, r.width);
+				label = trimText(label, r.width - 2* PADDING_LEGEND);
 				graphLibInt.setBgColor(BgColor.LEGENDBG);
 				if (no == currentPlotNo) {
 					graphLibInt.setBgColor(BgColor.LEGENDSELECTBG);
