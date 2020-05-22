@@ -18,7 +18,7 @@ Tübingen/Germany (in Borland Pascal) and many years later been ported to Java.<b
 In this repository you find the library and example applications for SWT and Android.<br>
 </p>
 <p>
-Maybe the library is useful for someone<br>
+Maybe the library be useful for whoever<br>
 <br>
 Eberhard Kümmel<br>
 <br>
@@ -42,7 +42,7 @@ Eberhard Kümmel<br>
 2019-10-05   New version 1.3.18 published on JCenter<br>
 2020-02-21   New version 1.3.22 published on JCenter<br>
 2020-03-22   New version 1.3.23 published on JCenter<br>
-2020-05-19   New version 1.3.24 published on JCenter<br>
+2020-05-22   New version 1.3.24 published on JCenter<br>
 </p>
 <h2>How to use on Android</h2>
 <p>

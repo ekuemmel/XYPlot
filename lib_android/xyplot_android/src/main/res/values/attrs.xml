@@ -16,6 +16,15 @@
         <attr name="buttonSaveImage" format="reference" />
         <attr name="buttonPos1Image" format="reference" />
         <attr name="buttonEndImage" format="reference" />
-		<attr name="axis_color" format="color"/>
+        <attr name="textColor" format="color" />
+        <attr name="axisColor" format="color" />
+        <attr name="fontAutoSize" format="boolean" />
+        <attr name="drawAreaBgColor" format="color" />
+        <attr name="cursorColor" format="color" />
+        <attr name="cursorBgColor" format="color" />
+        <attr name="legendBgColor" format="color" />
+        <attr name="legendSelectBgColor" format="color" />
+        <attr name="fontName" format="string" />
+        <attr name="fontNameBold" format="string" />
     </declare-styleable>
 </resources>

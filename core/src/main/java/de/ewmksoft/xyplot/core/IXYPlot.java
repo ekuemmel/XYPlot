@@ -77,8 +77,22 @@ public interface IXYPlot {
 	 *
 	 * @return List of data sets
 	 */
-
+	@Deprecated
 	abstract ArrayList<XYPlotData> getDataHandler();
+
+	/**
+	 * Get list of data handlers
+	 *
+	 * @return List of data sets
+	 */
+	abstract ArrayList<XYPlotData> getDataHandlers();
+
+	/**
+	 * Add a set of data handlers to the graph. It replaces all already assigned
+	 * data handlers..
+	 *
+	 */
+	abstract void setDataHandlers(XYPlotData[] dhs);
 
 	/**
 	 * Add an already existing data set

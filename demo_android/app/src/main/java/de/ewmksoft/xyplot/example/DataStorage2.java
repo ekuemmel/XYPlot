@@ -41,7 +41,7 @@ class DataStorage2 implements IDataStorage {
     @Override
     public void clearData() {
         y = 0;
-		startX = 0;
+        startX = 0;
         startTime = System.currentTimeMillis();
         dhs[0] = XYPlot
                 .createDataHandler(MAX_POINTS, new RGB(255, 50, 150, 50));
@@ -65,18 +65,18 @@ class DataStorage2 implements IDataStorage {
         return dhs;
     }
 
-	@Override
-	public String getXName() {
-		return "time";
-	}
+    @Override
+    public String getXName() {
+        return "time";
+    }
 
-	
-	@Override
-	public String getXUnit() {
-		return "s";
-	}
 
-	
+    @Override
+    public String getXUnit() {
+        return "s";
+    }
+
+
     /*
      * (non-Javadoc)
      *

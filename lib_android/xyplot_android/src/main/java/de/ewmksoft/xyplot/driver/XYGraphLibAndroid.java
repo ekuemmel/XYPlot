@@ -8,11 +8,11 @@
  *
  *  LICENSE AGREEMENT
  *
- *  WHEREAS, Eberhard Kuemmel is the owner of valuable intellectual 
+ *  WHEREAS, Eberhard Kuemmel is the owner of valuable intellectual
  *  property rights relating to the XYPlot and wish to license XYPlot
  *  subject to the terms and conditions set forth below;
  *
- *  and 
+ *  and
  *
  *  WHEREAS, you ("Licensee") acknowledge that Eberhard Kuemmel has the
  *  right to grant licenses to the intellectual property rights relating
@@ -36,7 +36,7 @@
  *  materials within or otherwise related to XYPlot, and not alter,
  *  erase, deface or overprint any such notice.
  *
- *  Licensee hereby grants a royalty-free license to any and all 
+ *  Licensee hereby grants a royalty-free license to any and all
  *  derivatives based upon this software code base.
  *
  *  Licensee may modify the sources of XYPlot for the Licensee's own
@@ -53,7 +53,7 @@
  *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
  *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  *  IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- *  POSSIBILITY OF SUCH DAMAGE. 
+ *  POSSIBILITY OF SUCH DAMAGE.
  *
  *****************************************************************************/
 
@@ -62,20 +62,30 @@ package de.ewmksoft.xyplot.driver;
 import de.ewmksoft.xyplot.core.IXYGraphLib;
 import de.ewmksoft.xyplot.core.IXYGraphLibInt;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
 class XYGraphLibAndroid implements IXYGraphLib {
-	private XYGraphLibIntAndroid xyGraphLibIntAndroid;
-	
-    XYGraphLibAndroid(View owner, Rect bounds) {
-        xyGraphLibIntAndroid = new XYGraphLibIntAndroid(owner, bounds);
+    private XYGraphLibIntAndroid xyGraphLibIntAndroid;
+
+    XYGraphLibAndroid(Context context, View owner, Rect bounds) {
+        xyGraphLibIntAndroid = new XYGraphLibIntAndroid(context, owner, bounds);
     }
 
     public void close() {
-
+        // Nothing to do here
     }
+
+    void setFontName(String fontName) {
+        xyGraphLibIntAndroid.setFontName(fontName);
+    }
+
+    void setFontNameBold(String fontName) {
+        xyGraphLibIntAndroid.setFontNameBold(fontName);
+    }
+
 
     @Override
     public boolean hasZoomBox() {
@@ -105,10 +115,37 @@ class XYGraphLibAndroid implements IXYGraphLib {
     void setImageDrawable(IXYGraphLibInt.ButtonImages button, Drawable drawable) {
         xyGraphLibIntAndroid.setImageDrawable(button, drawable);
     }
-  		
-	void setAxisColor(int redColor,int green,int blue)
-    {
-        xyGraphLibIntAndroid.setAxisColor(redColor,green,blue);
+
+	void setTextColor(int red, int green, int blue) {
+		xyGraphLibIntAndroid.setTextColor(red, green, blue);
+	}
+
+	void setAxisColor(int red, int green, int blue) {
+        xyGraphLibIntAndroid.setAxisColor(red, green, blue);
+    }
+
+    void setBgColor(int red, int green, int blue) {
+        xyGraphLibIntAndroid.setBgColor(red, green, blue);
+    }
+
+    void setDrawAreaBgColor(int red, int green, int blue) {
+        xyGraphLibIntAndroid.setDrawAreaBgColor(red, green, blue);
+    }
+
+    void setCursorColor(int red, int green, int blue) {
+        xyGraphLibIntAndroid.setCursorColor(red, green, blue);
+    }
+
+    void setCursorBgColor(int red, int green, int blue) {
+        xyGraphLibIntAndroid.setCursorBgColor(red, green, blue);
+    }
+
+    void setLegendBgColor(int red, int green, int blue) {
+        xyGraphLibIntAndroid.setLegendBgColor(red, green, blue);
+    }
+
+    void setLegendSelectBgColor(int red, int green, int blue) {
+        xyGraphLibIntAndroid.setLegendSelectBgColor(red, green, blue);
     }
 
 }

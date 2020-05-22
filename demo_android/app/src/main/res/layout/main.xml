@@ -52,7 +52,7 @@
         android:fadingEdge="horizontal"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        app:axis_color="@color/magenta_light"
+        app:axisColor="@color/magenta_light"
         app:buttonClearImage="@drawable/ic_trash"
         app:buttonDownImage="@drawable/ic_down"
         app:buttonEndImage="@drawable/ic_right_end"

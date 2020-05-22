@@ -8,11 +8,11 @@
  *
  *  LICENSE AGREEMENT
  *
- *  WHEREAS, Eberhard Kuemmel is the owner of valuable intellectual 
+ *  WHEREAS, Eberhard Kuemmel is the owner of valuable intellectual
  *  property rights relating to the XYPlot and wish to license XYPlot
  *  subject to the terms and conditions set forth below;
  *
- *  and 
+ *  and
  *
  *  WHEREAS, you ("Licensee") acknowledge that Eberhard Kuemmel has the
  *  right to grant licenses to the intellectual property rights relating
@@ -36,7 +36,7 @@
  *  materials within or otherwise related to XYPlot, and not alter,
  *  erase, deface or overprint any such notice.
  *
- *  Licensee hereby grants a royalty-free license to any and all 
+ *  Licensee hereby grants a royalty-free license to any and all
  *  derivatives based upon this software code base.
  *
  *  Licensee may modify the sources of XYPlot for the Licensee's own
@@ -53,7 +53,7 @@
  *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
  *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  *  IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- *  POSSIBILITY OF SUCH DAMAGE. 
+ *  POSSIBILITY OF SUCH DAMAGE.
  *
  *****************************************************************************/
 
@@ -61,11 +61,11 @@ package de.ewmksoft.xyplot.driver;
 
 public interface IXYGraphView {
 
-	boolean isEnabled();
+    boolean isEnabled();
 
-	void setEnabled(boolean enabled);
+    void setEnabled(boolean enabled);
 
-	void clear();
+    void clear();
 
-	void save();
+    void save();
 }

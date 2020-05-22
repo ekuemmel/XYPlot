@@ -66,17 +66,17 @@ class DataStorage1 implements IDataStorage {
     public XYPlotData[] getDataHandlers() {
         return dhs;
     }
-	
-	@Override
-	public String getXName() {
-		return "time";
-	}
 
-	
-	@Override
-	public String getXUnit() {
-		return "ms";
-	}
+    @Override
+    public String getXName() {
+        return "time";
+    }
+
+
+    @Override
+    public String getXUnit() {
+        return "ms";
+    }
 
 
     public void update() {

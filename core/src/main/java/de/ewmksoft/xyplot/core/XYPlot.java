@@ -246,9 +246,30 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 *
 	 * @see de.ewmksoft.xyplot.IXYPlot#getDataHandler()
 	 */
-
 	public ArrayList<XYPlotData> getDataHandler() {
-		return dataList;
+		return new ArrayList<XYPlotData>(dataList);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.ewmksoft.xyplot.IXYPlot#getDataHandlers()
+	 */
+	public ArrayList<XYPlotData> getDataHandlers() {
+		return new ArrayList<XYPlotData>(dataList);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.ewmksoft.xyplot.IXYPlot#setDataHandles(de.ewmksoft.xyplot.XYPlotData[])
+	 */
+	public void setDataHandlers(XYPlotData[] dhs) {
+		removeDataHandlers();
+		for (XYPlotData xyPlotData : dhs) {
+			addDataHandler(xyPlotData);
+		}
 	}
 
 	/*
@@ -483,6 +504,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		if (dataList.get(currentPlotNo) != null) {
 			if (key == CMD_SHOW_ALL) {
 				zoomScreenOut();
+				plotEvent.onEvent(KeyEvent.KEY_START);
 				needsRedraw = true;
 				result = true;
 			} else if (key == CMD_ZOOM_IN) {
@@ -748,7 +770,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 
 	public boolean moveByPixels(int pixelNum) {
 		boolean result = false;
-		if (!paused || currentPlotNo < 0 || currentPlotNo >= dataList.size()) {
+		if (!isPaused() || currentPlotNo < 0 || currentPlotNo >= dataList.size()) {
 			return result;
 		}
 		XYPlotData data = dataList.get(currentPlotNo);
@@ -800,7 +822,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 */
 	public boolean zoomAt(int position, double factor) {
 		boolean result = false;
-		if (paused && dataList.size() > currentPlotNo) {
+		if (isPaused() && dataList.size() > currentPlotNo) {
 			XYPlotData xyPlotData = dataList.get(currentPlotNo);
 			if (xyPlotData != null) {
 				XYPlotData.lock();
@@ -1007,6 +1029,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			return;
 		}
 		XYPlotData.lock();
+		graphLibInt.setNormalFont();
 		int no = -1;
 		dataMinMax.clear();
 		unitMinMax.clear();
@@ -1342,6 +1365,15 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		buttonsChanged = true;
 	}
 
+	/**
+	 * Check if the graph is in recording or paused mode.
+	 *
+	 * @return true: Graph is in paused mode false: Graph is in recording mode
+	 */
+	private boolean isPaused() {
+		return paused;
+	}
+
 	@Override
 	public void setAxisLabels(boolean value) {
 		showButtonsAndLegend = value;
@@ -1546,7 +1578,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 */
 	private void calculateLegendBox(int no, XYPlotData data) {
 		if (expandLegend) {
-			graphLibInt.setNormalFont();
 			Pt fontSize = graphLibInt.getAverageCharacterSize();
 			int x = bounds.width - 2 - legendWidth;
 			int itemHeight = fontSize.y * 2 + legendBoxBorder;
@@ -1567,7 +1598,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		}
 		Rect r = data.getLegendRect();
 		if (r != null) {
-			graphLibInt.setNormalFont();
 			graphLibInt.setFgColor(FgColor.AXIS);
 			graphLibInt.setBgColor(BgColor.LEGENDBG);
 			graphLibInt.setSolidLines(1);
@@ -1588,12 +1618,11 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 					pos = data.getCursorPos();
 				}
 				String label = formatValueUnit(false, data, data.getValue(pos).y());
-				label = trimText(label, r.width - 2* PADDING_LEGEND);
+				label = trimText(label, r.width - 2 * PADDING_LEGEND);
 				graphLibInt.setBgColor(BgColor.LEGENDBG);
 				if (no == currentPlotNo) {
 					graphLibInt.setBgColor(BgColor.LEGENDSELECTBG);
 				}
-				graphLibInt.setNormalFont();
 				graphLibInt.drawText(label, r.x + PADDING_LEGEND, r.y + r.height / 2);
 			}
 		}
@@ -1673,7 +1702,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			return;
 		}
 		// **************** Draw Y axis ***************************
-		graphLibInt.setBoldFont();
 		p1 = new Pt(startPointY.x, startPointY.y - 2);
 		p2 = new Pt(stopPointY.x, stopPointY.y);
 		graphLibInt.setSolidLines(1);
@@ -1688,6 +1716,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			}
 			ytext += unit;
 
+			graphLibInt.setBoldFont();
 			Pt tw = graphLibInt.getStringExtends(ytext);
 			// Draw current curve title in header
 			int colorBoxSize = tw.y / 2;
@@ -1700,7 +1729,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			graphLibInt.setBgPlotColor(currentPlotNo);
 			graphLibInt.fillRectangle(titleColorBox);
 			graphLibInt.setBgColor(BgColor.BG);
-			graphLibInt.setNormalFont();
+			graphLibInt.setNormalFont(); // Back from setBoldFont()
 			int yexp = (int) sd.dexpo;
 			if (yexp != 0) {
 				ytext = createExpoString(yexp);
@@ -2032,7 +2061,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		legendWidth = 0;
 		Pt fontSize = new Pt(0, 0);
 		if (showButtonsAndLegend) {
-			graphLibInt.setNormalFont();
 			fontSize = graphLibInt.getAverageCharacterSize();
 		}
 		int no = 0;
@@ -2041,7 +2069,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			if (xData == null || sd == null)
 				continue;
 			int bw = 3 * legendBoxBorder;
-			graphLibInt.setNormalFont();
 			lw = bw + PADDING_LEGEND + graphLibInt.getStringExtends(data.getLegendText()).x;
 			legendWidth = Math.max(legendWidth, lw);
 			lw = bw + PADDING_LEGEND + graphLibInt.getStringExtends(formatValueUnit(true, data, sd.vmax)).x;
@@ -2052,7 +2079,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			legendWidth = Math.min(2 * bounds.width / 3, legendWidth);
 
 			if (showButtonsAndLegend) {
-				graphLibInt.setNormalFont();
 				yox = Math.max(yox, (sd.gk + 1) * fontSize.x + tickLen);
 				int yexp = (int) sd.dexpo;
 				if (yexp != 0) {
@@ -2689,15 +2715,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 			buttonHeight = buttonWidth;
 		}
 		buttonBarHeight = buttonHeight + 8;
-	}
-
-	/**
-	 * Check if the graph is in recording or paused mode.
-	 *
-	 * @return true: Graph is in paused mode false: Graph is in recording mode
-	 */
-	private boolean isPaused() {
-		return paused;
 	}
 
 }

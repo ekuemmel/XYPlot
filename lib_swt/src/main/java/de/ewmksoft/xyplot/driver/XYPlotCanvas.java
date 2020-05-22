@@ -197,7 +197,6 @@ public class XYPlotCanvas extends Canvas {
 		if (listenerF1 != null) {
 			Event event = new Event();
 			listenerF1.handleEvent(event);
-
 		}
 	}
 
