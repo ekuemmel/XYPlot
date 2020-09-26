@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Display;
 public class Main {
 
 	private static int APPLICATION_TYPE = 3;
+	private static final String USAGE = "Usage: r=<file to read> w=<file to write>";
 
 	/**
 	 * @param args
@@ -32,6 +33,9 @@ public class Main {
 			String loadFileName = null;
 			String saveFileName = null;
 			for (String arg : args) {
+				if (arg.startsWith("-h")) {
+					System.out.println(USAGE);
+				}
 				if (arg.startsWith("r=")) {
 					loadFileName = arg.substring(2);
 				}
