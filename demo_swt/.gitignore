@@ -1,4 +1,5 @@
 build
+.settings
 .gradle
-test.gzip
+*.gzip
 /bin/
