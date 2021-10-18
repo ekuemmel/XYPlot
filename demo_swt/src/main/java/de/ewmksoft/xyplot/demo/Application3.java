@@ -63,7 +63,7 @@ public class Application3 implements ITimeTicker {
 
 	private String[] labels = { "Label 1", "Label 2 has a very long value and might be cut in some cases", "Label 3" };
 
-	public Application3(Display display, String loadFileName, String saveFileName) {
+	public Application3(Display display, String loadFileName, final String saveFileName) {
 		this.display = display;
 		this.loadFileName = loadFileName;
 		this.saveFileName = saveFileName;

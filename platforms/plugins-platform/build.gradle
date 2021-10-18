@@ -1,0 +1,11 @@
+plugins {
+    id('java-platform')
+}
+
+group = 'de.ewmksoft.platform'
+
+dependencies {
+    constraints {
+        api('com.android.tools.build:gradle:4.1.1')
+    }
+}

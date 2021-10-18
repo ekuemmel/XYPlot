@@ -1,7 +1,14 @@
-/*
- * XY-Plot Demo Application for Gradle
- *
- */
 
+includeBuild('../platforms')
+includeBuild('../build-logic')
 
-rootProject.name = 'DemoSwt'
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+}
+
+includeBuild('../core')
+includeBuild('../lib_swt')
+
+rootProject.name = 'demo_swt'

@@ -1,0 +1,10 @@
+plugins {
+    id('java-platform')
+}
+
+group = 'de.ewmksoft.platform'
+
+javaPlatform.allowDependencies()
+
+dependencies {
+}

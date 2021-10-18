@@ -1,0 +1,25 @@
+/*
+ * Gradle build for XY-Plot library. 
+ * This library contains the platform independent core. It is used in platform
+ * dependent libraries.
+ * Currently supported platforms are SWT for portable JAVA applications and 
+ * native Android.
+ *
+ */
+
+plugins {
+    id('de.ewmksoft.java-library') 
+}
+
+group = "${group}.core"
+
+sourceSets {
+    main.java.srcDirs += 'src/main/java'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.java
+    archiveClassifier = 'sources'
+}
+
+

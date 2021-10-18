@@ -1,0 +1,27 @@
+plugins {
+    id('java')
+    id('de.ewmksoft.jacoco')
+}
+
+group = 'de.ewmksoft.xyplot'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_6
+    targetCompatibility = JavaVersion.VERSION_1_6
+}
+
+gradle.projectsEvaluated {
+   tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
+}
+
+dependencies {
+    implementation(platform('de.ewmksoft.platform:product-platform'))
+
+    testImplementation(platform('de.ewmksoft.platform:test-platform'))
+}
+
+tasks.named("test") {
+    useJUnitPlatform()
+}

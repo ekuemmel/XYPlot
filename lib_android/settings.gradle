@@ -1,1 +1,19 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+    }
+    includeBuild('../build-logic')
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        google()
+    }
+}
+includeBuild('../platforms')
+includeBuild('../core')
+
+rootProject.name = 'lib_android'
 include ':xyplot_android'

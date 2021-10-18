@@ -1,0 +1,6 @@
+plugins {
+    id('de.ewmksoft.commons')
+    id('java-library')
+	id('distribution')
+	id('maven')
+}

@@ -1,1 +1,26 @@
-include ':app'
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        
+        flatDir {
+            dirs '../../../../../ws_xyplotlib/new/XYPlot/lib_android/xyplot_android/build/outputs/aar'
+        }
+
+
+    }
+    includeBuild('../build-logic')
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        google()
+    }
+}
+includeBuild('../platforms')
+includeBuild('../core')
+includeBuild('../lib_android')
+
+rootProject.name = 'demo_android'
+include('app')

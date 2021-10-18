@@ -1,0 +1,31 @@
+plugins {
+    id('com.android.application')
+}
+
+//group = 'de.ewmksoft.demo_android'
+
+android {
+    compileSdkVersion(28)
+    defaultConfig {
+        minSdkVersion(24)
+        targetSdkVersion(28)
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+}
+
+    repositories {
+		google()
+		mavenCentral()
+		flatDir {
+            dirs '../../lib_android/xyplot_android/build/outputs/aar'
+        }
+    }
+
+
+dependencies {
+    implementation(platform('de.ewmksoft.platform:product-platform'))
+    testImplementation(platform('de.ewmksoft.platform:test-platform'))
+}

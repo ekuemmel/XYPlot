@@ -1,0 +1,12 @@
+// This is an empty umbrella build including all the component builds.
+
+includeBuild('platforms')
+includeBuild('build-logic')
+
+includeBuild('core')
+
+includeBuild('lib_android')
+includeBuild('lib_swt')
+
+includeBuild('demo_android')
+includeBuild('demo_swt')

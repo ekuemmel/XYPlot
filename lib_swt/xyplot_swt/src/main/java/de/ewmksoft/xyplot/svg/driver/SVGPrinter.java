@@ -1,7 +1,9 @@
- *  These files are belong to XYPlot library. The library allows to draw
+/*****************************************************************************
+ * 
+ *  This file is part of the XYPlot library. The library allows to draw
  *  data in a x/y diagram using several output media.
  * 
- *  Copyright (C) 1994 EWMK-Soft Eberhard Kuemmel
+ *  Copyright (C) 1994-2012 EWMK-Soft Eberhard Kuemmel
  *
  *  LICENSE AGREEMENT
  * 
@@ -51,4 +53,49 @@
  *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  *  IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE. 
- 
+ *
+ *****************************************************************************/
+
+package de.ewmksoft.xyplot.svg.driver;
+
+import java.io.OutputStream;
+import java.util.ArrayList;
+
+import de.ewmksoft.xyplot.core.IXYGraphLib.Rect;
+import de.ewmksoft.xyplot.core.IXYPlot;
+import de.ewmksoft.xyplot.core.XYPlot;
+import de.ewmksoft.xyplot.core.XYPlotData;
+
+/**
+ * Static wrapper to draw a XYPlot graph with multiple data sets split
+ * up in multiple graphs.  
+ *
+ */
+public class SVGPrinter {
+
+	static public void print(OutputStream os, IXYPlot xyPlotParam) {
+		int pageWidth = 500;
+		int graphHeight = 250;
+		ArrayList<XYPlotData> dhList = xyPlotParam.getDataHandlers();
+		int pageHeight = graphHeight * dhList.size();
+		if (dhList.size() > 0) {
+			Rect rect = new Rect(0, 0, pageWidth,pageHeight);
+			XYGraphLibSVG svgLib = new XYGraphLibSVG(os, rect);
+			IXYPlot xyPlot = XYPlot.createXYPlot(svgLib);
+			xyPlot.setFontSize(12, 12);
+			xyPlot.setBounds(new Rect(0, 0, pageWidth, graphHeight));
+			xyPlot.setXRange(xyPlotParam.getXMin(), xyPlotParam.getXMax());
+			xyPlot.setXUnitText(xyPlotParam.getXUnitText());
+			xyPlot.setXAxisText(xyPlotParam.getXAxisText());
+			int yOfs = 0;
+			for (XYPlotData dh : dhList) {
+				xyPlot.addDataHandler(dh);
+				svgLib.setOffset(0, yOfs);
+				svgLib.paint();
+				xyPlot.removeDataHandler(dh);
+				yOfs += graphHeight;
+			}
+			svgLib.close();
+		}
+	}
+}
