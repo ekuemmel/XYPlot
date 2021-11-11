@@ -228,7 +228,6 @@ public class MainActivity extends Activity implements Handler.Callback {
         xyPlot.setLegendExpanded(true);
         xyPlot.setSaveButtonVisible(true);
         xyPlot.setAllowPauseOnDataClick(false);
-        xyPlot.setSmoothScroll(true);
         xyPlot.setXAxisText(dataStorage.getXName());
         xyPlot.setXUnitText(dataStorage.getXUnit());
         xyPlot.setDataHandlers(dataStorage.getDataHandlers());

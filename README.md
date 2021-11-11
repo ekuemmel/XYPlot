@@ -53,8 +53,19 @@ implementation 'de.ewmksoft.xyplot:xyplot_android:1.3.24@aar'<br>
 </p>
 <h2>How to build</h2>
 <p>
-The build for xyplot is actually not a gradle multi build. The different parts must be compiled 
-separately on the command line using gradle in the respective folders.
-First core must be build, then the libraries, then the demo projects.
+The following products can be build by executing the commands from top folder.
+
+The Android demo application:
+ .\gradlew.bat :demo_android:app:build
+
+ The Android library (.aar):
+ .\gradlew.bat :lib_android:xyplot_android:build 
+
+The SWT demo application:
+ .\gradlew.bat :demo_swt:build
+
+ The SWT library:
+ .\gradlew.bat :lib_swt:xyplot_swt:build 
+ 
 </p>
 

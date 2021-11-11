@@ -14,6 +14,7 @@ import de.ewmksoft.xyplot.utils.XYPlotPersistence;
 
 class DataStorage2 implements IDataStorage {
     private static final String DATA_FILE_NAME = "data2_xyplot";
+	private static final double MOVING_DELTAT = 30;
     private boolean enabled;
     private double startTime;
     private Random random;
@@ -25,6 +26,7 @@ class DataStorage2 implements IDataStorage {
     private final String[] labels = {"Under Limit", "In Limit", "Above Limit"};
     private double xMin;
     private double xMax;
+	private double x;
 
     DataStorage2() {
         random = new Random();
@@ -88,7 +90,7 @@ class DataStorage2 implements IDataStorage {
             return;
         }
         long now = System.currentTimeMillis();
-        double x = startX + 0.001 * (now - startTime);
+        x = startX + 0.001 * (now - startTime);
         y = y + 10000.0 * (random.nextDouble() - 0.5);
         dhs[0].addValue(x, y);
         if (y > 3) {
@@ -178,7 +180,8 @@ class DataStorage2 implements IDataStorage {
 
     @Override
     public void updateXAxis(XYGraphView xyGraphView) {
-        xyGraphView.setVisibleLastX(30);
+		double min_x = Math.max(x - MOVING_DELTAT, 0);
+        xyGraphView.setVisibleXRange(min_x, x);
     }
 
     @Override

@@ -73,15 +73,7 @@ public interface IXYPlot {
 	abstract void registerEventHandler(IXYPlotEvent h);
 
 	/**
-	 * Get list of data handlers
-	 *
-	 * @return List of data sets
-	 */
-	@Deprecated
-	abstract ArrayList<XYPlotData> getDataHandler();
-
-	/**
-	 * Get list of data handlers
+	 * Get list of used data handlers
 	 *
 	 * @return List of data sets
 	 */

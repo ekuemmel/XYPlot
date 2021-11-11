@@ -83,7 +83,7 @@ task copyCore(type: Copy) {
 	}
 }
 
-assemble.dependsOn copyCore
+preBuild.dependsOn copyCore
 build.finalizedBy makePom
 
 dependencies {

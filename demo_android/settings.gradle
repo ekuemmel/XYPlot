@@ -19,7 +19,6 @@ dependencyResolutionManagement {
     }
 }
 includeBuild('../platforms')
-includeBuild('../core')
 includeBuild('../lib_android')
 
 rootProject.name = 'demo_android'

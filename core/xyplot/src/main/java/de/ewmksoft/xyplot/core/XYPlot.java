@@ -244,15 +244,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see de.ewmksoft.xyplot.IXYPlot#getDataHandler()
-	 */
-	public ArrayList<XYPlotData> getDataHandler() {
-		return new ArrayList<XYPlotData>(dataList);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
 	 * @see de.ewmksoft.xyplot.IXYPlot#getDataHandlers()
 	 */
 	public ArrayList<XYPlotData> getDataHandlers() {
@@ -2056,7 +2047,7 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 		int yox = 0;
 		int yoy = 0;
 		int yuy = bounds.height - 1;
-		int xrx = bounds.width;
+		int xrx = bounds.width - buttonBarHeight / 2;
 		int xly = 0;
 		legendWidth = 0;
 		Pt fontSize = new Pt(0, 0);
@@ -2087,8 +2078,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 				}
 				yoy = Math.max(yoy, buttonBarHeight + fontSize.y / 2);
 				yuy = Math.min(yuy, bounds.height - buttonBarHeight - PADDING_BUTTON * 2 - tickLen - fontSize.y);
-				xrx = bounds.width - graphLibInt.getStringExtends(formatValue(true, xData, xData.vmax)).x;
-				xrx = Math.min(xrx, bounds.width - PADDING_XR);
 			}
 			double diff = sd.vmax - sd.vmin;
 			if (diff != 0)
