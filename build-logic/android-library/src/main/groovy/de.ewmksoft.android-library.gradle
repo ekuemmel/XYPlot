@@ -3,8 +3,6 @@ plugins {
 	id('maven')
 }
 
-//group = 'de.ewmksoft.xyplot_android'
-
 version = '1.4.0'
 
 android {
@@ -16,7 +14,7 @@ android {
         versionCode 1
         versionName version
 		
-		setProperty("archivesBaseName", "xyplot_android")
+		setProperty("archivesBaseName", "xyplot-android")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
@@ -54,7 +52,7 @@ android {
 task makePom {
         pom {
 			groupId = 'de.ewmksoft.xyplot'
-			artifactId = 'xyplot_android'
+			artifactId = 'xyplot-android'
 			name = 'XYPlot Library for Android'
 			description = 'Library for displaying an interactive XY Graph on Android'
             project {
@@ -69,7 +67,7 @@ task makePom {
                     url = 'https://github.com/ekuemmel/XYPlot'
                 }
             }
-        }.writeTo("${buildDir}/outputs/aar/xyplot_android-${version}.pom")
+        }.writeTo("${buildDir}/outputs/aar/xyplot-android-${version}.pom")
 	doLast {
 		println("Created POM")
 	}

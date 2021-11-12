@@ -2,7 +2,7 @@ plugins {
     id('de.ewmksoft.android-library')
 }
 
-group = "${group}.lib_android"
+group = "${group}.lib-android"
 
 dependencies {
     testImplementation 'junit:junit:4.12'

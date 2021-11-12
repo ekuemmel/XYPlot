@@ -10,9 +10,9 @@ plugins {
     id('de.ewmksoft.java-library') 
 }
 
-group = "${group}.lib_swt"
+group = "${group}.lib-swt"
 
-version = '1.3.24'
+version = '1.4.0'
 
 configurations {
     includeLibs
@@ -39,10 +39,10 @@ task sourcesJar(type: Jar) {
 
 distributions {
     main {
-        distributionBaseName = 'xyplot_swt'
+        distributionBaseName = 'xyplot-swt'
 		pom {
 			groupId = 'de.ewmksoft.xyplot'
-			artifactId = 'xyplot_swt'
+			artifactId = 'xyplot-swt'
 			name = 'XYPlot Library for SWT'
 			description = 'Library for displaying an interactive XY Graph in SWT apps'
             project {
@@ -57,7 +57,7 @@ distributions {
                     url = 'https://github.com/ekuemmel/XYPlot'
                 }
             }
-        }.writeTo("${buildDir}/libs/xyplot_swt-${version}.pom")
+        }.writeTo("${buildDir}/libs/xyplot-swt-${version}.pom")
 
         contents {
             from 'build/libs'
