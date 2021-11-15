@@ -113,7 +113,7 @@ public interface IXYPlot {
 	 * waited before such an request is actually triggered. (Note there is a minimum
 	 * set internally which can not be exceeded)
 	 *
-	 * @return Value in [ms]
+	 * @param delay Value in [ms]
 	 */
 	abstract void setUpdateDelay(long delay);
 
@@ -324,7 +324,7 @@ public interface IXYPlot {
 	/**
 	 * Allow that a click into the graph switches the state to pause mode.
 	 *
-	 * @param New state
+	 * @param allowPauseOnDataClick New state
 	 */
 	abstract void setAllowPauseOnDataClick(boolean allowPauseOnDataClick);
 
@@ -332,7 +332,7 @@ public interface IXYPlot {
 	 * Set graph in paused mode. In this mode the cursor appears Note: In paused
 	 * mode, a setXRange() call is not executed immediately.
 	 *
-	 * @param zoomed
+	 * @param paused true/false
 	 */
 	abstract void setPaused(boolean paused);
 
@@ -351,47 +351,31 @@ public interface IXYPlot {
 	abstract boolean isLegendExpanded();
 
 	/**
-	 * Set the legend box to visible or invisible The method is deprecated due to a
-	 * typo. Use the correctly spelled name instead.
+	 * Set the legend box to visible or invisible.
 	 *
-	 * @param value
+	 * @param value true/false
 	 */
-	@Deprecated
-	abstract void setLegendVisisble(boolean value);
-
 	abstract void setLegendVisible(boolean value);
 
 	/**
-	 * Set the save button to visible or invisible. The method is deprecated due to
-	 * a typo. Use the correctly spelled name instead.
+	 * Set the save button to visible or invisible.
 	 *
-	 * @param value
+	 * @param value true/false
 	 */
-	@Deprecated
-	abstract void setSaveButtonVisisble(boolean value);
-
 	abstract void setSaveButtonVisible(boolean value);
 
 	/**
-	 * Set the run/pause button to visible or invisible The method is deprecated due
-	 * to a typo. Use the correctly spelled name instead.
+	 * Set the run/pause button to visible or invisible.
 	 *
-	 * @param value
+	 * @param value true/false
 	 */
-	@Deprecated
-	abstract void setStartButtonVisisble(boolean value);
-
 	abstract void setStartButtonVisible(boolean value);
 
 	/**
-	 * Set the delete plot button to visible or invisible The method is deprecated
-	 * due to a typo. Use the correctly spelled name instead.
+	 * Set the delete plot button to visible or invisible.
 	 *
-	 * @param value
+	 * @param value true/false
 	 */
-	@Deprecated
-	abstract void setClearButtonVisisble(boolean value);
-
 	abstract void setClearButtonVisible(boolean value);
 
 	/**

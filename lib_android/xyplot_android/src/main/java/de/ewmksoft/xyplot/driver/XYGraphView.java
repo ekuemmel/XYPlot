@@ -196,17 +196,6 @@ public class XYGraphView extends View implements Handler.Callback {
         }
     }
 
-    /**
-     * Use setKeyListener() and methods of IXYPlot inteface instead.
-     */
-    @Deprecated
-    public void init(String xText, String xUnit, XYPlotData[] dhs, IXYGraphView aListener) {
-        xyPlot.setDataHandlers(dhs);
-        xyPlot.setXAxisText(xText);
-        xyPlot.setXUnitText(xUnit);
-        setKeyListener(aListener);
-    }
-
     private void init(Context context) {
         if (myHandler == null) {
             myHandler = new Handler(this);

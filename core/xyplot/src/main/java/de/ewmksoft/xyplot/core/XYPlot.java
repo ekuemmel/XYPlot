@@ -1257,11 +1257,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 *
 	 * @see de.ewmksoft.xyplot.core.IXYPlot#setSaveButtonVisible(boolean)
 	 */
-	@Deprecated
-	public void setSaveButtonVisisble(boolean value) {
-		setSaveButtonVisible(value);
-	}
-
 	public void setSaveButtonVisible(boolean value) {
 		XYPlotData.lock();
 		boolean changed = (value != showSaveButton);
@@ -1278,11 +1273,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 *
 	 * @see de.ewmksoft.xyplot.core.IXYPlot#setRunPauseButtonVisible(boolean)
 	 */
-	@Deprecated
-	public void setStartButtonVisisble(boolean value) {
-		setStartButtonVisible(value);
-	}
-
 	public void setStartButtonVisible(boolean value) {
 		XYPlotData.lock();
 		boolean changed = (value != showStartButton);
@@ -1299,11 +1289,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 *
 	 * @see de.ewmksoft.xyplot.core.IXYPlot#setDeleteButtonVisible(boolean)
 	 */
-	@Deprecated
-	public void setClearButtonVisisble(boolean value) {
-		setClearButtonVisible(value);
-	}
-
 	public void setClearButtonVisible(boolean value) {
 		XYPlotData.lock();
 		boolean changed = (value != showClearButton);
@@ -1320,11 +1305,6 @@ public class XYPlot implements IXYGraphLibAdapter, IXYPlot, IXYPlotEvent {
 	 *
 	 * @param value New value for visible state
 	 */
-	@Deprecated
-	public void setLegendVisisble(boolean value) {
-		setLegendVisible(value);
-	}
-
 	public void setLegendVisible(boolean value) {
 		XYPlotData.lock();
 		boolean changed = (value != showLegend);

@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation(platform('de.ewmksoft.platform:plugins-platform'))
-
+    //implementation(platform('de.ewmksoft.platform:plugins-platform'))
     implementation(project(':commons'))
 }

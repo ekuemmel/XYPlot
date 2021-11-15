@@ -6,6 +6,5 @@ dependencies {
     implementation(platform('de.ewmksoft.platform:plugins-platform'))
 
     implementation(project(':commons'))
-
     implementation('com.android.tools.build:gradle')
 }

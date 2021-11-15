@@ -1,20 +1,25 @@
 plugins {
     id('com.android.library')
-	id('maven')
+    id('maven')
+    id('signing')
 }
 
-version = '1.4.0'
+signing {
+    sign configurations.archives
+}
+
+version = '1.4.0-SNAPSHOT'
 
 android {
-	compileSdkVersion 23
-	
+    compileSdkVersion 23
+    
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
         versionName version
-		
-		setProperty("archivesBaseName", "xyplot-android")
+        
+        setProperty("archivesBaseName", "xyplot-android")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
@@ -28,16 +33,16 @@ android {
 
     lintOptions {
         disable 'InvalidPackage', 'OldTargetApi'
-    }	
-	
-	
-	libraryVariants.all { variant ->
-		variant.outputs.all { output ->
-			if (outputFile != null && outputFileName.endsWith('.aar')) {
-				outputFileName = "${archivesBaseName}-${version}.aar"
-			}
-		}
-	}
+    }    
+    
+    
+    libraryVariants.all { variant ->
+        variant.outputs.all { output ->
+            if (outputFile != null && outputFileName.endsWith('.aar')) {
+                outputFileName = "${archivesBaseName}-${version}.aar"
+            }
+        }
+    }
 
     sourceCompatibility = '1.6'
     targetCompatibility = '1.6'
@@ -49,44 +54,41 @@ android {
     }
 }
 
-task makePom {
-        pom {
-			groupId = 'de.ewmksoft.xyplot'
-			artifactId = 'xyplot-android'
-			name = 'XYPlot Library for Android'
-			description = 'Library for displaying an interactive XY Graph on Android'
-            project {
-                licenses {
-                    license {
-						name 'EWMK-SOFT XYPlot License'
-                        url 'https://ewmk-soft.de/de/ewmksoft/xyplot/LICENSE.txt'
-                    }
-                }
-                scm {
-                    connection = 'scm:git:git@github.com:ekuemmel/XYPlot.git'
-                    url = 'https://github.com/ekuemmel/XYPlot'
-                }
-            }
-        }.writeTo("${buildDir}/outputs/aar/xyplot-android-${version}.pom")
-	doLast {
-		println("Created POM")
-	}
+sourceSets {
+    main {
+        java {
+            android.sourceSets.main.java.srcDir '../../core/xyplot/src/main/java'
+        }
+    }
 }
 
-task copyCore(type: Copy) {
-	from file("${buildDir}/../../../core/xyplot/build/libs/xyplot.jar")
-	into file("${buildDir}/../libs")
-	doLast {
-		println("Copied core library to libs")
-	}
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    baseName = 'xyplot-android'
+    from android.sourceSets.main.java.srcDirs
 }
 
-preBuild.dependsOn copyCore
-build.finalizedBy makePom
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    baseName = 'xyplot-android'
+    from files("$buildDir/docs/javadoc")
+}
+
+task createJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += files("$buildDir/intermediates/compile_r_class_jar/release/R.jar")
+    exclude "**/R**"
+    failOnError = false
+}
+
+
+artifacts {
+    archives androidSourcesJar, javadocJar
+}
+
+javadocJar.dependsOn createJavadocs
 
 dependencies {
-    implementation(platform('de.ewmksoft.platform:product-platform'))
-    testImplementation(platform('de.ewmksoft.platform:test-platform'))
-	implementation fileTree(include: ['*.jar'], dir: 'libs')	
-	
+    implementation fileTree(include: ['*.jar'], dir: 'libs')    
 }

@@ -1,13 +1,11 @@
 
-includeBuild('../platforms')
-includeBuild('../build-logic')
-
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
     }
 }
 
+includeBuild('../build-logic')
 includeBuild('../core')
 
 rootProject.name = 'lib-swt'

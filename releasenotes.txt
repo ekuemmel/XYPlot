@@ -86,4 +86,9 @@ Version 1.3.24
 2020-05-22
 - Large data sets: Improved display and progress during saving. Fixed some scale presentation issues
 
+Version 1.4.0
+202-11-15
+- Changed project to a gradle multi-project setup
+- Added upload to MavenCentral
+- Removed deprecated methods
 

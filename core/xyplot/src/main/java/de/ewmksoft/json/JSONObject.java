@@ -83,7 +83,7 @@ import java.util.ResourceBundle;
  * <code>{ } [ ] / \ : , = ; #</code> and if they do not look like numbers and
  * if they are not the reserved words <code>true</code>, <code>false</code>, or
  * <code>null</code>.</li>
- * <li>Keys can be followed by <code>=</code> or <code>=></code> as well as by
+ * <li>Keys can be followed by <code>=</code> or <code>=&gt;</code> as well as by
  * <code>:</code>.</li>
  * <li>Values can be followed by <code>;</code> <small>(semicolon)</small> as
  * well as by <code>,</code> <small>(comma)</small>.</li>
@@ -1180,7 +1180,7 @@ public class JSONObject {
 
 	/**
 	 * Produce a string in double quotes with backslash sequences in all the
-	 * right places. A backslash will be inserted within </, producing <\/,
+	 * right places. A backslash will be inserted within &lt;/, producing &lt;\/,
 	 * allowing JSON text to be delivered in HTML. In JSON text, a string cannot
 	 * contain a control character or an unescaped quote or backslash.
 	 * 

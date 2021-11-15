@@ -4,7 +4,6 @@ dependencyResolutionManagement {
     }
 }
 
-includeBuild('../platforms')
 includeBuild('../build-logic')
 
 rootProject.name = 'core'

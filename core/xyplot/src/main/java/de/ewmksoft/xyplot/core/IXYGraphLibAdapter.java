@@ -81,8 +81,6 @@ public interface IXYGraphLibAdapter {
 	/**
 	 * Paint the cursor into the plot
 	 * 
-	 * @param gc
-	 *            Device context
 	 */
 	abstract public void paintCursor();
 

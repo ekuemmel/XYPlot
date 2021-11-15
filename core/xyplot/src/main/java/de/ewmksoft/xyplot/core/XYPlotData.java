@@ -115,9 +115,8 @@ public class XYPlotData {
 	}
 
 	/**
-	 * Clear the data
+	 * Clear the data.
 	 * 
-	 * @param owner
 	 */
 	public void clear() {
 		accessLock.lock();
@@ -226,9 +225,9 @@ public class XYPlotData {
 	/**
 	 * Add a switch value with text and value.
 	 * 
+	 * @param x     X value
 	 * @param label Text of the switch state.
-	 * @param y     Value of the state.
-	 * @return
+	 * @return Number of different labels used so far
 	 */
 	public int addValue(double x, String label) {
 		accessLock.lock();
@@ -461,9 +460,8 @@ public class XYPlotData {
 	}
 
 	/**
-	 * Make sure that this value is always visible on the y axis *
+	 * Make sure that this value is always visible on the y axis.
 	 * 
-	 * @param value Any value
 	 */
 	public void clearManualScale() {
 		hasFixedYMinValue = false;

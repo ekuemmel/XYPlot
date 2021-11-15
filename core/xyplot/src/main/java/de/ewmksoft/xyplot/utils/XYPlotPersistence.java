@@ -259,7 +259,6 @@ public class XYPlotPersistence {
 	 * Read data from a file
 	 * 
 	 * @param fileName         Name of the file
-	 * @param dataList         An plot data handler array
 	 * @param progressCallback A progress callback
 	 * @return Array of XYPlotData objects or null if nothing can be read.
 	 * 
@@ -360,7 +359,6 @@ public class XYPlotPersistence {
 	 * Read data from a file
 	 * 
 	 * @param fileName Name of the file
-	 * @param dataList An plot data handler array
 	 * @throws IOException
 	 */
 	public XYPlotData[] readData(String fileName) throws IOException {

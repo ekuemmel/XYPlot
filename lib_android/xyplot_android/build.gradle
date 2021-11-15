@@ -2,13 +2,51 @@ plugins {
     id('de.ewmksoft.android-library')
 }
 
-group = "${group}.lib-android"
+group = "de.ewmksoft"
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.project {
+                name = 'XYPlot Library for Android'
+                description = 'Library for displaying an interactive XY Graph on Android'
+                developers {
+                    developer {
+                        id 'ekuemmel'
+                        name 'Eberhard Kümmel'
+                        email 'oss@ewmksoft.net'
+                        organization 'ewmk-soft.de'
+                        organizationUrl 'https://ewmksoft.de'
+                    }
+                }
+                licenses {
+                    license {
+                        name 'EWMK-SOFT XYPlot License'
+                        url 'https://ewmk-soft.de/de/ewmksoft/xyplot/LICENSE.txt'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git@github.com:ekuemmel/XYPlot.git'
+                    url = 'https://github.com/ekuemmel/XYPlot'
+                }
+            }
+
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+        }
+    }
+}
 
 dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')    
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-	
-	implementation 'de.ewmksoft.xyplot.core:xyplot'
-	implementation fileTree(include: ['*.jar'], dir: 'libs')	
 }

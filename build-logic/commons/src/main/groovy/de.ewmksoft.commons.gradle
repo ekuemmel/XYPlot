@@ -5,6 +5,8 @@ plugins {
 
 group = 'de.ewmksoft.xyplot'
 
+version = '1.4.0'
+
 java {
     sourceCompatibility = JavaVersion.VERSION_1_6
     targetCompatibility = JavaVersion.VERSION_1_6
@@ -17,9 +19,8 @@ gradle.projectsEvaluated {
 }
 
 dependencies {
-    implementation(platform('de.ewmksoft.platform:product-platform'))
-
-    testImplementation(platform('de.ewmksoft.platform:test-platform'))
+//    implementation(platform('de.ewmksoft.platform:product-platform'))
+//    testImplementation(platform('de.ewmksoft.platform:test-platform'))
 }
 
 tasks.named("test") {
