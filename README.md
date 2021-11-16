@@ -43,6 +43,7 @@ Eberhard Kümmel<br>
 2020-02-21   New version 1.3.22 published on JCenter<br>
 2020-03-22   New version 1.3.23 published on JCenter<br>
 2020-05-22   New version 1.3.24 published on JCenter<br>
+2021-11-15   New version 1.4.0 published on MavenCentral<br>
 
 </p>
 <h2>How to use on Android</h2>
@@ -53,19 +54,19 @@ implementation 'de.ewmksoft.xyplot:xyplot_android:1.3.24@aar'<br>
 </p>
 <h2>How to build</h2>
 <p>
-The following products can be build by executing the commands from top folder.
+The following products can be build by executing the following commands from top folder.
 
-The Android demo application:
- .\gradlew.bat :demo_android:app:build
+The Android demo application:<br>
+ ./gradlew :demo_android:app:build<br>
 
- The Android library (.aar):
- .\gradlew.bat :lib_android:xyplot_android:build 
+ The Android library (.aar):<br>
+ ./gradlew :lib_android:xyplot_android:build <br>
 
-The SWT demo application:
- .\gradlew.bat :demo_swt:build
+The SWT demo application:<br>
+ ./gradlew :demo_swt:build<br>
 
- The SWT library:
- .\gradlew.bat :lib_swt:xyplot_swt:build 
+ The SWT library:<br>
+ ./gradlew :lib_swt:xyplot_swt:build<br>
  
 </p>
 

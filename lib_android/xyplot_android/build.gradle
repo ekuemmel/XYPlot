@@ -9,7 +9,8 @@ uploadArchives {
         mavenDeployer {
             pom.project {
                 name = 'XYPlot Library for Android'
-                description = 'Library for displaying an interactive XY Graph on Android'
+                description = 'Library for displaying an interactive XY Graph in Android apps'
+                url 'https://github.com/ekuemmel/XYPlot'
                 developers {
                     developer {
                         id 'ekuemmel'
@@ -22,11 +23,11 @@ uploadArchives {
                 licenses {
                     license {
                         name 'EWMK-SOFT XYPlot License'
-                        url 'https://ewmk-soft.de/de/ewmksoft/xyplot/LICENSE.txt'
+                        url 'https://raw.githubusercontent.com/ekuemmel/XYPlot/master/LICENSE'
                     }
                 }
                 scm {
-                    connection = 'scm:git:git@github.com:ekuemmel/XYPlot.git'
+                    connection = 'scm:git:https://github.com/ekuemmel/XYPlot.git'
                     url = 'https://github.com/ekuemmel/XYPlot'
                 }
             }
@@ -44,7 +45,7 @@ uploadArchives {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')    
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
