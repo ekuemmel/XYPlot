@@ -43,7 +43,8 @@ Eberhard Kümmel<br>
 2020-02-21   New version 1.3.22 published on JCenter<br>
 2020-03-22   New version 1.3.23 published on JCenter<br>
 2020-05-22   New version 1.3.24 published on JCenter<br>
-2021-11-15   New version 1.4.0 published on MavenCentral<br>
+2021-11-15   New version 1.4.0 for Android published on MavenCentral<br>
+2022-03-14   New version 1.4.0 for SWT published on MavenCentral<br>
 
 </p>
 <h2>How to use on Android</h2>
