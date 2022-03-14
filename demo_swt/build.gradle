@@ -14,8 +14,24 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.25'
 	compile 'org.slf4j:slf4j-simple:1.7.25'
 	compile 'org.eclipse.swt:org.eclipse.swt.win32.win32.x86_64:4.3'
-	implementation 'de.ewmksoft.xyplot.lib-swt:xyplot_swt'
-	implementation 'de.ewmksoft.xyplot.core:xyplot'
+	
+	// There are three ways to use the xyplot-swt library. Only one
+	// may be enabled at a time
+	
+	// For using the sources from core and lib_swt enable the next two lines
+	// Note: You also need to include the two libraries in settings.gradle
+	//implementation 'de.ewmksoft.xyplot.lib-swt:xyplot_swt'
+	//implementation 'de.ewmksoft.xyplot.core:xyplot'
+
+	// For using the local library from lib_swt folder use this
+	//implementation (name:'xyplot-swt-1.4.0-SNAPSHOT', ext:'jar')
+	
+	// For using the SNAPSHOT library from MavenCentral use this
+	//compile 'de.ewmksoft:xyplot-swt:1.4.0-SNAPSHOT'
+
+	// For using the release library from MavenCentral use this
+	compile 'de.ewmksoft:xyplot-swt:1.4.0'
+	
 }
 
 mainClassName = 'de.ewmksoft.xyplot.demo.Main'

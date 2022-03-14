@@ -10,9 +10,7 @@ plugins {
     id('de.ewmksoft.java-library') 
 }
 
-group = "${group}.lib-swt"
-
-//version = '1.4.0'
+group = "de.ewmksoft"
 
 configurations {
     includeLibs
@@ -26,16 +24,36 @@ jar {
     from {
         configurations.includeLibs.collect { it.isDirectory() ? it : zipTree(it) }
     }
+	archiveBaseName = 'xyplot-swt'
 }
 
 sourceSets {
     main.java.srcDirs += 'src/main/java'
+	main.java.srcDirs += '../../core/xyplot/src/main/java'
 }
 
 task sourcesJar(type: Jar) {
     from sourceSets.main.java
     archiveClassifier = 'sources'
 }
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    baseName = 'xyplot-swt'
+    from files("$buildDir/docs/javadoc")
+}
+
+task createJavadocs(type: Javadoc) {
+    source = sourceSets.main.java.srcDirs
+    failOnError = false
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
+}
+
+javadocJar.dependsOn createJavadocs
+
 
 jar {
     from {
@@ -47,7 +65,7 @@ distributions {
     main {
         distributionBaseName = 'xyplot-swt'
         pom {
-            groupId = 'de.ewmksoft.xyplot'
+            groupId = 'de.ewmksoft'
             artifactId = 'xyplot-swt'
             name = 'XYPlot Library for SWT'
             description = 'Library for displaying an interactive XY Graph in SWT apps'
@@ -71,10 +89,51 @@ distributions {
     }
 }
 
+group = "de.ewmksoft"
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.project {
+                name = 'XYPlot Library for SWT'
+                description = 'Library for displaying an interactive XY Graph in Java apps using SWT'
+                url 'https://github.com/ekuemmel/XYPlot'
+                developers {
+                    developer {
+                        id 'ekuemmel'
+                        name 'Eberhard Kümmel'
+                        email 'oss@ewmksoft.net'
+                        organization 'ewmk-soft.de'
+                        organizationUrl 'https://ewmksoft.de'
+                    }
+                }
+                licenses {
+                    license {
+                        name 'EWMK-SOFT XYPlot License'
+                        url 'https://raw.githubusercontent.com/ekuemmel/XYPlot/master/LICENSE'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/ekuemmel/XYPlot.git'
+                    url = 'https://github.com/ekuemmel/XYPlot'
+                }
+            }
+
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+        }
+    }
+}
+
 
 dependencies {
     includeLibs 'de.ewmksoft.xyplot.core:xyplot'
-    implementation 'de.ewmksoft.xyplot.core:xyplot'
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'org.eclipse.swt:org.eclipse.swt.win32.win32.x86:4.3'
 }

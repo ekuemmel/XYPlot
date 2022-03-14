@@ -3,4 +3,13 @@ plugins {
     id('java-library')
 	id('distribution')
 	id('maven')
+    id('signing')
 }
+
+signing {
+    sign configurations.archives
+}
+
+//version = '1.4.1-SNAPSHOT'
+version = '1.4.0'
+

@@ -5,10 +5,21 @@ includeBuild('../build-logic')
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
+		
+		maven {
+			url = "https://s01.oss.sonatype.org/content/repositories/snapshots"
+		}
+		
+		flatDir {
+			dirs "../lib_swt/xyplot_swt/build/libs"
+		}
     }
 }
 
-includeBuild('../core')
-includeBuild('../lib_swt')
-
 rootProject.name = 'demo_swt'
+
+// Note: These lines are only required when using the projects for compilation.
+// See comments for dependencies in build.gradle 
+//includeBuild('../core')
+//includeBuild('../lib_swt')
+

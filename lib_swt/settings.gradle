@@ -8,6 +8,6 @@ dependencyResolutionManagement {
 includeBuild('../build-logic')
 includeBuild('../core')
 
-rootProject.name = 'lib-swt'
+//rootProject.name = 'xyplot_swt'
 
 include('xyplot_swt')
