@@ -92,3 +92,6 @@ Version 1.4.0
 - Added upload to MavenCentral
 - Removed deprecated methods
 
+2023-02-05
+- New SWT version 1.4.1 released. No code changes, only dependency to SWT modified
+
