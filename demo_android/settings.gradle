@@ -4,7 +4,7 @@ pluginManagement {
         google()
         
         flatDir {
-            dirs '../../../../../ws_xyplotlib/new/XYPlot/lib_android/xyplot_android/build/outputs/aar'
+            dirs '../lib_android/xyplot_android/build/outputs/aar'
         }
 
 
@@ -18,8 +18,11 @@ dependencyResolutionManagement {
         google()
     }
 }
-includeBuild('../platforms')
-includeBuild('../lib_android')
+
+// Note: These lines are only required when using the projects for compilation.
+// See comments for dependencies in build.gradle
+//includeBuild('../platforms')
+//includeBuild('../lib_android')
 
 rootProject.name = 'demo_android'
 include('app')
